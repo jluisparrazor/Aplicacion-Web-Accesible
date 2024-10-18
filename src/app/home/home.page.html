@@ -13,15 +13,38 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-list>
-    @for (user of users; track $index) {
-    <ion-title>
-      <ion-label>Nombre: {{user.nombre}}
-        <p>
-          Edad: {{user.edad}}
-        </p>
-      </ion-label>
-    </ion-title>
+  <ion-card>
+    <ion-item>
+      <ion-label>Nombre: </ion-label>
+      <ion-input type="string" [(ngModel)]="newUser.nombre"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Edad: </ion-label>
+      <ion-input type="number" [(ngModel)]="newUser.edad"></ion-input>
+    </ion-item>
+  </ion-card>
+
+  <div style="margin: 20px;">
+     <ion-button (click)="save()" expand="block" shape="round">Guardar</ion-button>
+  </div>
+ 
+ 
+  @if (cargando) {
+    <div style="text-align: center;">
+      <ion-spinner name="bubbles"></ion-spinner>
+    </div>
   }
-  </ion-list>
+
+  <ion-list>
+  @for (user of users; track $index) {
+  <ion-title>
+    <ion-label>Nombre: {{user.nombre}}
+      <p>
+        Edad: {{user.edad}}
+      </p>
+    </ion-label>
+  </ion-title>
+}
+</ion-list>
+
 </ion-content>

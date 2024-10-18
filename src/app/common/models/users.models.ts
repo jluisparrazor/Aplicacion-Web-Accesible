@@ -1,4 +1,5 @@
 export interface UserI{
     nombre: string;
-    edad: number;
+    edad?: number;
+    id: string;
 }
