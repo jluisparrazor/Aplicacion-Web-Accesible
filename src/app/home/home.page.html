@@ -13,6 +13,9 @@
     </ion-toolbar>
   </ion-header>
 
+
+  
+
   <ion-card>
     <ion-item>
       <ion-label>Nombre: </ion-label>
@@ -37,14 +40,35 @@
 
   <ion-list>
   @for (user of users; track $index) {
-  <ion-title>
+  <ion-item>
     <ion-label>Nombre: {{user.nombre}}
-      <p>
-        Edad: {{user.edad}}
-      </p>
+      <p>Edad: {{user.edad}}</p>
     </ion-label>
-  </ion-title>
-}
-</ion-list>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="edit(user)">
+        <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+      </ion-button>
+            
+      <ion-button (click)="delete(user)">
+        <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+      </ion-button>
+  
+    </ion-buttons>
+          
+  </ion-item>
+  
+  }
+  </ion-list>
+
+  @if(user){
+    <ion-item>
+      <ion-label>
+        Nombre:{{user.nombre}}
+        <p>Edad: {{user.edad}}</p>
+      </ion-label>
+    </ion-item>
+  }
+
 
 </ion-content>
