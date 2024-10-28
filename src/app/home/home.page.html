@@ -28,8 +28,9 @@
   </ion-card>
 
   <div style="margin: 20px;">
-     <ion-button (click)="save()" expand="block" shape="round">Guardar</ion-button>
-  </div>
+     <ion-button (click)="save()" expand="block" shape="round">Guardar edición</ion-button>
+     <ion-button (click)="addUser()" slot = "end"><ion-icon slot="icon-only" name="add-circle-outline" color="black"></ion-icon></ion-button>
+    </div>
  
  
   @if (cargando) {
@@ -60,15 +61,7 @@
   
   }
   </ion-list>
-
-  @if(user){
-    <ion-item>
-      <ion-label>
-        Nombre:{{user.nombre}}
-        <p>Edad: {{user.edad}}</p>
-      </ion-label>
-    </ion-item>
-  }
+  
 
 
 </ion-content>

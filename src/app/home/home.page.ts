@@ -28,12 +28,16 @@ export class HomePage {
     this.getUser();
   }
 
+  async addUser(){
+  this.newUser.id = this.firestoreService.createIDDoc();
+  await this.firestoreService.createDocumentID(this.newUser, 'Usuarios', this.newUser.id);
+}
+
   initUser(){
     this.newUser = {
       nombre: null,
       edad: null,
       id: this.firestoreService.createIDDoc(),
-
     }
   }
 
@@ -52,12 +56,13 @@ export class HomePage {
   }
   
   edit(user: UserI){
-    console.log('edit -> ',user);
+    console.log('edit -> ', user);
     this.newUser = user;
   }
 
   async delete(user: UserI){
     this.cargando = true;
+    console.log('delete -> ',user.id);
     await this.firestoreService.deleteDocumentID('Usuarios', user.id);
     this.cargando = false;
   }
