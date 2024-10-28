@@ -44,9 +44,11 @@ export class FirestoreService {
     return uuidv4();
   }
 
+  
   //Delete
   deleteDocumentID(path: string, idDoc: string){
     const document= doc(this.firestore, `${path}/${idDoc}`);
+    console.log("Se va a eliminar el ID: " + idDoc);
     return deleteDoc(document);
   }
   
