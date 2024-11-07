@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { collectionData, docData, Firestore } from '@angular/fire/firestore';
-import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc } from 'firebase/firestore';
-import { Observable } from 'rxjs';
+import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, where, getDocs } from 'firebase/firestore';import { Observable } from 'rxjs';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -52,4 +51,15 @@ export class FirestoreService {
     return deleteDoc(document);
   }
   
+  // Obtener ID de un documento por un campo específico 
+  async getDocumentIDByField(collectionName: string, fieldName: string, value: any): Promise<string | null> { 
+    const colRef = collection(this.firestore, collectionName); 
+    const q = query(colRef, where(fieldName, '==', value)); 
+    const querySnapshot = await getDocs(q); 
+    if (querySnapshot.empty) { 
+      return null; 
+    } else { 
+      return querySnapshot.docs[0].id; 
+    } 
+  }
 }
