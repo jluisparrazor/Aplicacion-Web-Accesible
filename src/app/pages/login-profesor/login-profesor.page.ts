@@ -34,7 +34,7 @@ export class LoginPage implements OnInit {
         console.log('userData -> ', userData);
 
         if (userData && userData.password === this.password) {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/homeprofesor']);
         } else {
           console.log('Contraseña incorrecta');
         }
