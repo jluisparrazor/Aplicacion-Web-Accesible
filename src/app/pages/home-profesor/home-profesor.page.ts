@@ -9,8 +9,8 @@ import { IoniconsModule } from '../../common/modules/ionicons.module';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  templateUrl: 'home-profesor.page.html',
+  styleUrls: ['home-profesor.page.scss'],
   standalone: true,
   imports: [IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
     IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule

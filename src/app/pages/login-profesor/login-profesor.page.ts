@@ -9,8 +9,8 @@ import { UserI } from '../../common/models/users.models';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  templateUrl: './login-profesor.page.html',
+  styleUrls: ['./login-profesor.page.scss'],
   standalone: true,
   imports: [IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
     IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule],
