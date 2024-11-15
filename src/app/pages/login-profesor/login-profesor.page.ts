@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../common/services/firestore.service';
-import { UserI } from '../../common/models/users.models';
+import { ProfI } from '../../common/models/profesor.models';
 
 @Component({
   selector: 'app-login',
@@ -25,15 +25,15 @@ export class LoginPage implements OnInit {
 
   async login() {
     try {
-      const userId = await this.firestoreService.getDocumentIDByField('Usuarios', 'nombre', this.name);
+      const profId = await this.firestoreService.getDocumentIDByField('Profesores', 'Nombre', this.name);
 
-      if (userId) {
-        const userDoc = await this.firestoreService.getDocument<UserI>(`Usuarios/${userId}`);
-        const userData = userDoc.data();
+      if (profId) {
+        const profDoc = await this.firestoreService.getDocument<ProfI>(`Profesores/${profId}`);
+        const profData = profDoc.data();
 
-        console.log('userData -> ', userData);
+        console.log('profData -> ', profData);
 
-        if (userData && userData.password === this.password) {
+        if (profData && profData.Password === this.password) {
           this.router.navigate(['/homeprofesor']);
         } else {
           console.log('Contraseña incorrecta');
