@@ -5,8 +5,8 @@ import { FirestoreService } from '../../common/services/firestore.service';
 import { UserI } from '../../common/models/users.models';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
-import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { TareaI } from 'src/app/common/models/tarea.models';
 
 @Component({
   selector: 'app-home-administrador',
@@ -19,31 +19,35 @@ import { CommonModule } from '@angular/common';
 
 
 export class HomeAdministradorPage {
+  cargando: boolean = false;
+  
   profs: ProfI[] = [];
   newProf: ProfI;
   prof: ProfI;
-  cargando: boolean = false;
+
   students: UserI[] = [];
   newStud: UserI;
   stud: UserI;
 
+  tareas: TareaI[] = [];
+  newTarea: TareaI;
+  tarea: TareaI;
 
-  // constructor(private firestoreService: FirestoreService) {
-  //   this.loadprofs();
-  //   this.initProf();
-  //   this.getProf();
-  // }
-
-  constructor(private firestoreService: FirestoreService, private navCtrl: NavController) {
+  constructor(private firestoreService: FirestoreService) {
     //Profs
     this.loadprofs();
     this.initProf();
     this.getProf();
 
     //Students
-    this.loadStudent();
+    this.loadStudents();
     this.initStudent();
     this.getStudent();
+
+     //Tareas
+     this.loadTareas();
+     this.initTarea();
+     this.getTarea();
   }
   
   // Profesor section
@@ -120,7 +124,7 @@ async addprof(){
     }
   }
 
-  loadStudent(){
+  loadStudents(){
   this.firestoreService.getCollectionChanges<UserI>('Usuarios').subscribe((data) => {
     if (data) {
       this.students = data;
@@ -134,14 +138,6 @@ async addprof(){
     this.cargando = false;
     this.cleanInterface();
   }
-  
-  // cleanInterface(){ 
-  //   this.newProf.Nombre = null;
-  //   this.newProf.Edad = null;
-  //   this.newProf.Password = null;
-  //   this.newProf.Administrativo = null;
-  // }
-
 
   editStu(student: UserI){
     console.log('edit -> ', student);
@@ -161,11 +157,55 @@ async addprof(){
   }
   
   
+  // Tareas section
 
-
-  ChangePassword() {
-    this.navCtrl.navigateForward('/change-password');
+  initTarea(){
+    this.tarea = {
+      id: this.firestoreService.createIDDoc(),
+      Nombre: null,
+      Completada: null,
+      Fecha: null,
+    }
   }
+
+  loadTareas(){
+  this.firestoreService.getCollectionChanges<TareaI>('Tareas').subscribe((data) => {
+    if (data) {
+      this.tareas = data;
+      console.log('tareas -> ', this.tareas);
+    }
+  });
+  }
+
+  addTarea(){
+    console.log('add -> ', this.newTarea);
+  }
+
+  editTarea(tarea: TareaI){
+    console.log('edit -> ', tarea);
+    this.newTarea = tarea;  }
+
+  async deleteTarea(tarea: TareaI){
+    this.cargando = true;
+    console.log('delete -> ', tarea.id);
+    await this.firestoreService.deleteDocumentID('Tareas', tarea.id);
+    this.cargando = false;
+  }
+  
+  async getTarea(){
+    const res = await this.firestoreService.getDocument<TareaI>('Tareas/'+ this.newTarea.id);
+    this.tarea = res.data();
+  }
+
+  async saveTarea(){
+    this.cargando = true;
+    await this.firestoreService.createDocumentID(this.newStud, 'Tareas', this.newTarea.id);
+    this.cargando = false;
+    this.cleanInterface();
+  }
+  // ChangePassword() {
+  //   this.navCtrl.navigateForward('/change-password');
+  // }
 
 
 }

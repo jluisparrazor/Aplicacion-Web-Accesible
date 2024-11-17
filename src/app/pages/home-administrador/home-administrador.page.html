@@ -5,27 +5,45 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- <ion-card>
-    <ion-list lines="full">
-      <ion-item>
-        <ion-input clearInput="true" label="Nombre" labelPlacement="floating"  type="string"[(ngModel)]="newProf.Nombre"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input clearInput="true" label="Edad" labelPlacement="floating" type="number"[(ngModel)]="newProf.Edad"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input clearInput="true" label= "Administrador" labelPlacement="floating" [(ngModel)]="newProf.Administrativo"></ion-input>
-      </ion-item>
-    </ion-list>
-  </ion-card> -->
-
-       <!-- <ion-button (click)="saveStudent()" expand="block" shape="round">Guardar edición</ion-button> -->
-        <!-- <ion-button (click)="addUser()" expand="block" shape="round">Añadir Usuario</ion-button> -->
-        <!-- <ion-button (click)="ChangePassword()" expand="block" shape="round" color="tertiary">Cambiar Contraseña </ion-button>-->
-
   <ion-spinner *ngIf="cargando" name="bubbles" style="display: block; margin: auto;"></ion-spinner>
 
   <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-toolbar>
+          <ion-title>Tareas:</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="addTarea()">
+              <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
+            </ion-button> 
+          </ion-buttons>
+        </ion-toolbar>
+        <ion-list>
+        @for (tarea of tareas; track $index) {
+        <ion-item>
+          <ion-label>Nombre: {{tarea.Nombre}}
+            <p>Completada: {{tarea.Completada}}</p>
+            <!-- <p>Fecha: {{tarea.Fecha.toDate() | date}}</p> -->
+          </ion-label>
+      
+          <ion-buttons slot="end">
+            <ion-button (click)="editTarea(tarea)">
+              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+            </ion-button>
+                  
+            <ion-button (click)="deleteTarea(tarea)">
+              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+            </ion-button>
+        
+          </ion-buttons>
+                
+        </ion-item>
+        
+        }
+        </ion-list>
+      </ion-col>
+    </ion-row>
+
     <ion-row>
       <ion-col>
         <ion-toolbar>
@@ -41,6 +59,7 @@
         <ion-item>
           <ion-label>Nombre: {{user.nombre}}
             <p>Edad: {{user.edad}}</p>
+            <p>Tipo de Discapacidad: {{user.TipoDiscapacidad.join(', ')}}</p>
           </ion-label>
       
           <ion-buttons slot="end">
@@ -57,7 +76,6 @@
         </ion-item>
         
         }
-        
         </ion-list>
       </ion-col>
 
@@ -75,6 +93,7 @@
         <ion-item>
           <ion-label>Nombre: {{user.Nombre}}
             <p>Edad: {{user.Edad}}</p>
+            <p>Es Administrativo: {{user.Administrativo}}</p>
           </ion-label>
       
           <ion-buttons slot="end">
