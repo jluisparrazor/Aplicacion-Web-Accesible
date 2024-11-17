@@ -1,0 +1,16 @@
+<ion-content>
+  <div class="login-container">
+      <h1>Login Profesores</h1>
+      
+      <ion-item>
+          <ion-input clearInput="true" label="Nombre" labelPlacement="floating" placeholder="Enter text" type="string"[(ngModel)]="name"></ion-input>
+      </ion-item>
+
+      <ion-item>
+          <ion-input label="Contraseña" labelPlacement="floating" placeholder="Enter text" type="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
+
+      <ion-button expand="full" (click)="login()">Login</ion-button>
+      <div class="forgot-password">Forgot Password?</div>
+  </div>
+</ion-content>

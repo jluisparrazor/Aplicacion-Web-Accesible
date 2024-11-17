@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList, IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
-import { IoniconsModule } from '../../common/modules/ionicons.module';
+import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
-import { FirestoreService } from '../../common/services/firestore.service';
-import { ProfI } from '../../common/models/profesor.models';
+import { FirestoreService } from '../../../common/services/firestore.service';
+import { ProfI } from '../../../common/models/profesor.models';
 
 @Component({
   selector: 'app-login',
@@ -15,13 +14,12 @@ import { ProfI } from '../../common/models/profesor.models';
   imports: [IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
     IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule],
 })
-export class LoginPage implements OnInit {
+export class LoginPage{
   name: string;
   password: string;
 
   constructor(private router: Router, private firestoreService: FirestoreService) { }
 
-  ngOnInit() {}
 
   async login() {
     try {

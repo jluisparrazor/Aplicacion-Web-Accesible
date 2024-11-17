@@ -3,4 +3,5 @@ export interface UserI{
     edad?: number;
     id: string;
     password: string;
+    TipoDiscapacidad: Array<string>;
 }

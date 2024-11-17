@@ -13,7 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'loginprofesor',
-    loadComponent: () => import('./pages/login-profesor/login-profesor.page').then( m => m.LoginPage)
+    loadComponent: () => import('./pages/home-profesor/login-profesor/login-profesor.page').then( m => m.LoginPage)
   },
   {
     path: 'menus',
@@ -38,6 +38,14 @@ export const routes: Routes = [
   {
     path: 'tareasporpasos',
     loadComponent: () => import('./pages/tareas-por-pasos/tareas-por-pasos.page').then( m => m.TareasPorPasosPage)
+  },
+  {
+    path: 'change-password',
+    loadComponent: () => import('./pages/home-profesor/login-profesor/change-password/change-password.page').then( m => m.ChangePasswordPage)
+  },
+  {
+    path: 'edit-profesor',
+    loadComponent: () => import('./pages/home-profesor/edit-profesor/edit-profesor.page').then( m => m.EditProfesorPage)
   },
 ];
 @NgModule({

@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons } from '@ionic/angular/standalone';
-import { UserI } from '../../common/models/users.models';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
+import { ProfI } from '../../common/models/profesor.models';
 import { FirestoreService } from '../../common/services/firestore.service';
+import { UserI } from '../../common/models/users.models';
+
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
+import { NavController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -12,77 +16,157 @@ import { IoniconsModule } from '../../common/modules/ionicons.module';
   templateUrl: 'home-profesor.page.html',
   styleUrls: ['home-profesor.page.scss'],
   standalone: true,
-  imports: [IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
-    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule
+  imports: [IonCol, IonRow, IonGrid, IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
+    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule 
   ],
 })
 export class HomePage {
-  users: UserI[] = [];
-  newUser: UserI;
+  profs: ProfI[] = [];
+  newProf: ProfI;
+  prof: ProfI;
   cargando: boolean = false;
-  user: UserI;
+  students: UserI[] = [];
+  newStud: UserI;
+  stud: UserI;
 
-  constructor(private firestoreService: FirestoreService) {
-    this.loadusers();
-    this.initUser();
-    this.getUser();
+
+  // constructor(private firestoreService: FirestoreService) {
+  //   this.loadprofs();
+  //   this.initProf();
+  //   this.getProf();
+  // }
+
+  constructor(private firestoreService: FirestoreService, private navCtrl: NavController) {
+    //Profs
+    this.loadprofs();
+    this.initProf();
+    this.getProf();
+
+    //Students
+    this.loadStudent();
+    this.initStudent();
+    this.getStudent();
   }
-
-  async addUser(){
-  this.newUser.id = this.firestoreService.createIDDoc();
-  await this.firestoreService.createDocumentID(this.newUser, 'Usuarios', this.newUser.id);
+  
+  // Profesor section
+async addprof(){
+  this.newProf.id = this.firestoreService.createIDDoc();
+  await this.firestoreService.createDocumentID(this.newProf, 'Profesores', this.newProf.id);
 }
 
-  initUser(){
-    this.newUser = {
-      nombre: null,
-      edad: null,
+  initProf(){
+    this.newProf = {
+      Nombre: null,
+      Edad: null,
       id: this.firestoreService.createIDDoc(),
-      password:null,
+      Password:null,
+      Administrativo: false
     }
   }
 
-  loadusers(){
-  this.firestoreService.getCollectionChanges<UserI>('Usuarios').subscribe((data) => {
+  loadprofs(){
+  this.firestoreService.getCollectionChanges<ProfI>('Profesores').subscribe((data) => {
     if (data) {
-      this.users = data;
+      this.profs = data;
     }
   });
   }
 
-  async save(){
+  async saveProf(){
     this.cargando = true;
-    await this.firestoreService.createDocumentID(this.newUser, 'Usuarios', this.newUser.id);
+    await this.firestoreService.createDocumentID(this.newProf, 'Profesores', this.newProf.id);
     this.cargando = false;
+    this.cleanInterface();
   }
   
-  edit(user: UserI){
-    console.log('edit -> ', user);
-    this.newUser = user;
+  cleanInterface(){ 
+    this.newProf.Nombre = null;
+    this.newProf.Edad = null;
+    this.newProf.Password = null;
+    this.newProf.Administrativo = null;
   }
 
-  async delete(user: UserI){
+
+  edit(prof: ProfI){
+    console.log('edit -> ', prof);
+    this.newProf = prof;
+  }
+
+  async delete(prof: ProfI){
     this.cargando = true;
-    console.log('delete -> ',user.id);
-    await this.firestoreService.deleteDocumentID('Usuarios', user.id);
+    console.log('delete -> ',prof.id);
+    await this.firestoreService.deleteDocumentID('Profesores', prof.id);
     this.cargando = false;
   }
 
-  async getUser(){
+  async getProf(){
+    const res = await this.firestoreService.getDocument<ProfI>('Profesores/'+ this.newProf.id);
+    this.prof = res.data();
+  }
 
-    const uid = "64c0874c-7338-4ee7-9fec-6352547d2032";
-    // this.firestoreService.getDocumentChanges<UserI>('Usuarios/'+ uid).subscribe(data => {
-    //   console.log('getUser -> ', data);
-    //   if(data){
-    //     this.user = data
-    //   }
-    // });
 
-    const res = await this.firestoreService.getDocument<UserI>('Usuarios/'+ uid);
-    this.user = res.data();
-    //this.firestoreService.getDocument('Usuarios/'+ uid).then(data => {
-      //data.ref.id
- //   });
+  // Students section
+  
+  async addStud(){
+    this.newProf.id = this.firestoreService.createIDDoc();
+    await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
+  }
+  
+  initStudent(){
+    this.newStud = {
+      id: this.firestoreService.createIDDoc(),
+      nombre: null,
+      edad: null,
+      password:null,
+      TipoDiscapacidad: null,
+    }
+  }
+
+  loadStudent(){
+  this.firestoreService.getCollectionChanges<UserI>('Usuarios').subscribe((data) => {
+    if (data) {
+      this.students = data;
+    }
+  });
+  }
+
+  async saveStudent(){
+    this.cargando = true;
+    await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
+    this.cargando = false;
+    this.cleanInterface();
+  }
+  
+  // cleanInterface(){ 
+  //   this.newProf.Nombre = null;
+  //   this.newProf.Edad = null;
+  //   this.newProf.Password = null;
+  //   this.newProf.Administrativo = null;
+  // }
+
+
+  editStu(student: UserI){
+    console.log('edit -> ', student);
+    this.newStud = student;
+  }
+
+  async deleteStu(student: UserI){
+    this.cargando = true;
+    console.log('delete -> ', student.id);
+    await this.firestoreService.deleteDocumentID('Usuarios', student.id);
+    this.cargando = false;
+  }
+
+  async getStudent(){
+    const res = await this.firestoreService.getDocument<UserI>('Usuarios/'+ this.newStud.id);
+    this.stud = res.data();
+  }
+  
+  
+
+
+  ChangePassword() {
+    this.navCtrl.navigateForward('/change-password');
   }
 
 

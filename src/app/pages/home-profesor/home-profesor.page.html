@@ -1,76 +1,98 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Administrador</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Nueva página</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- <ion-card>
+    <ion-list lines="full">
+      <ion-item>
+        <ion-input clearInput="true" label="Nombre" labelPlacement="floating"  type="string"[(ngModel)]="newProf.Nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input clearInput="true" label="Edad" labelPlacement="floating" type="number"[(ngModel)]="newProf.Edad"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input clearInput="true" label= "Administrador" labelPlacement="floating" [(ngModel)]="newProf.Administrativo"></ion-input>
+      </ion-item>
+    </ion-list>
+  </ion-card> -->
 
+       <!-- <ion-button (click)="saveStudent()" expand="block" shape="round">Guardar edición</ion-button> -->
+        <!-- <ion-button (click)="addUser()" expand="block" shape="round">Añadir Usuario</ion-button> -->
+        <!-- <ion-button (click)="ChangePassword()" expand="block" shape="round" color="tertiary">Cambiar Contraseña </ion-button>-->
 
-  
+  <ion-spinner *ngIf="cargando" name="bubbles" style="display: block; margin: auto;"></ion-spinner>
 
-  <ion-card>
-    <ion-item>
-      <ion-label>Nombre: </ion-label>
-      <ion-input type="string" [(ngModel)]="newUser.nombre"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Edad: </ion-label>
-      <ion-input type="number" [(ngModel)]="newUser.edad"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Password: </ion-label>
-      <ion-input type="string" [(ngModel)]="newUser.password"></ion-input>
-    </ion-item>
-  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-toolbar>
+          <ion-title>Alumnos:</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="addStud()">
+              <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
+            </ion-button> 
+          </ion-buttons>
+        </ion-toolbar>
+        <ion-list>
+        @for (user of students; track $index) {
+        <ion-item>
+          <ion-label>Nombre: {{user.nombre}}
+            <p>Edad: {{user.edad}}</p>
+          </ion-label>
+      
+          <ion-buttons slot="end">
+            <ion-button (click)="editStu(user)">
+              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+            </ion-button>
+                  
+            <ion-button (click)="deleteStu(user)">
+              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+            </ion-button>
+        
+          </ion-buttons>
+                
+        </ion-item>
+        
+        }
+        
+        </ion-list>
+      </ion-col>
 
-  <div style="margin: 20px;">
-     <ion-button (click)="save()" expand="block" shape="round">Guardar edición</ion-button>
-     <ion-button (click)="addUser()" slot = "end"><ion-icon slot="icon-only" name="add-circle-outline" color="black"></ion-icon></ion-button>
-    </div>
- 
- 
-  @if (cargando) {
-    <div style="text-align: center;">
-      <ion-spinner name="bubbles"></ion-spinner>
-    </div>
-  }
-
-  <ion-toolbar>
-    <ion-title>
-      Alumnos:
-    </ion-title>
-  </ion-toolbar>
-  <ion-list>
-  @for (user of users; track $index) {
-  <ion-item>
-    <ion-label>Nombre: {{user.nombre}}
-      <p>Edad: {{user.edad}}</p>
-    </ion-label>
-
-    <ion-buttons slot="end">
-      <ion-button (click)="edit(user)">
-        <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-      </ion-button>
-            
-      <ion-button (click)="delete(user)">
-        <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-      </ion-button>
-  
-    </ion-buttons>
-          
-  </ion-item>
-  
-  }
-  </ion-list>
-  
-
-
+      <ion-col>
+        <ion-toolbar>
+          <ion-title>Profesores:</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="addprof()">
+              <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
+            </ion-button> 
+          </ion-buttons>
+        </ion-toolbar>
+        <ion-list>
+        @for (user of profs; track $index) {
+        <ion-item>
+          <ion-label>Nombre: {{user.Nombre}}
+            <p>Edad: {{user.Edad}}</p>
+          </ion-label>
+      
+          <ion-buttons slot="end">
+            <ion-button (click)="edit(user)">
+              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+            </ion-button>
+                  
+            <ion-button (click)="delete(user)">
+              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+            </ion-button>
+        
+          </ion-buttons>
+                
+        </ion-item>
+        
+        }
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
