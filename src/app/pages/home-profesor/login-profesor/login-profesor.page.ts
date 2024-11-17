@@ -32,6 +32,10 @@ export class LoginPage{
         console.log('profData -> ', profData);
 
         if (profData && profData.Password === this.password) {
+          
+          if(profData.Administrativo === true)
+            this.router.navigate(['/homeadministrador']);
+          else
           this.router.navigate(['/homeprofesor']);
         } else {
           console.log('Contraseña incorrecta');

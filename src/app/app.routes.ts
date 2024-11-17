@@ -47,6 +47,10 @@ export const routes: Routes = [
     path: 'edit-profesor',
     loadComponent: () => import('./pages/home-profesor/edit-profesor/edit-profesor.page').then( m => m.EditProfesorPage)
   },
+  {
+    path: 'homeadministrador',
+    loadComponent: () => import('./pages/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
+  },
 ];
 @NgModule({
   imports: [
