@@ -16,10 +16,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home-profesor/login-profesor/login-profesor.page').then( m => m.LoginPage)
   },
   {
-    path: 'menus',
-    loadComponent: () => import('./pages/menus/menus.page').then( m => m.MenusPage)
-  },
-  {
     path: 'loginlumno',
     loadComponent: () => import('./pages/login-alumno/login-alumno.page').then( m => m.LoginAlumnoPage)
   },
@@ -50,6 +46,10 @@ export const routes: Routes = [
   {
     path: 'homeadministrador',
     loadComponent: () => import('./pages/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
+  },
+  {
+    path: 'choose-menus',
+    loadComponent: () => import('./pages/choose-menus/choose-menus.page').then( m => m.ChooseMenusPage)
   },
   
 ];
