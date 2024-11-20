@@ -1,4 +1,14 @@
-export interface MenuI{
+import { Timestamp } from "firebase/firestore";
+
+export interface MenuType{
     id: string;
-    Nombre: string;
+    name: string;
+    pictogramId: string;
+    visible: boolean;
+}
+
+export interface Menu{
+    id: string;
+    date: Timestamp;
+    menus: Map<string, Map<string, number>>;
 }
