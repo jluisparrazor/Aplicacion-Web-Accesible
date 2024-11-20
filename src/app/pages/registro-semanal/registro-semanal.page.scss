@@ -1,0 +1,120 @@
+/* Estilo general */
+ion-header {
+    --background: #387ef5; /* Azul suave para el encabezado */
+  }
+  
+  ion-toolbar {
+    --color: white; /* Blanco para el texto en la barra de herramientas */
+  }
+  
+  ion-title {
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  ion-content {
+    --background: #f4f4f4; /* Fondo gris claro */
+    padding: 10px;
+  }
+  
+ /* Estilo para el título en el ion-item-divider */
+ion-item-divider {
+    font-weight: bold;
+    background-color: #f4f4f4; /* Fondo claro para los divisores */
+    color: #387ef5; /* Azul para los títulos de los divisores */
+    margin-bottom: 10px;
+    padding: 10px; /* Espaciado en el divisor */
+  }
+  
+/* Estilo para los elementos de la lista de alumnos */
+ion-item {
+    --background: white; /* Fondo blanco para cada item */
+    --border-radius: 10px; /* Bordes redondeados */
+    margin-bottom: 10px;
+    padding: 10px 15px; /* Menos padding para reducir el tamaño */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    display: flex;
+    justify-content: center; /* Centrar contenido */
+    align-items: center; /* Centrar contenido verticalmente */
+    height: 50px; /* Tamaño del botón más pequeño */
+  }
+  
+  ion-item:hover {
+    --background: #e0e0e0; /* Color de fondo al pasar el ratón */
+  }
+  
+  /* Estilo para las columnas de tareas */
+  .tareas-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  /* Columna de tareas */
+  .columna {
+    flex: 1;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra */
+  }
+  
+  /* Títulos de tareas */
+  .titulo-tareas {
+    font-size: 18px;
+    font-weight: bold;
+    color: #387ef5;
+    margin-bottom: 15px;
+  }
+  
+  /* Estilo de las tareas en la lista */
+  ion-item ion-label h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  ion-item ion-label p {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 5px;
+  }
+  
+  /* Estilo para el texto del nombre del alumno */
+ion-item ion-label {
+    font-size: 18px; /* Aumentar el tamaño del texto */
+    font-weight: bold; /* Poner el texto en negrita */
+    color: #333; /* Color de texto oscuro */
+    text-align: center; /* Centrar el texto en el botón */
+    width: 100%; /* Asegura que el texto ocupe todo el ancho del botón */
+  }
+  
+  /* Estilo de los botones y enlaces */
+  ion-button {
+    --background: #387ef5; /* Azul para los botones */
+    --color: white;
+    --border-radius: 20px;
+    --box-shadow: none;
+  }
+  
+  ion-button:hover {
+    --background: #2b6cb0; /* Azul más oscuro al pasar el ratón */
+  }
+  
+  ion-icon {
+    color: white;
+  }
+
+  .custom-button {
+    background-color: #387ef5; /* Azul */
+    color: white;
+    border-radius: 200px; /* Bordes redondeados */
+    transition: background-color 0.3s ease;
+}
+  
+.custom-button:hover {
+    background-color: #2b6cb0; /* Un azul más oscuro */
+}
+  

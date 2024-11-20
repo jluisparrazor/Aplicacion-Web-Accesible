@@ -8,13 +8,14 @@ import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
 import { TareaI } from 'src/app/common/models/tarea.models';
 import { doc } from 'firebase/firestore';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home-administrador',
   templateUrl: './home-administrador.page.html',
   styleUrls: ['./home-administrador.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, IoniconsModule, CommonModule],
+  imports: [IonicModule, FormsModule, IoniconsModule, CommonModule, RouterModule],
 })
 
 

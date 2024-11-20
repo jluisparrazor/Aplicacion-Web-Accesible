@@ -1,13 +1,55 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>registroSemanal</ion-title>
+    <ion-title>Registro Semanal de Tareas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">registroSemanal</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item-divider color="light">
+      Lista de Alumnos
+      <ion-buttons slot="end">
+        <ion-button [routerLink]="['/homeadministrador']" class="custom-button">
+          <ion-icon slot="icon-only" name="home-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item-divider>
+    <ion-item
+      *ngFor="let alumno of alumnos"
+      button
+      (click)="cargarTareas(alumno.id, alumno.nombre)"
+    >
+      <ion-label>{{ alumno.nombre }}</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="seleccionado">
+    <ion-item-divider color="light">Tareas de {{ seleccionado }}</ion-item-divider>
+
+    <div class="tareas-container">
+      <div class="columna">
+        <ion-title>Tareas Pendientes</ion-title>
+        <ion-list>
+          <ion-item *ngFor="let tarea of tareasPendientes">
+            <ion-label>
+              <h3>{{ tarea.Nombre }}</h3>
+              <p>Fecha: {{ tarea.Fecha?.toDate() | date: 'medium' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <div class="columna">
+        <ion-title>Tareas Completadas</ion-title>
+        <ion-list>
+          <ion-item *ngFor="let tarea of tareasCompletadas">
+            <ion-label>
+              <h3>{{ tarea.Nombre }}</h3>
+              <p>Fecha: {{ tarea.Fecha?.toDate() | date: 'medium' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </div>
 </ion-content>
