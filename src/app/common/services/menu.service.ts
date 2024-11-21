@@ -1,126 +1,107 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collectionData, docData, doc, setDoc, deleteDoc, updateDoc, collection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
 import { Menu, MenuType } from '../models/menu.models';
-import { v4 as uuidv4 } from 'uuid';
+import { FirestoreService } from '../services/firestore.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuService {
-  constructor(private firestore: Firestore) {}
-
-  // TIPOS DE MENÚ
-
-  // Obtener todos los tipos de menú
-  getMenuTypes(): Observable<MenuType[]> {
-    const refCollection = collection(this.firestore, 'MenuTypes');
-    return collectionData(refCollection, { idField: 'id' }) as Observable<MenuType[]>;
-  }
-
-  // Obtener un tipo de menú por ID
-  getMenuTypeById(id: string): Promise<MenuType> {
-    const document = doc(this.firestore, `MenuTypes/${id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-          throw new Error('Document(MenuType) does not exist - getMenuTypeById');
-        }
-        return { id, ...docSnapshot['data']() } as MenuType;
-      });
-  }
-  
-  // Crear un nuevo tipo de menú
-  createMenuType(menuType: MenuType): Promise<void> {
-    const id = uuidv4();
-    const document = doc(this.firestore, `MenuTypes/${id}`);
-    const { id: _, ...dataWithoutId } = menuType; // Excluir el campo id
-    return setDoc(document, { ...dataWithoutId });
-  }
-
-  // Actualizar un tipo de menú
-  updateMenuType(menuType: MenuType): Promise<void> {
-    const document = doc(this.firestore, `MenuTypes/${menuType.id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-        throw new Error('Document(MenuType) does not exist - updateMenuType');
-      }
-      const { id: _, ...dataWithoutId } = menuType; // Excluir el campo id
-      return updateDoc(document, { ...dataWithoutId });
-    });
-  }
-
-
-  // Eliminar un tipo de menú
-  deleteMenuType(id: string): Promise<void> {
-    const document = doc(this.firestore, `MenuTypes/${id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-        throw new Error('Document(MenuType) does not exist - deleteMenuType');
-      }
-      return deleteDoc(document);
-    });
-  }
-  
-
-  // MENÚS
-
-  // Obtener todos los menús
-  getMenus(): Observable<Menu[]> {
-    const refCollection = collection(this.firestore, 'Menus');
-    return collectionData(refCollection, { idField: 'id' }) as Observable<Menu[]>;
-  }
-
-  // Obtener un tipo de menú por ID
-  getMenuById(id: string): Promise<Menu> {
-    const document = doc(this.firestore, `Menu/${id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-          throw new Error('Document(Menu) does not exist - getMenuById');
-        }
-        return { id, ...docSnapshot['data']() } as Menu;
-      });
-  }
-
-  // Obtener un menú por fecha
-  getMenuByDate(date: Date): Promise<Menu> {
-    const document = doc(this.firestore, `Menus/${date.toISOString()}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-          throw new Error('Document(Menu) does not exist - getMenuByDate');
-        }
-        return { id: date.toISOString(), ...docSnapshot['data']() } as Menu;
-      });
-  }
-
+  constructor(private firestore: FirestoreService) {}
 
   // Crear un nuevo menú
-  createMenu(menu: Menu): Promise<void> {
-    const id = uuidv4();
-    const document = doc(this.firestore, `Menus/${id}`);
-    const { id: _, ...dataWithoutId } = menu; // Excluir el campo id
-    return setDoc(document, { ...dataWithoutId });
+  async createMenu(newMenu: Menu): Promise<string> {
+    newMenu.id = this.firestore.createIDDoc();
+    await this.firestore.createDocumentID(newMenu, 'Menus', newMenu.id);
+    return newMenu.id;
+  }
+
+  // Obtener un menú por ID
+  async getMenuById(id: string): Promise<Menu | null> {
+    const doc = await this.firestore.getDocument<Menu>(`Menus/${id}`);
+    if (doc.exists())
+      return { id, ...doc.data() as Menu };
+    else {
+      console.log('Document does not exist - getMenuById');
+      return null;
+    }
   }
 
   // Actualizar un menú
-  updateMenu(menu: Menu): Promise<void> {
-    const document = doc(this.firestore, `Menus/${menu.id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-        throw new Error('Document(Menu) does not exist - updateMenu');
-      }
-      const { id: _, ...dataWithoutId } = menu; // Excluir el campo id
-      return updateDoc(document, { ...dataWithoutId });
-    });
+  async updateMenu(updatedMenu: Menu): Promise<boolean> {
+    const doc = await this.firestore.getDocument<Menu>(`Menus/${updatedMenu.id}`);
+    if (doc.exists()) {
+      await this.firestore.createDocumentID(updatedMenu, 'Menus', updatedMenu.id);
+      return true;
+    } else
+      return false;
   }
 
   // Eliminar un menú
-  deleteMenu(id: string): Promise<void> {
-    const document = doc(this.firestore, `Menus/${id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-        throw new Error('Document(Menu) does not exist - deleteMenu');
-      }
-      return deleteDoc(document);
-    });
+  async deleteMenu(id: string): Promise<boolean> {
+    const doc = await this.firestore.getDocument<Menu>(`Menus/${id}`);
+    if (doc.exists()) {
+      await this.firestore.deleteDocumentID('Menus', id);
+      return true;
+    } else
+      return false;
+  }
+
+  // Obtener todos los menús
+  getAllMenus(): Observable<Menu[]> | null {
+    const refCollection = this.firestore.getCollectionChanges('Menus');
+    if (!refCollection) {
+      console.log('No menus found');
+      return null;
+    } else
+      return refCollection as Observable<Menu[]>;
+  }
+
+  // Crear un nuevo tipo de menú
+  async createMenuType(newMenuType: MenuType): Promise<string> {
+    newMenuType.id = this.firestore.createIDDoc();
+    await this.firestore.createDocumentID(newMenuType, 'MenuTypes', newMenuType.id);
+    return newMenuType.id;
+  }
+
+  // Obtener un tipo de menú por ID
+  async getMenuTypeById(id: string): Promise<MenuType | null> {
+    const doc = await this.firestore.getDocument<MenuType>(`MenuTypes/${id}`);
+    if (doc.exists())
+      return { id, ...doc.data() as MenuType };
+    else {
+      console.log('Document does not exist - getMenuTypeById');
+      return null;
+    }
+  }
+
+  // Actualizar un tipo de menú
+  async updateMenuType(updatedMenuType: MenuType): Promise<boolean> {
+    const doc = await this.firestore.getDocument<MenuType>(`MenuTypes/${updatedMenuType.id}`);
+    if (doc.exists()) {
+      await this.firestore.createDocumentID(updatedMenuType, 'MenuTypes', updatedMenuType.id);
+      return true;
+    } else
+      return false;
+  }
+
+  // Eliminar un tipo de menú
+  async deleteMenuType(id: string): Promise<boolean> {
+    const doc = await this.firestore.getDocument<MenuType>(`MenuTypes/${id}`);
+    if (doc.exists()) {
+      await this.firestore.deleteDocumentID('MenuTypes', id);
+      return true;
+    } else
+      return false;
+  }
+
+  // Obtener todos los tipos de menú
+  getAllMenuTypes(): Observable<MenuType[]> | null {
+    const refCollection = this.firestore.getCollectionChanges('MenuTypes');
+    if (!refCollection) {
+      console.log('No menu types found');
+      return null;
+    } else
+      return refCollection as Observable<MenuType[]>;
   }
 }

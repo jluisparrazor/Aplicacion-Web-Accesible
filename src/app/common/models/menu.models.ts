@@ -10,5 +10,9 @@ export interface MenuType{
 export interface Menu{
     id: string;
     date: Timestamp;
-    menus: Map<string, Map<string, number>>;
+    menus: {
+        [className: string]: {
+          [menuTypeName: string]: number;
+        };
+      };
 }

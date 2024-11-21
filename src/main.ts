@@ -10,6 +10,7 @@ import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingServ
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { environment } from './environments/environment';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -17,7 +18,7 @@ bootstrapApplication(AppComponent, {
 // Creado automáticamente en la instalación
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)), 
-    provideFirebaseApp(() => initializeApp({"projectId":"app-prueba-4ce18","appId":"1:927492475304:web:6bac229ac274737c04f59d","storageBucket":"app-prueba-4ce18.appspot.com","apiKey":"AIzaSyC1PrvP7l_0w1Z2krGwilRqLlAvCAhNAVs","authDomain":"app-prueba-4ce18.firebaseapp.com","messagingSenderId":"927492475304","measurementId":"G-E18NS9KM1Z"})), 
+    provideFirebaseApp(() => initializeApp(environment.firebase)), 
     provideAuth(() => getAuth()), provideAnalytics(() => getAnalytics()), ScreenTrackingService, UserTrackingService, provideFirestore(() => getFirestore()), provideFunctions(() => getFunctions()), provideStorage(() => getStorage()),
   ],
 });

@@ -1,60 +1,63 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collectionData, docData, doc, setDoc, deleteDoc, updateDoc, collection } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
 import { Class } from '../models/class.models';
-import { v4 as uuidv4 } from 'uuid';
+import { FirestoreService } from '../services/firestore.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClassService {
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: FirestoreService) {}
 
   // Crear una nueva clase
-  createClass(newClass: Class): Promise<void> {
-    const id = uuidv4();
-    const document = doc(this.firestore, `Classes/${id}`);
-    const { id: _, ...dataWithoutId } = newClass; // Excluir el campo id
-    return setDoc(document, { ...dataWithoutId });
+  async createClass(newClass: Class): Promise<string>{
+    newClass.id  = this.firestore.createIDDoc() ;
+    await this.firestore.createDocumentID(newClass, 'Classes', newClass.id);
+    return newClass.id;
   }
 
   // Obtener una clase por ID
-  getClassById(id: string): Promise<Class> {
-    const document = doc(this.firestore, `Classes/${id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-        throw new Error('Document(Class) does not exist - getClassById');
-      }
-      return { id, ...docSnapshot['data']() } as Class;
-    });
+  async getClassById(id: string) : Promise<Class | null> {
+    const doc = await this.firestore.getDocument<Class>(`Classes/${id}`);
+    if (doc.exists())
+      return { id, ...doc.data() as Class };
+    else {
+      console.log('Document does not exist - getClassById');
+      return null;
+    }
   }
 
   // Actualizar una clase
-  updateClass(updatedClass: Class): Promise<void> {
-    const document = doc(this.firestore, `Classes/${updatedClass.id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-        throw new Error('Document(Class) does not exist - updateClass');
-      }
-      const { id: _, ...dataWithoutId } = updatedClass; // Excluir el campo id
-      return updateDoc(document, { ...dataWithoutId });
-    });
+  async updateClass(updatedClass: Class): Promise<boolean> {
+    const doc = await this.firestore.getDocument<Class>(`Classes/${updatedClass.id}`);
+    if (doc.exists()) {
+      await this.firestore.createDocumentID(updatedClass, 'Classes', updatedClass.id);
+      return true;
+    } else
+      return false;
   }
 
   // Eliminar una clase
-  deleteClass(id: string): Promise<void> {
-    const document = doc(this.firestore, `Classes/${id}`);
-    return docData(document).toPromise().then(docSnapshot => {
-      if (!docSnapshot['exists']()) {
-        throw new Error('Document(Class) does not exist - deleteClass');
-      }
-      return deleteDoc(document);
-    });
+  async deleteClass(id: string): Promise<boolean> {
+    const doc = await this.firestore.getDocument<Class>(`Classes/${id}`);
+    if (doc.exists()){
+      await this.firestore.deleteDocumentID('Classes', id);
+      return true;
+    } else
+      return false;
   }
 
+
   // Obtener todas las clases
-  getAllClasses(): Observable<Class[]> {
-    const refCollection = collection(this.firestore, 'Classes');
-    return collectionData(refCollection, { idField: 'id' }) as Observable<Class[]>;
+  getAllClasses(): Observable<Class[]> | null {
+    let classes: Class[];
+    const refCollection = this.firestore.getCollectionChanges('Classes');
+    if (!refCollection) {
+      console.log('No classes found');
+      return null;
+    } else 
+      return refCollection as Observable<Class[]>;
+    
   }
 }
