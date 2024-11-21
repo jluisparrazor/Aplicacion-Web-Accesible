@@ -20,7 +20,7 @@ export class MenuService {
   async getMenuById(id: string): Promise<Menu | null> {
     const doc = await this.firestore.getDocument<Menu>(`Menus/${id}`);
     if (doc.exists())
-      return { id, ...doc.data() as Menu };
+      return doc.data() as Menu ;
     else {
       console.log('Document does not exist - getMenuById');
       return null;
@@ -68,7 +68,7 @@ export class MenuService {
   async getMenuTypeById(id: string): Promise<MenuType | null> {
     const doc = await this.firestore.getDocument<MenuType>(`MenuTypes/${id}`);
     if (doc.exists())
-      return { id, ...doc.data() as MenuType };
+      return doc.data() as MenuType;
     else {
       console.log('Document does not exist - getMenuTypeById');
       return null;

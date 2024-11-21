@@ -21,7 +21,7 @@ export class ClassService {
   async getClassById(id: string) : Promise<Class | null> {
     const doc = await this.firestore.getDocument<Class>(`Classes/${id}`);
     if (doc.exists())
-      return { id, ...doc.data() as Class };
+      return doc.data() as Class ;
     else {
       console.log('Document does not exist - getClassById');
       return null;
