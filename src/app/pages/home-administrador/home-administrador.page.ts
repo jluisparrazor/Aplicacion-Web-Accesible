@@ -133,7 +133,6 @@ async addprof(){
     this.cargando = true;
     await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
     this.cargando = false;
-    // this.cleanInterface();
   }
 
   editStu(student: UserI){
@@ -180,7 +179,7 @@ async addprof(){
     if (this.selectedStudent) {
       this.newTarea.Asignado = doc(this.firestoreService.firestore, 'Usuarios', this.selectedStudent.id);
     }
-    await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.id); // Aquí se corrige `this.newStud`
+    await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.id); 
     this.cargando = false;
   }
 
@@ -206,7 +205,8 @@ async addprof(){
   
   editTarea(tarea: TareaI){
     console.log('edit -> ', tarea);
-    this.newTarea = tarea;  }
+    this.newTarea = tarea;  
+  }
 
   
 
@@ -216,7 +216,6 @@ async addprof(){
       this.showForm = false;  // Oculta el formulario después de guardar
       this.cleanInterfaceTarea();
       this.cargando = false;
-      // this.cleanInterface();
      }
     
  
