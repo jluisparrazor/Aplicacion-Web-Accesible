@@ -1,21 +1,28 @@
+<!-- Encabezado de la página-->
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Administrador</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-spinner *ngIf="cargando" name="bubbles" style="display: block; margin: auto;"></ion-spinner>
 
+<!-- Contenido de la página -->
+<ion-content [fullscreen]="true">
+  <!-- <ion-spinner *ngIf="cargando" name="bubbles" class="center-spinner"></ion-spinner> -->
+
+  <!-- Formulario para añadir una tarea -->
     <ion-card *ngIf="showForm">
     <ion-list lines="full">
+      <ion-title>Crear tarea</ion-title>
+
       <!-- Nombre -->
       <ion-item>
         <ion-input clearInput="true" label="Nombre" labelPlacement="floating"  type="string"[(ngModel)]="newTarea.Nombre"></ion-input>
       </ion-item>
+      
       <!-- Completada -->
       <ion-item>
-        <ion-select placeholder="Selecciona estado" label="Completada" labelPlacement="floating" [(ngModel)]="newTarea.Completada">
+        <ion-select placeholder="Selecciona estado" label="Completada" [(ngModel)]="newTarea.Completada">
           <ion-select-option [value]="true">Completada</ion-select-option>
           <ion-select-option [value]="false">Pendiente</ion-select-option>
         </ion-select>
@@ -28,6 +35,7 @@
         <ion-datetime #datetime locale="es-ES" hourCycle="h12" [showDefaultButtons]="false" [(ngModel)]="newTarea.Fecha" presentation="date-time">
           <ion-buttons slot="buttons">
             <ion-button color="danger" (click)="datetime.reset()">Resetea</ion-button>
+            <!-- <ion-button color="primary" (click)="">Aceptar</ion-button> -->
           </ion-buttons>
         </ion-datetime>
       </ion-item>
@@ -52,116 +60,131 @@
   <ion-grid>
     <ion-row>
       <ion-col>
+        <!-- Título de tareas -->
         <ion-toolbar>
           <ion-title>Tareas:</ion-title>
+
+          <!-- Botón para añadir tareas -->
           @if(!showForm) {
             <ion-buttons slot="end">
             <ion-button  (click)="toggleForm()">
               <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
             </ion-button> </ion-buttons>
-        }
-
-
+          }
         </ion-toolbar>
+        
+        <!-- Lista de tareas y todos sus elementos -->
         <ion-list>
         @for (tarea of tareas; track $index) {
-        <ion-item>
-          <ion-label>Nombre: {{tarea.Nombre}}
-            <p>Completada: {{tarea.Completada}}</p>
-            @if(tarea.Fecha) {
-            <p>Fecha: {{tarea.Fecha.toDate() | date}}</p>
-            }
-            @if(tarea.Asignado) {
-              <p>Asignado a: {{tarea.Asignado}}</p>
+          <ion-item>
+            <ion-label>
+              Nombre: {{tarea.Nombre}}
+              <p>Completada: {{tarea.Completada}}</p>
+              @if(tarea.Fecha) {
+              <p>Fecha: {{tarea.Fecha.toDate() | date}}</p>
               }
-          </ion-label>
-      
-          <ion-buttons slot="end">
-            <ion-button (click)="editTarea(tarea)">
-              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-            </ion-button>
-                  
-            <ion-button (click)="deleteTarea(tarea)">
-              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-            </ion-button>
+              @if(tarea.Asignado) {
+                <p>Asignado a: {{tarea.Asignado}}</p>
+              }
+            </ion-label>
         
-          </ion-buttons>
-                
-        </ion-item>
-        
+            <!-- Botones de editar y eliminar la tarea -->
+            <ion-buttons slot="end">
+              <ion-button (click)="editTarea(tarea)">
+                <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+              </ion-button>
+                    
+              <ion-button (click)="deleteTarea(tarea)">
+                <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+
+          </ion-item>
         }
         </ion-list>
+      
       </ion-col>
     </ion-row>
 
     <ion-row>
       <ion-col>
+        <!-- Título de Alumnos -->
         <ion-toolbar>
           <ion-title>Alumnos:</ion-title>
+
+          <!-- Botón para añadir alumnos -->
           <ion-buttons slot="end">
             <ion-button (click)="addStud()">
               <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
             </ion-button> 
           </ion-buttons>
         </ion-toolbar>
+
+        <!-- Lista de alumnos y todos sus elementos -->
         <ion-list>
         @for (user of students; track $index) {
-        <ion-item>
-          <ion-label>Nombre: {{user.nombre}}
-            <p>Edad: {{user.edad}}</p>
-            <p>Tipo de Discapacidad: {{user.TipoDiscapacidad.join(', ')}}</p>
-          </ion-label>
-      
-          <ion-buttons slot="end">
-            <ion-button (click)="editStu(user)">
-              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-            </ion-button>
+          <ion-item>
+            <ion-label>Nombre: {{user.nombre}}
+              <p>Edad: {{user.edad}}</p>
+              <p>Tipo de Discapacidad: {{user.TipoDiscapacidad.join(', ')}}</p>
+            </ion-label>
+        
+            <!-- Botones de editar y eliminar el alumno -->
+            <ion-buttons slot="end">
+              <ion-button (click)="editStu(user)">
+                <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+              </ion-button>
+                    
+              <ion-button (click)="deleteStu(user)">
+                <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+              </ion-button>
+            </ion-buttons>
                   
-            <ion-button (click)="deleteStu(user)">
-              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-            </ion-button>
-        
-          </ion-buttons>
-                
-        </ion-item>
-        
+          </ion-item> 
         }
         </ion-list>
+      
       </ion-col>
 
       <ion-col>
+        <!-- Título de Profesores -->
         <ion-toolbar>
           <ion-title>Profesores:</ion-title>
+          
+          <!-- Botón para añadir profesores -->
           <ion-buttons slot="end">
             <ion-button (click)="addprof()">
               <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
             </ion-button> 
           </ion-buttons>
         </ion-toolbar>
+
+        <!-- Lista de profesores y todos sus elementos -->
         <ion-list>
-        @for (user of profs; track $index) {
-        <ion-item>
-          <ion-label>Nombre: {{user.Nombre}}
-            <p>Edad: {{user.Edad}}</p>
-            <p>Es Administrativo: {{user.Administrativo}}</p>
-          </ion-label>
-      
-          <ion-buttons slot="end">
-            <ion-button (click)="edit(user)">
-              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-            </ion-button>
-                  
-            <ion-button (click)="delete(user)">
-              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-            </ion-button>
+        @for (prof of profs; track $index) {
+          <ion-item>
+            <ion-label>Nombre: {{prof.Nombre}}
+              <p>Edad: {{prof.Edad}}</p>
+              <p>Es Administrativo: {{prof.Administrativo}}</p>
+            </ion-label>
         
-          </ion-buttons>
-                
-        </ion-item>
+            <ion-buttons slot="end">
+              <ion-button (click)="editProf(prof)">
+                <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+              </ion-button>
+                    
+              <ion-button (click)="(prof)">
+                <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+              </ion-button>
+          
+            </ion-buttons>
+                  
+          </ion-item>
         
         }
         </ion-list>
       </ion-col>
     </ion-row>
+
   </ion-grid>
 </ion-content>
