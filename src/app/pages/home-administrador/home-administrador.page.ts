@@ -82,20 +82,27 @@ export class HomeAdministradorPage{
   // Método para cargar los datos de la base de datos
   load(){
     // Carga los profesores de la base de datos
-    this.loadCollection('Profesores', this.profs);
-
-    // Carga los estudiantes de la base de datos
-    this.loadCollection('Usuarios', this.students);
+    this.firestoreService.getCollectionChanges<ProfI>('Profesores').subscribe((data) => {
+      if (data) {
+        this.profs = data;
+      }
+    });  
 
     // Carga las tareas de la base de datos
-    this.loadCollection('Tareas', this.tareas);
-  }
-
-  // Método genérico para cargar una colección de la base de datos
-  loadCollection<T>(collectionName: string, Array: T[]) {
-    this.firestoreService.getCollectionChanges<T>(collectionName).subscribe((data) => {
-      if (data) Array = data;
+    this.firestoreService.getCollectionChanges<TareaI>('Tareas').subscribe((data) => {
+      if (data) {
+        this.tareas = data;
+        console.log('tareas -> ', this.tareas);
+      }
     });
+
+    // Carga los estudiantes de la base de datos
+    this.firestoreService.getCollectionChanges<UserI>('Usuarios').subscribe((data) => {
+      if (data) {
+        this.students = data;
+      }
+    });
+    
   }
 
   // GETTERS
