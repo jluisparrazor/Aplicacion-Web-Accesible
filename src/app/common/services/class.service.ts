@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Class } from '../models/class.models';
 import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
