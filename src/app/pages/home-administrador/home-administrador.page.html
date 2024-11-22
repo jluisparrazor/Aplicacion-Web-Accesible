@@ -28,16 +28,32 @@
         </ion-select>
         </ion-item>
 
+        
         <!-- OPCIÓN PARA NO PONER FECHA -->
       <!-- Fecha de cumplimiento-->
       <ion-item>
         <ion-label>Fecha de cumplimiento:</ion-label>
-        <ion-datetime #datetime locale="es-ES" hourCycle="h12" [showDefaultButtons]="false" [(ngModel)]="newTarea.Fecha" presentation="date-time">
+        <ion-datetime #datetime locale="es-ES" hourCycle="h12" 
+        [showDefaultButtons]="false" [(ngModel)]="tempFecha" 
+        presentation="date-time">
+
           <ion-buttons slot="buttons">
             <ion-button color="danger" (click)="datetime.reset()">Resetea</ion-button>
-            <!-- <ion-button color="primary" (click)="">Aceptar</ion-button> -->
+            <ion-button color="primary" (click)="confirmarFecha()">Aceptar</ion-button>
           </ion-buttons>
+        
         </ion-datetime>
+      </ion-item>
+      
+      <!-- Mostrar la fecha seleccionada -->
+      <ion-item>
+        <ion-label>Fecha seleccionada para la tarea:</ion-label>
+        @if(tarea.Fecha) {
+          <p>{{newTarea.Fecha.toDate() | date}}</p>
+          }
+        @else(){
+          <p>No hay fecha seleccionada</p>
+        }
       </ion-item>
       
       
@@ -113,11 +129,11 @@
           <ion-title>Alumnos:</ion-title>
 
           <!-- Botón para añadir alumnos -->
-          <ion-buttons slot="end">
+          <!-- <ion-buttons slot="end">
             <ion-button (click)="addStud()">
               <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
             </ion-button> 
-          </ion-buttons>
+          </ion-buttons> -->
         </ion-toolbar>
 
         <!-- Lista de alumnos y todos sus elementos -->
@@ -152,11 +168,11 @@
           <ion-title>Profesores:</ion-title>
           
           <!-- Botón para añadir profesores -->
-          <ion-buttons slot="end">
+          <!-- <ion-buttons slot="end">
             <ion-button (click)="addprof()">
               <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
             </ion-button> 
-          </ion-buttons>
+          </ion-buttons> -->
         </ion-toolbar>
 
         <!-- Lista de profesores y todos sus elementos -->

@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
 import { TareaI } from 'src/app/common/models/tarea.models';
-import { doc } from 'firebase/firestore';
+import { doc, Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-home-administrador',
@@ -19,7 +19,7 @@ import { doc } from 'firebase/firestore';
 
 
 export class HomeAdministradorPage{
-  // : boolean = false;
+  tempFecha: string | null = null;
   
   profs: ProfI[] = [];
   newProf: ProfI;
@@ -133,7 +133,12 @@ export class HomeAdministradorPage{
     }
   }
 
-  
+  confirmarFecha() {
+    if (this.tempFecha) {
+      this.newTarea.Fecha = Timestamp.fromDate(new Date(this.tempFecha)); // Asigna la fecha confirmada al modelo
+      console.log('Fecha confirmada:', this.newTarea.Fecha);
+    }
+  }
   //~~~~~~~~~~~~~~~~~~~~~~~~~Profesor section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo profesor a la base de datos (profesor no existente en la BD)
   async addprof(){
