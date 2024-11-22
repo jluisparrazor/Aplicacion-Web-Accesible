@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'loginprofesor',
+    redirectTo: 'material-demand',
     pathMatch: 'full',
   },
   {
@@ -56,8 +56,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
   },
   {
-    path: 'homealumno',
-    loadComponent: () => import('./pages/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
+    path: 'material-demand',
+    loadComponent: () => import('./pages/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
   },
   
 ];
