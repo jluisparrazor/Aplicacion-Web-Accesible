@@ -1,0 +1,119 @@
+/* Ajuste para el título centrado */
+.titulo-central {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 10vh;
+    border: 7px solid #000;
+    margin: 30px auto;
+    padding: 0;
+    width: 40%;
+    box-sizing: border-box;
+  
+    ion-title {
+      font-size: 24px;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+  
+  /* Estilo para la fila de Material y Cantidad */
+  .material-cantidad-row {
+    justify-content: center; /* Centra las columnas */
+    margin-bottom: 10px; /* Espaciado inferior entre filas */
+  
+    ion-col {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 45%; /* Ajustar el tamaño de cada columna */
+    }
+  
+    ion-item {
+      border-radius: 10px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin: 0; /* Eliminar margen entre los campos */
+    }
+  
+    ion-input,
+    ion-select {
+      font-size: 16px;
+      padding: 10px;
+      height: 50px;
+      width: 100%; /* Asegurar que llenen el espacio disponible */
+    }
+  
+    ion-label {
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
+  
+  /* Estilo para el campo Solicitante */
+  .solicitante-row {
+    justify-content: center; /* Centra el campo */
+    margin-bottom: 10px; /* Espaciado inferior */
+  
+    ion-col {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 60%; /* Ancho específico para el campo */
+    }
+  
+    ion-item {
+      border-radius: 10px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin: 0;
+    }
+  
+    ion-input {
+      font-size: 16px;
+      padding: 10px;
+      height: 50px;
+      width: 100%;
+    }
+  
+    ion-label {
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
+  
+  /* Estilo específico para el calendario */
+  .calendar-row {
+    justify-content: center; /* Centra el calendario */
+    margin-bottom: 20px; /* Espaciado inferior */
+  
+    ion-col {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 60%; /* Ancho específico para el calendario */
+    }
+  
+    ion-item {
+      border-radius: 10px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin: 0;
+    }
+  
+    ion-datetime {
+      font-size: 16px;
+      padding: 10px;
+      width: 100%; /* Asegura que el calendario ocupe todo el ancho */
+      height: auto; /* Permite que se ajuste dinámicamente */
+    }
+  
+    ion-label {
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
+  
+  /* Estilo general para el botón */
+  ion-button {
+    margin-top: 20px;
+  }
+  
