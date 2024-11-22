@@ -20,8 +20,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/menus/menus.page').then( m => m.MenusPage)
   },
   {
-    path: 'loginlumno',
-    loadComponent: () => import('./pages/login-alumno/login-alumno.page').then( m => m.LoginAlumnoPage)
+    path: 'loginalumno',
+    loadComponent: () => import('./pages/home-alumno/login-alumno/login-alumno.page').then( m => m.LoginAlumnoPage)
   },
   {
     path: 'paginainicial',
@@ -32,12 +32,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/tareas-diario-alumno/tareas-diario-alumno.page').then( m => m.TareasDiarioAlumnoPage)
   },
   {
-    path: 'registrosemanal',
+    path: 'registrosemanaltareas',
     loadComponent: () => import('./pages/registro-semanal/registro-semanal.page').then( m => m.RegistroSemanalPage)
   },
   {
     path: 'tareasporpasos',
     loadComponent: () => import('./pages/tareas-por-pasos/tareas-por-pasos.page').then( m => m.TareasPorPasosPage)
+  },
+  {
+    path: 'tareasaplicacionjuego',
+    loadComponent: () => import('./pages/tareas-aplicacion-juego/tareas-aplicacion-juego.page').then( m => m.TareasAplicacionJuegoPage)
   },
   {
     path: 'change-password',
