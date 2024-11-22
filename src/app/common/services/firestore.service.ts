@@ -93,5 +93,4 @@ export class FirestoreService {
       ...doc.data(),
     })) as TareaI[];
   }
-  
 }

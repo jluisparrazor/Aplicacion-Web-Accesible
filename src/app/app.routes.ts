@@ -40,6 +40,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/tareas-por-pasos/tareas-por-pasos.page').then( m => m.TareasPorPasosPage)
   },
   {
+    path: 'tareasaplicacionjuego',
+    loadComponent: () => import('./pages/tareas-aplicacion-juego/tareas-aplicacion-juego.page').then( m => m.TareasAplicacionJuegoPage)
+  },
+  {
     path: 'change-password',
     loadComponent: () => import('./pages/home-profesor/login-profesor/change-password/change-password.page').then( m => m.ChangePasswordPage)
   },
