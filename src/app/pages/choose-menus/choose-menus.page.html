@@ -15,10 +15,10 @@
   <ion-list>
     <ion-card *ngFor="let cls of classes" (click)="selectClass(cls)">
       <ion-card-header>
-        <ion-card-title>{{ cls.name }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <img [src]="cls.pictogramId" alt="{{ cls.name }}" />
+        <ion-card-title class="ion-text-center">{{ cls.name }}</ion-card-title>
+        <img [src]="cls.pictogramId" alt="{{ cls.name }}" style="float: left; margin-right: 10px;"/>
       </ion-card-content>
     </ion-card>
   </ion-list>
@@ -27,8 +27,8 @@
   <ng-template>
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ selectedClass?.name }}</ion-title>      
-        <img [src]="selectedClass?.pictogramId" alt="{{ selectedClass?.name }}" />
+        <ion-title class="ion-text-center">{{ selectedClass?.name }}</ion-title>
+        <img [src]="selectedClass?.pictogramId" alt="{{ selectedClass?.name }}" style="float: left; margin-right: 10px;" />
       </ion-toolbar>
     </ion-header>
 
@@ -36,17 +36,25 @@
       <ion-list>
         <ion-card *ngFor="let menuType of menuTypes">
           <ion-card-header>
-            <ion-card-title>{{ menuType.name }}</ion-card-title>
-            <img [src]="menuType.pictogramId" alt="{{ menuType.name }}" />
+            <ion-card-title class="ion-text-center">{{ menuType.name }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-button (click)="decrement(menuType.name)">-</ion-button>
-            <span>{{ menu.menus[selectedClass?.name][menuType.name] }}</span>
-            <ion-button (click)="increment(menuType.name)">+</ion-button>
+            <img [src]="menuType.pictogramId" alt="{{ menuType.name }}" style="float: left; margin-right: 10px;" />
+            <div style="display: flex; align-items: center; justify-content: flex-end;">
+              <ion-button (click)="decrement(menuType.name)">
+              <ion-icon name="remove-circle-outline"></ion-icon>
+              </ion-button>
+              <span>{{ menu.menus[selectedClass?.name][menuType.name] }}</span>
+              <ion-button (click)="increment(menuType.name)">
+              <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-list>
-      <ion-button (click)="selectClass(null)">Terminado</ion-button>
+      <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <ion-button (click)="selectClass(null)">Terminado</ion-button>
+      </div>
     </ion-content>
   </ng-template>
   </ion-modal>
