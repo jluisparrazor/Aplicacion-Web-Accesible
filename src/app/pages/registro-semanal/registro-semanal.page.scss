@@ -1,0 +1,130 @@
+/* Estilo general */
+ion-header {
+  --background: linear-gradient(90deg, #387ef5, #2b6cb0); /* Gradiente azul */
+  color: white;
+}
+
+ion-toolbar {
+  --color: white;
+}
+
+ion-title {
+  color: #2b6cb0; /* Azul principal */
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase; /* Texto en mayúsculas */
+}
+
+ion-content {
+  --background: #f9fafb; /* Fondo claro */
+  padding: 15px;
+}
+
+/* Encabezados */
+ion-item-divider {
+  font-weight: bold;
+  background-color: #eef2f7; /* Fondo claro para los encabezados */
+  color: #4a5568; /* Gris oscuro para texto */
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.header-divider {
+  display: flex;
+  justify-content: space-between; /* Espacio entre el título y el botón */
+  align-items: center;
+}
+
+.titulo-principal {
+  font-size: 24px; /* Más grande */
+  font-weight: bold;
+  color: #2b6cb0; /* Azul principal */
+}
+
+/* Lista de alumnos en dos columnas */
+.lista-alumnos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Dos columnas */
+  gap: 15px; /* Espaciado entre elementos */
+  padding: 0; /* Eliminar padding adicional del ion-list */
+}
+
+.lista-alumnos .alumno-item {
+  --background: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center; /* Centrar texto */
+}
+
+.lista-alumnos .alumno-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lista-alumnos .alumno-nombre {
+  font-size: 20px; /* Tamaño del texto */
+  font-weight: bold;
+  color: #333;
+}
+
+/* Contenedor de tareas */
+.tareas-container {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.columna {
+  flex: 1;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.titulo-tareas {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2b6cb0;
+  margin-bottom: 15px;
+}
+
+/* Estilo de las tareas */
+.tarea-item {
+  --background: #f7fafc; /* Fondo claro */
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.tarea-item ion-label h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2d3748;
+}
+
+.tarea-item ion-label p {
+  font-size: 14px;
+  color: #718096;
+}
+
+/* Botones personalizados */
+.custom-button {
+  --background: #2b6cb0; /* Azul */
+  color: white;
+  --border-radius: 50%; /* Redondeado completo */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s; /* Transición para hover */
+  margin-left: auto; /* Empuja el botón al extremo derecho */
+}
+
+.custom-button:hover {
+  --background: #1a365d; /* Azul más oscuro */
+}
