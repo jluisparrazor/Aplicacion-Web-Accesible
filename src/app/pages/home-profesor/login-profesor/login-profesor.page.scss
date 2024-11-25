@@ -65,6 +65,13 @@ ion-input {
     text-decoration: underline;
 }
 
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+  }
+
 @media (max-width: 768px) {
     .login-container {
         padding: 1.5rem;

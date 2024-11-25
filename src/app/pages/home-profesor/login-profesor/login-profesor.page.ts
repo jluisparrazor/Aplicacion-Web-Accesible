@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { IonContent, IonItem, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonItem, IonInput, IonButton } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../../common/services/firestore.service';
 import { ProfI } from '../../../common/models/profesor.models';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -12,12 +13,13 @@ import { ProfI } from '../../../common/models/profesor.models';
   styleUrls: ['./login-profesor.page.scss'],
   standalone: true,
   imports: [
-    IonContent, IonItem, FormsModule, IonButton, IoniconsModule
+    IonContent, IonItem, FormsModule, IonButton, IoniconsModule, CommonModule, IonInput
   ],
 })
 export class LoginPage{
-  name: string;
-  password: string;
+  name: string = '';
+  password: string = '';
+  errorMessage: string = ''; // Variable para almacenar el mensaje de error
 
   constructor(private readonly router: Router, private readonly firestoreService: FirestoreService) { }
 
@@ -26,12 +28,13 @@ export class LoginPage{
     try {
 
     // Eliminamos los espacios en blanco al inicio o al final de los inputs
-    const trimmedName = this.name?.trim() || '';
-    const trimmedPassword = this.password?.trim() || '';
+    //const trimmedName = name; this.name?.trim(); //Con .? se asegura de que no sea null y no haga un trim a null que da error
+    //const trimmedPassword = this.password?.trim();
     
     // Validar que los campos no estén vacíos después de eliminar los espacios
-    if (!trimmedName || !trimmedPassword) {
-      console.log('Por favor, ingrese un nombre y una contraseña válidos.');
+    if (!this.name || !this.password) {
+      console.log('Por favor, ingrese un nombre y una contraseña válidos.'
+        + 'Los introducidos son ->', this.name + ' y ' + this.password);
       return;
     }
 
@@ -46,24 +49,28 @@ export class LoginPage{
         // console.log('profData -> ', profData);
 
         // Verificamos que sea el profesor inserte la contraseña correcta 
-        if (profData && profData.Password === trimmedPassword) {
+        if (profData && profData.Password === this.password) {
 
 
           // Redirigimos a la página de inicio según si es administrativo o profesor
-          if(profData.Administrativo === true)
+          if(profData.Administrativo)
             this.router.navigate(['/homeadministrador']);
           else
           this.router.navigate(['/homeprofesor']);
 
         } else {
           console.log('Contraseña incorrecta');
+          this.errorMessage = 'Contraseña incorrecta.'; // Mensaje si la contraseña no coincide
+
         }
       } else {
+        this.errorMessage = 'Usuario no encontrado.'; // Mensaje si el usuario no existe
         console.log('Usuario no encontrado');
       }
 
     } catch (error) {
       console.error('Error al autenticar usuario', error);
+      this.errorMessage = 'Ocurrió un error al iniciar sesión. Por favor, intente nuevamente.';
     }
   }
 }
