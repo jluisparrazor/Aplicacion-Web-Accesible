@@ -25,18 +25,15 @@
     </button>
   </div>
 
-<!-- Contenedor de la animación con overlay -->
-<div class="overlay" [class.oscuro]="tareaCompletada">
-  <div class="animacion-confeti">
-    <!-- Texto animado -->
-    <h2 class="texto-enhorabuena" [class.visible]="tareaCompletada">¡Enhorabuena!</h2>
-    <!-- GIF animado -->
-    <img *ngIf="mostrarConfeti" src="assets/imagenes/confeti.gif" alt="Confeti" class="gif-confeti">
+  <!-- Contenedor de la animación con overlay -->
+  <div class="overlay" [class.oscuro]="tareaCompletada">
+    <div class="animacion-confeti">
+      <!-- Texto animado -->
+      <h2 class="texto-enhorabuena" [class.visible]="tareaCompletada">¡Enhorabuena!</h2>
+      <!-- GIF animado -->
+      <img *ngIf="mostrarConfeti" src="assets/imagenes/confeti.gif" alt="Confeti" class="gif-confeti">
+    </div>
   </div>
-</div>
-
-
-
-
+  
 </ion-content>
 

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../../common/services/firestore.service';
+import { SessionService } from 'src/app/common/services/session.service';
 import { ProfI } from '../../../common/models/profesor.models';
 import { CommonModule } from '@angular/common';
 
@@ -21,7 +22,11 @@ export class LoginPage{
   password: string = '';
   errorMessage: string = ''; // Variable para almacenar el mensaje de error
 
-  constructor(private readonly router: Router, private readonly firestoreService: FirestoreService) { }
+  constructor(
+    private readonly router: Router,
+    private readonly firestoreService: FirestoreService,
+    private sessionService: SessionService
+  ) { }
 
 
   async login() {
@@ -50,13 +55,15 @@ export class LoginPage{
 
         // Verificamos que sea el profesor inserte la contraseña correcta 
         if (profData && profData.Password === this.password) {
-
-
           // Redirigimos a la página de inicio según si es administrativo o profesor
-          if(profData.Administrativo === true)
-            this.router.navigate(['/homeadministrador']);//Cambiar por homeadministrador,
-          else                                           //registrosemanaltareas es solo para probar
-          this.router.navigate(['/homeprofesor']);
+          if(profData.Administrativo === true){
+            this.sessionService.setCurrentUser(profData, 'admin');
+            this.router.navigate(['/homeadministrador']);
+          }
+          else{
+            this.sessionService.setCurrentUser(profData, 'profesor');
+            this.router.navigate(['/homeprofesor']);
+          }                                       
 
         } else {
           console.log('Contraseña incorrecta');

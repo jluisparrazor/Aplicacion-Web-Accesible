@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { TareaI } from 'src/app/common/models/tarea.models';
 import { doc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
+import { SessionService } from 'src/app/common/services/session.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-administrador',
@@ -35,10 +37,12 @@ export class HomeAdministradorPage{
   tarea: TareaI;
   selectedStudent: UserI; // Estudiante al que se asignará la tarea
 
+  userActual: ProfI;
+
   showForm = false; // Variable para mostrar/ocultar el formulario de tarea
 
 
-  constructor(private readonly firestoreService: FirestoreService) {
+  constructor(private readonly firestoreService: FirestoreService, private sessionService: SessionService, private router: Router) {
     
     this.load();
     this.init();
@@ -54,6 +58,19 @@ export class HomeAdministradorPage{
   
   // Método para guardar los datos del profesor
   init(){
+
+    //Miro que admin ha iniciado sesion
+    const user = this.sessionService.getCurrentUser();
+
+  if (user && 'Administrativo' in user && user.Administrativo) {
+    this.userActual = user as ProfI;
+    console.log('Administrador loggeado:', this.userActual.Nombre);
+  } else {
+    console.error('El usuario actual no es válido o no tiene permisos de administrador.');
+    this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+    return; // Detenemos la ejecución si el usuario no es válido
+  }
+
     // Inicializa los objetos de profesor, estudiante y tarea
     this.newProf = {
       Nombre: null,
