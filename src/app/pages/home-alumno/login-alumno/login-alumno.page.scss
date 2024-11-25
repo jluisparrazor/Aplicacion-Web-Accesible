@@ -1,5 +1,3 @@
-/* login-profesor.page.scss */
-
 ion-content {
     --background: linear-gradient(135deg, #4facfe, #00f2fe);
     display: flex;
@@ -64,13 +62,6 @@ ion-input {
 .login-container .forgot-password:hover {
     text-decoration: underline;
 }
-
-.error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
-  }
 
 @media (max-width: 768px) {
     .login-container {

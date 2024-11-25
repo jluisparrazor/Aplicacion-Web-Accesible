@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="volverListado()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Tarea Aplicación/Juego</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tarea Aplicación/Juego</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="tarea-aplicacion">
+    <img src="assets/icon/favicon.png" alt="Pictograma de la tarea" class="pictograma-tarea" />
+    <h2 class="nombre-tarea">Nombre de la Tarea</h2>
+    <p class="descripcion-tarea">Breve descripción de lo que debe hacer el alumno para completar la tarea.</p>
+    <button class="boton-completar" (click)="completarTarea()">
+      <p>He completado la tarea</p>
+    </button>
+  </div>
+
+<!-- Contenedor de la animación con overlay -->
+<div class="overlay" [class.oscuro]="tareaCompletada">
+  <div class="animacion-confeti">
+    <!-- Texto animado -->
+    <h2 class="texto-enhorabuena" [class.visible]="tareaCompletada">¡Enhorabuena!</h2>
+    <!-- GIF animado -->
+    <img *ngIf="mostrarConfeti" src="assets/imagenes/confeti.gif" alt="Confeti" class="gif-confeti">
+  </div>
+</div>
+
+
+
+
+</ion-content>
+

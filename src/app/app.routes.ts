@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'loginprofesor',
+    redirectTo: 'material-demand',
     pathMatch: 'full',
   },
   {
@@ -16,8 +16,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home-profesor/login-profesor/login-profesor.page').then( m => m.LoginPage)
   },
   {
-    path: 'loginlumno',
-    loadComponent: () => import('./pages/login-alumno/login-alumno.page').then( m => m.LoginAlumnoPage)
+    path: 'loginalumno',
+    loadComponent: () => import('./pages/home-alumno/login-alumno/login-alumno.page').then( m => m.LoginAlumnoPage)
   },
   {
     path: 'paginainicial',
@@ -28,12 +28,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/tareas-diario-alumno/tareas-diario-alumno.page').then( m => m.TareasDiarioAlumnoPage)
   },
   {
-    path: 'registrosemanal',
+    path: 'registrosemanaltareas',
     loadComponent: () => import('./pages/registro-semanal/registro-semanal.page').then( m => m.RegistroSemanalPage)
   },
   {
     path: 'tareasporpasos',
     loadComponent: () => import('./pages/tareas-por-pasos/tareas-por-pasos.page').then( m => m.TareasPorPasosPage)
+  },
+  {
+    path: 'tareasaplicacionjuego',
+    loadComponent: () => import('./pages/tareas-aplicacion-juego/tareas-aplicacion-juego.page').then( m => m.TareasAplicacionJuegoPage)
   },
   {
     path: 'change-password',
@@ -46,6 +50,10 @@ export const routes: Routes = [
   {
     path: 'homeadministrador',
     loadComponent: () => import('./pages/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
+  },
+  {
+    path: 'material-demand',
+    loadComponent: () => import('./pages/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
   },
   {
     path: 'choose-menus',
