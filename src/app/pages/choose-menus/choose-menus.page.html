@@ -1,60 +1,133 @@
+
+<!-- HEADER -->
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button>Salir</ion-button>
-    </ion-buttons>
-    <ion-title class="ion-text-center">Menús de hoy {{ menu.date.toDate() | date: 'dd/MM/yyyy' }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button>Finalizar</ion-button>
-    </ion-buttons>
+    <ion-button color="medium" slot="start">Salir</ion-button>
+    <ion-title style="align-items: center;" class="ion-text-center"><strong>Menús de hoy {{ menu.date.toDate() | date: 'dd/MM/yyyy' }}</strong></ion-title>
+    <ion-button [color]="allClassesCompleted() ? 'success' : 'light'" (click)="completeTask()" slot="end"> ¡Completar \n tarea!</ion-button>
+
 </ion-toolbar>
 </ion-header>
 
+<!-- CONTENT -->
 <ion-content [fullscreen]="true">
 
+  <!-- CLASS LIST -->
   <ion-list>
     <ion-card *ngFor="let cls of classes" (click)="selectClass(cls)">
-      <ion-card-header>
-      </ion-card-header>
       <ion-card-content>
-        <ion-card-title class="ion-text-center">{{ cls.name }}</ion-card-title>
-        <img [src]="cls.pictogramId" alt="{{ cls.name }}" style="float: left; margin-right: 10px;"/>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <img [src]="cls.pictogramId" alt="{{ cls.name }}" class="pictogram-center" />
+          </ion-col>
+          <ion-col>
+            <ion-card-title class="ion-text-center">{{ cls.name }}</ion-card-title>
+          </ion-col>
+          <ion-col>
+            <ion-button [color]="infoClasses[cls.name]?.state ? 'success' : 'light'" (click)="showPendingMenus(cls)">
+              {{ infoClasses[cls.name]?.state ? 'Finalizado' : 'Pendiente' }}
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
       </ion-card-content>
     </ion-card>
   </ion-list>
 
+  <!-- MENUS MODAL -->
   <ion-modal [isOpen]="selectedClass !== null" (ionModalDidDismiss)="selectedClass = null">
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title class="ion-text-center">{{ selectedClass?.name }}</ion-title>
-        <img [src]="selectedClass?.pictogramId" alt="{{ selectedClass?.name }}" style="float: left; margin-right: 10px;" />
-      </ion-toolbar>
-    </ion-header>
-
+    <ng-template>
+      <!-- MODAL HEADER -->
+      <ion-header>
+        <ion-toolbar>
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+              <ion-card class="card-col-content-menutype">
+                <ion-card-header>
+                  <ion-card-title class="ion-text-center">{{ selectedClass?.name }}</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <img [src]="selectedClass?.pictogramId" alt="{{ selectedClass?.name }}" class="pictogram-center" />
+                </ion-card-content>
+              </ion-card>
+              </ion-col>
+              <ion-col>
+                <div class="ion-text-center"><strong>Alumnos por clase</strong></div>
+                <div>
+                  <img [src]="infoClasses[selectedClass?.name].n" alt="{{ infoClasses[selectedClass?.name].n }}" class="pictogram-center" />
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                  <ion-button fill="clear" class="button-increm-decrem" (click)="decrementStudents()">
+                    <ion-icon name="remove-circle-outline"></ion-icon>
+                  </ion-button>
+                  <span class="numbers-count">{{ infoClasses[selectedClass?.name].n }}</span>
+                  <ion-button fill="clear" class="button-increm-decrem" (click)="incrementStudents()">
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-button [color]="infoClasses[selectedClass.name]?.state ? 'success' : 'medium' (click)="showPendingMenus(selectedClass)">
+                {{ infoClasses[selectedClass.name]?.state ? 'Finalizado' : 'Pendiente' }}
+              </ion-button>
+            </ion-row>
+          </ion-grid>
+        </ion-toolbar>
+      </ion-header>
+    <!-- MODAL CONTENT -->
     <ion-content>
       <ion-list>
-        <ion-card *ngFor="let menuType of menuTypes">
-          <ion-card-header>
-            <ion-card-title class="ion-text-center">{{ menuType.name }}</ion-card-title>
-          </ion-card-header>
+        <!-- MENUTYPE CARD -->
+        <ion-card *ngFor="let menuType of getMenuTypesForCurrentPage()">
           <ion-card-content>
-            <img [src]="menuType.pictogramId" alt="{{ menuType.name }}" style="float: left; margin-right: 10px;" />
-            <div style="display: flex; align-items: center; justify-content: flex-end;">
-              <ion-button (click)="decrement(menuType.name)">
-              <ion-icon name="remove-circle-outline"></ion-icon>
-              </ion-button>
-              <span>{{ menu.menus[selectedClass?.name][menuType.name] }}</span>
-              <ion-button (click)="increment(menuType.name)">
-              <ion-icon name="add-circle-outline"></ion-icon>
-              </ion-button>
-            </div>
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                  <ion-card-title class="ion-text-center">{{ menuType.name }}</ion-card-title>
+                  <img [src]="menuType.pictogramId" alt="{{ menuType.name }}" class="pictogram-center" />
+                </ion-col>
+                <ion-col>
+                  <div>
+                    <img [src]="menu.menus[selectedClass?.name][menuType.name]" alt="{{ menu.menus[selectedClass?.name][menuType.name] }}" class="pictogram-center" />
+                  </div>
+                  <div style="display:flex; align-items:center;">
+                    <ion-button fill="clear" class="button-increm-decrem" (click)="decrement(menuType.name)">
+                      <ion-icon name="remove-circle-outline"></ion-icon>
+                    </ion-button>
+                    <span class="numbers-count">{{ menu.menus[selectedClass?.name][menuType.name] }}</span>
+                    <ion-button fill="clear" class="button-increm-decrem" (click)="increment(menuType.name)">
+                      <ion-icon name="add-circle-outline"></ion-icon>
+                    </ion-button>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-card-content>
         </ion-card>
       </ion-list>
-      <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-        <ion-button (click)="selectClass(null)">Terminado</ion-button>
-      </div>
+      <!-- MODAL FOOTER -->
+      <ion-footer style="position: absolute; bottom: 0; width: 100%;"> 
+        <ion-grid>
+            <ion-row>
+              <ion-col size="4" class="ion-text-left">
+                <ion-button *ngIf="currentPage > 0" (click)="previousPage()">
+                  <ion-icon name="arrow-back-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col size="4" class="ion-text-center">
+                <ion-button (click)="selectClass(null)">Terminado</ion-button>
+              </ion-col>
+              <ion-col size="4" class="ion-text-right">
+                <ion-button *ngIf="(currentPage + 1) * 3 < menuTypes.length" (click)="nextPage()">
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-footer>
     </ion-content>
   </ng-template>
   </ion-modal>

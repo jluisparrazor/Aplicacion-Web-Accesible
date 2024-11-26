@@ -1,0 +1,48 @@
+.numbers-count {
+    font-size: 20px;
+}
+
+.button-increm-decrem {
+    font-size: 20px;
+    color: black;
+    border: none;
+}
+
+.card-col-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+
+.card-col-content-menutype {
+    flex: 1;
+    display: block;
+    justify-content: center;
+    // align-items: center;
+}
+
+.card-col-content-class {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.button-finalizado {
+    background-color: green;
+    color: white;
+}
+
+.button-pendiente {
+    background-color: grey;
+    color: white;
+}
+
+.pictogram-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

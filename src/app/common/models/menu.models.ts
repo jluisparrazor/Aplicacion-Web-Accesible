@@ -4,7 +4,6 @@ export interface MenuType{
     id: string;
     name: string;
     pictogramId: string;
-    visible: boolean;
 }
 
 export interface Menu{
