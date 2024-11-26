@@ -4,4 +4,5 @@ export interface UserI{
     id: string;
     password: string;
     TipoDiscapacidad: Array<string>;
+    id_pictogram: string;
 }
