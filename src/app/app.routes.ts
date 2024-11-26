@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'loginprofesor',
+    redirectTo: 'paginainicial',
     pathMatch: 'full',
   },
   {

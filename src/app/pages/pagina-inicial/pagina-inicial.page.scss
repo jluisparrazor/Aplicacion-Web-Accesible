@@ -28,17 +28,26 @@ ion-col {
   padding: 5px;
 }
 
+.icono {
+  margin-right: 5px;
+}
+
 .alumno-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  border: 1px solid #ccc; /* Añade un borde para que se vea como una cuadrícula */
+  border: 1px solid #ccc;
   padding-left: 50px;
   padding-right: 50px;
   box-sizing: border-box;
-  width: 80%; /* Asegura que el item ocupe todo el espacio del ion-col */
-  height: 100%; /* Asegura que el item ocupe todo el espacio del ion-col */
+  width: 80%;
+  height: 100%; 
+}
+
+.login-button {
+  --background: #3880ff; 
+  --color: #fff; 
 }
 
 .pictogram-img {
@@ -48,7 +57,7 @@ ion-col {
 }
 
 .alumno-nombre {
-  font-size: 1.5vw; /* Ajusta este valor según sea necesario para hacer el texto más grande */
+  font-size: 1.5vw;
 }
 
 .pagination-buttons {
@@ -58,7 +67,7 @@ ion-col {
 }
 
 ion-item {
-  --inner-border-width: 0px; /* Elimina el borde interno del ion-item */
+  --inner-border-width: 0px;
 }
 
 ion-button {

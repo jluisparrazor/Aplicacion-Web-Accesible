@@ -135,6 +135,7 @@ async addprof(){
       password:null,
       TipoDiscapacidad: null,
       id_pictogram: null,
+      correctPassword: null,
     }
   }
 
