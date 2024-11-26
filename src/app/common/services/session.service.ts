@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { UserI } from '../models/users.models';
-import { ProfI } from '../models/profesor.models';
+import { TeacherI } from '../models/teacher.models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
-  private currentUser: UserI | ProfI | null = null;
+  private currentUser: UserI | TeacherI | null = null;
   private userType: 'user' | 'profesor' | 'admin' | null = null;
 
-  setCurrentUser(user: UserI | ProfI, type: 'user' | 'profesor' | 'admin') {
+  setCurrentUser(user: UserI | TeacherI, type: 'user' | 'profesor' | 'admin') {
     this.currentUser = user;
     this.userType = type;
   }
 
-  getCurrentUser(): UserI | ProfI | null {
+  getCurrentUser(): UserI | TeacherI | null {
     return this.currentUser;
   }
 
