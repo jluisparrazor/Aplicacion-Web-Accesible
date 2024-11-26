@@ -42,7 +42,11 @@ export class HomeAdministradorPage{
   showForm = false; // Variable para mostrar/ocultar el formulario de tarea
 
 
-  constructor(private readonly firestoreService: FirestoreService, private sessionService: SessionService, private router: Router) {
+  constructor(
+    private readonly firestoreService: FirestoreService,
+    private sessionService: SessionService,
+    private router: Router
+  ) {
     
     this.load();
     this.init();
@@ -94,6 +98,8 @@ export class HomeAdministradorPage{
       Completada: null,
       Fecha: null,
       Asignado: null,
+      Tipo: null,
+      enlace: null,
     }
   }
 

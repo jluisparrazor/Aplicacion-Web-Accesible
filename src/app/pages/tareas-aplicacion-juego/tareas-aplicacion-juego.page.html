@@ -19,7 +19,9 @@
   <div class="tarea-aplicacion">
     <img src="assets/icon/favicon.png" alt="Pictograma de la tarea" class="pictograma-tarea" />
     <h2 class="nombre-tarea">Nombre de la Tarea</h2>
-    <p class="descripcion-tarea">Breve descripción de lo que debe hacer el alumno para completar la tarea.</p>
+    <p class="descripcion-tarea">Enlace a la tarea: 
+      <a href="{{ tarea.enlace }}" target="_blank">{{ tarea.enlace }}</a>
+    </p>
     <button class="boton-completar" (click)="completarTarea()">
       <p>He completado la tarea</p>
     </button>
@@ -36,4 +38,3 @@
   </div>
   
 </ion-content>
-

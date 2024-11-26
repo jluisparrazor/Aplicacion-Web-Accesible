@@ -1,15 +1,82 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Tareas de</ion-title>
+    <ion-title class="header-title" *ngIf="userActual">
+      Tareas de {{ userActual.nombre }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tareas de</ion-title>
+      <ion-title size="large" *ngIf="userActual">
+        Tareas de {{ userActual.nombre }}
+      </ion-title>
     </ion-toolbar>
   </ion-header>
 
-  
+  <!-- Lista de tareas incompletas -->
+  <section>
+    <h2 class="tareas-pendientes">Tareas Pendientes</h2>
+    <div *ngIf="tareasIncompletas.length > 0; else noIncompletas">
+      <ion-card class="tarea-card-pendiente" *ngFor="let tarea of tareasIncompletas" (click)="navegarTarea(tarea)">
+        <div class="tarea-contenido">
+          <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma">
+          <div class="tarea-info">
+            <h3 class="tarea-nombre">{{ tarea.Nombre }}</h3>
+            <div class="tarea-detalles">
+              <p class="tarea-fecha">
+                Fecha: 
+                {{ tarea.Fecha ? (tarea.Fecha.toDate() | date: 'dd/MM/yyyy') : '' }}
+              </p>
+              <p class="tarea-estado">
+                Completada:
+                <span [class.text-success]="tarea.Completada" [class.text-danger]="!tarea.Completada">
+                  {{ tarea.Completada ? 'Sí' : 'No' }}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+  </section>
+
+  <ng-template #noIncompletas>
+    <div class="no-tareas">
+      <ion-icon name="document-outline" class="no-tareas-icon"></ion-icon>
+      <p class="no-tareas-message">No tienes tareas pendientes.</p>
+    </div>
+  </ng-template>
+
+  <!-- Lista de tareas completadas -->
+  <section>
+    <h2 class="tareas-completadas">Tareas Completadas</h2>
+    <div *ngIf="tareasCompletadas.length > 0; else noCompletadas">
+      <ion-card class="tarea-card-completada" *ngFor="let tarea of tareasCompletadas">
+        <div class="tarea-contenido">
+          <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma">
+          <div class="tarea-info">
+            <h3 class="tarea-nombre">{{ tarea.Nombre }}</h3>
+            <div class="tarea-detalles">
+              <p class="tarea-fecha">
+                Fecha: 
+                {{ tarea.Fecha ? (tarea.Fecha.toDate() | date: 'dd/MM/yyyy') : '' }}
+              </p>
+              <p class="tarea-estado">
+                Completada: <span class="text-success">Sí</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </ion-card>
+    </div>
+  </section>
+
+  <ng-template #noCompletadas>
+    <div class="no-tareas">
+      <ion-icon name="checkmark-done-outline" class="no-tareas-icon"></ion-icon>
+      <p class="no-tareas-message">No tienes tareas completadas aún.</p>
+    </div>
+  </ng-template>
 </ion-content>

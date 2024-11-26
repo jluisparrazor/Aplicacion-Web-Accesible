@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { TareaI } from '../models/tarea.models';
 import { collectionData, docData, Firestore} from '@angular/fire/firestore';
-import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, where, getDocs } from 'firebase/firestore';import { Observable } from 'rxjs';
-
+import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, Query, where, getDocs, DocumentData, updateDoc } from 'firebase/firestore';import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
@@ -63,10 +62,19 @@ export class FirestoreService {
     } 
   }
 
-  // Obtener todos los documentos de una colección
-  async getCollection(collectionName: string): Promise<any[]> {
-    const colRef = collection(this.firestore, collectionName);
-    const querySnapshot = await getDocs(colRef);
+  async getCollection(collectionName: string, filters?: { field: string; operator: any; value: any }[]): Promise<any[]> {
+    const colRef = collection(this.firestore, collectionName); // Referencia a la colección
+    let q: Query<DocumentData> = colRef; // Declaramos `q` como Query explícitamente
+  
+    // Si hay filtros, los aplicamos
+    if (filters) {
+      for (const filter of filters) {
+        q = query(q, where(filter.field, filter.operator, filter.value));
+      }
+    }
+  
+    // Ejecutamos la consulta y devolvemos los documentos
+    const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -93,4 +101,17 @@ export class FirestoreService {
       ...doc.data(),
     })) as TareaI[];
   }
+
+  async actualizarTarea(tarea: TareaI) {
+    try {
+      const tareaRef = doc(this.firestore, 'Tareas', tarea.id); // Referencia al documento
+      await updateDoc(tareaRef, {
+        Completada: tarea.Completada
+      });
+      console.log('Tarea actualizada exitosamente');
+    } catch (error) {
+      console.error('Error actualizando tarea:', error);
+    }
+  }
 }
+

@@ -45,7 +45,7 @@ export class LoginAlumnoPage{
         // Verificamos que sea el usuario inserte la contraseña correcta 
         if (userData && userData.password === this.password) {
           this.sessionService.setCurrentUser(userData, 'user');
-          this.router.navigate(['/tareasaplicacionjuego']);//Cambiar por homealumno, lo de tareas es ara probar
+          this.router.navigate(['/tareasdiarioalumno']);//Cambiar por homealumno, lo de tareas es ara probar
         } else {
           console.log('Contraseña incorrecta');
         }

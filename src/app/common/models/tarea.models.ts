@@ -6,4 +6,6 @@ export interface TareaI{
     Completada: boolean;
     Fecha?: Timestamp;
     Asignado?: DocumentReference; // Referencia al documento de usuario
+    Tipo: string;
+    enlace?: string;
 }

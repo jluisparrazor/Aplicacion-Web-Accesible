@@ -8,8 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-
-
+import { Router } from '@angular/router';
+import { SessionService } from 'src/app/common/services/session.service';
 
 @Component({
   selector: 'app-home',
@@ -29,14 +29,15 @@ export class HomePage {
   newStud: UserI;
   stud: UserI;
 
+  userActual: ProfI;
 
-  // constructor(private firestoreService: FirestoreService) {
-  //   this.loadprofs();
-  //   this.initProf();
-  //   this.getProf();
-  // }
-
-  constructor(private firestoreService: FirestoreService, private navCtrl: NavController) {
+  constructor(
+    private firestoreService: FirestoreService,
+    private navCtrl: NavController,
+    private sessionService: SessionService,
+    private router: Router
+  ) {
+    this.load();
     //Profs
     this.loadprofs();
     this.initProf();
@@ -46,6 +47,20 @@ export class HomePage {
     this.loadStudent();
     this.initStudent();
     this.getStudent();
+  }
+
+  load(){
+    //Miro que profesor ha iniciado sesion
+    const user = this.sessionService.getCurrentUser();
+
+    if (user && 'Administrativo' in user && !user.Administrativo) {
+      this.userActual = user as ProfI;
+      console.log('Profesor loggeado:', this.userActual.Nombre);
+    } else {
+      console.error('El usuario actual no es válido.');
+      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+      return; // Detenemos la ejecución si el usuario no es válido
+    }
   }
   
   // Profesor section

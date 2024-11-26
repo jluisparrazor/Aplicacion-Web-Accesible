@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
+import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { UserI } from 'src/app/common/models/users.models';
+import { TareaI } from 'src/app/common/models/tarea.models';
 
 @Component({
   selector: 'app-tareas-aplicacion-juego',
@@ -14,18 +16,26 @@ import { UserI } from 'src/app/common/models/users.models';
   imports: [IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule]
 })
 export class TareasAplicacionJuegoPage implements OnInit {
-
   tareaCompletada: boolean = false;
   mostrarConfeti = false;
   userActual: UserI;
+  tarea: TareaI;
 
   constructor(
     private router: Router,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private firestoreService: FirestoreService
   ) { }
 
   ngOnInit() {
-    console.log('Comprobando sesión...');
+
+    // Obtener los datos de la tarea pasada como parámetro
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state?.['tarea']) {
+      this.tarea = navigation.extras.state['tarea'];
+      console.log('Tarea seleccionada:', this.tarea);
+    }
+
     const user = this.sessionService.getCurrentUser();
   
     if (user && 'password' in user) {
@@ -44,7 +54,15 @@ export class TareasAplicacionJuegoPage implements OnInit {
 
   // Función para marcar la tarea como completada
   completarTarea() {
-    this.tareaCompletada = true;
+    this.tareaCompletada =
+    this.tarea.Completada = true;
+
+    // Actualiza la tarea en el servicio de Firestore
+    this.firestoreService.actualizarTarea(this.tarea).then(() => {
+      console.log('Tarea actualizada a completada:', this.tarea);
+    }).catch(error => {
+      console.error('Error actualizando tarea:', error);
+    });
         
     // Mostrar el GIF de confeti 1 segundo después de que comience la animación del texto
     setTimeout(() => {
