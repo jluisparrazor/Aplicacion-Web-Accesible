@@ -91,6 +91,7 @@ export class HomeAdministradorPage{
       password:null,
       TipoDiscapacidad: null,
       id_pictogram: null,
+      correctPassword: null,
     }
     
     this.newTarea = { 
