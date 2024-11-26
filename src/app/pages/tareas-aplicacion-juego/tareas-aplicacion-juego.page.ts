@@ -17,9 +17,10 @@ import { TareaI } from 'src/app/common/models/tarea.models';
 })
 export class TareasAplicacionJuegoPage implements OnInit {
   tareaCompletada: boolean = false;
-  mostrarConfeti = false;
+  mostrarConfeti: boolean = false;
   userActual: UserI;
   tarea: TareaI;
+  enlaceVisitado = false;
 
   constructor(
     private router: Router,
@@ -54,8 +55,13 @@ export class TareasAplicacionJuegoPage implements OnInit {
 
   // Función para marcar la tarea como completada
   completarTarea() {
-    this.tareaCompletada =
+    this.tareaCompletada = true;
     this.tarea.Completada = true;
+
+    // Mostrar confeti 1.7s después de que empiece la animación del texto
+    setTimeout(() => {
+      this.mostrarConfeti = true;
+    }, 1600);  // 1700 ms = 1.7 segundos
 
     // Actualiza la tarea en el servicio de Firestore
     this.firestoreService.actualizarTarea(this.tarea).then(() => {
@@ -63,15 +69,14 @@ export class TareasAplicacionJuegoPage implements OnInit {
     }).catch(error => {
       console.error('Error actualizando tarea:', error);
     });
-        
-    // Mostrar el GIF de confeti 1 segundo después de que comience la animación del texto
-    setTimeout(() => {
-      this.mostrarConfeti = true;
-    }, 1000); // 1000 ms = 1 segundo
 
     // Después de la animación, redirige al listado
     setTimeout(() => {
       this.volverListado(); // Redirige al listado de tareas
-    }, 5850); // Espera para volver al listado de tareas
+    }, 6000); // Espera para volver al listado de tareas
+  }
+
+  marcarEnlaceVisitado(){
+    this.enlaceVisitado = true;
   }
 }

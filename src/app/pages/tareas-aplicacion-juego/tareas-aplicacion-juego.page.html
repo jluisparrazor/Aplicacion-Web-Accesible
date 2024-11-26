@@ -19,10 +19,16 @@
   <div class="tarea-aplicacion">
     <img src="assets/icon/favicon.png" alt="Pictograma de la tarea" class="pictograma-tarea" />
     <h2 class="nombre-tarea">Nombre de la Tarea</h2>
-    <p class="descripcion-tarea">Enlace a la tarea: 
-      <a href="{{ tarea.enlace }}" target="_blank">{{ tarea.enlace }}</a>
+    <p class="descripcion-tarea">
+      Enlace a la tarea: 
+      <a href="{{ tarea.enlace }}" target="_blank" (click)="marcarEnlaceVisitado()">
+        {{ tarea.enlace }}
+      </a>
     </p>
-    <button class="boton-completar" (click)="completarTarea()">
+    <button 
+      class="boton-completar" 
+      (click)="completarTarea()" 
+      [disabled]="!enlaceVisitado">
       <p>He completado la tarea</p>
     </button>
   </div>
@@ -31,10 +37,25 @@
   <div class="overlay" [class.oscuro]="tareaCompletada">
     <div class="animacion-confeti">
       <!-- Texto animado -->
-      <h2 class="texto-enhorabuena" [class.visible]="tareaCompletada">¡Enhorabuena!</h2>
+      <h2 class="texto-enhorabuena" [class.animar-texto]="tareaCompletada">¡Enhorabuena!</h2>
       <!-- GIF animado -->
       <img *ngIf="mostrarConfeti" src="assets/imagenes/confeti.gif" alt="Confeti" class="gif-confeti">
     </div>
+  </div>
+
+  <!-- Contenedor de la animación con overlay -->
+  <div class="overlay" [class.oscuro]="tareaCompletada">
+    <!-- Texto animado -->
+    <h2 
+      class="texto-enhorabuena" 
+      [class.animar-texto]="tareaCompletada">¡Enhorabuena!
+    </h2>
+    <!-- GIF animado -->
+    <img 
+      src="assets/imagenes/confeti.gif" 
+      alt="Confeti" 
+      class="gif-confeti" 
+      [class.animar-confeti]="mostrarConfeti">
   </div>
   
 </ion-content>
