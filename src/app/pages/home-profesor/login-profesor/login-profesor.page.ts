@@ -64,7 +64,7 @@ export class LoginPage{
             this.router.navigate(['/homeadministrador']);
           }
           else{
-            this.sessionService.setCurrentUser(profData, 'profesor');
+            this.sessionService.setCurrentUser(profData, 'teacher');
             this.router.navigate(['/homeprofesor']);
           }                                       
 

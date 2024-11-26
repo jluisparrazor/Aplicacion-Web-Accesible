@@ -7,9 +7,9 @@ import { TeacherI } from '../models/teacher.models';
 })
 export class SessionService {
   private currentUser: UserI | TeacherI | null = null;
-  private userType: 'user' | 'profesor' | 'admin' | null = null;
+  private userType: 'user' | 'teacher' | 'admin' | null = null;
 
-  setCurrentUser(user: UserI | TeacherI, type: 'user' | 'profesor' | 'admin') {
+  setCurrentUser(user: UserI | TeacherI, type: 'user' | 'teacher' | 'admin') {
     this.currentUser = user;
     this.userType = type;
   }
@@ -18,7 +18,7 @@ export class SessionService {
     return this.currentUser;
   }
 
-  getUserType(): 'user' | 'profesor' | 'admin' | null {
+  getUserType(): 'user' | 'teacher' | 'admin' | null {
     return this.userType;
   }
 

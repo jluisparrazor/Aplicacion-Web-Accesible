@@ -73,7 +73,7 @@ export class HomeAdministradorPage{
     //Miro que admin ha iniciado sesion
     const user = this.sessionService.getCurrentUser();
 
-  if (user && 'Administrativo' in user && user.Administrativo) {
+  if (user && 'administrative' in user) {
     this.userActual = user as TeacherI;
     console.log('Administrador loggeado:', this.userActual.name);
   } else {
