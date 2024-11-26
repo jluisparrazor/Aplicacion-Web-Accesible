@@ -71,18 +71,18 @@
           </ion-buttons>
         </ion-toolbar>
         <ion-list>
-        @for (user of profs; track $index) {
+        @for (prof of profs; track $index) {
         <ion-item>
-          <ion-label>Nombre: {{user.Nombre}}
-            <p>Edad: {{user.Edad}}</p>
+          <ion-label>Nombre: {{prof.name}}
+            <!-- <p>Edad: {{prof..Edad}}</p> -->
           </ion-label>
       
           <ion-buttons slot="end">
-            <ion-button (click)="edit(user)">
+            <ion-button (click)="edit(prof)">
               <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
             </ion-button>
                   
-            <ion-button (click)="delete(user)">
+            <ion-button (click)="delete(prof)">
               <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
             </ion-button>
         

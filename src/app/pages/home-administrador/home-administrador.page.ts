@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { ProfI } from '../../common/models/profesor.models';
+import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
 import { UserI } from '../../common/models/users.models';
 import { FormsModule } from '@angular/forms';
@@ -22,9 +22,9 @@ import { RouterModule } from '@angular/router';
 export class HomeAdministradorPage{
   tempFecha: string | null = null;
   
-  profs: ProfI[] = [];
-  newProf: ProfI;
-  prof: ProfI;
+  profs: TeacherI[] = [];
+  newTeacher: TeacherI;
+  prof: TeacherI;
 
   students: UserI[] = [];
   newStud: UserI;
@@ -35,7 +35,9 @@ export class HomeAdministradorPage{
   tarea: TareaI;
   selectedStudent: UserI; // Estudiante al que se asignará la tarea
 
-  showForm = false; // Variable para mostrar/ocultar el formulario de tarea
+  showTaskForm: boolean = false;
+  showStudentForm: boolean = false;
+  showTeacherForm: boolean = false; 
 
 
   constructor(private readonly firestoreService: FirestoreService) {
@@ -55,12 +57,14 @@ export class HomeAdministradorPage{
   // Método para guardar los datos del profesor
   init(){
     // Inicializa los objetos de profesor, estudiante y tarea
-    this.newProf = {
-      Nombre: null,
-      Edad: null,
+    this.newTeacher = {
+      name: null,
+      surname: null,
       id: this.firestoreService.createIDDoc(),
-      Password:null,
-      Administrativo: false
+      password: null,
+      administrative: false,
+      pictogramId: null,
+      email: null
     }
 
     this.newStud = {
@@ -83,7 +87,7 @@ export class HomeAdministradorPage{
   // Método para cargar los datos de la base de datos
   load(){
     // Carga los profesores de la base de datos
-    this.firestoreService.getCollectionChanges<ProfI>('Profesores').subscribe((data) => {
+    this.firestoreService.getCollectionChanges<TeacherI>('Profesores').subscribe((data) => {
       if (data) {
         this.profs = data;
       }
@@ -109,7 +113,7 @@ export class HomeAdministradorPage{
   // GETTERS
   // Método para obtener un profesor de la base de datos
   async getProf(){
-    const res = await this.firestoreService.getDocument<ProfI>('Profesores/'+ this.newProf.id);
+    const res = await this.firestoreService.getDocument<TeacherI>('Profesores/'+ this.newTeacher.id);
     this.prof = res.data();
   }
 
@@ -140,26 +144,29 @@ export class HomeAdministradorPage{
       console.log('Fecha confirmada:', this.newTarea.Fecha);
     }
   }
+  
   //~~~~~~~~~~~~~~~~~~~~~~~~~Profesor section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo profesor a la base de datos (profesor no existente en la BD)
   async addprof(){
-    this.newProf.id = this.firestoreService.createIDDoc();
-    await this.firestoreService.createDocumentID(this.newProf, 'Profesores', this.newProf.id);
+    this.newTeacher.id = this.firestoreService.createIDDoc();
+    await this.firestoreService.createDocumentID(this.newTeacher, 'Profesores', this.newTeacher.id);
+    this.showTeacherForm = false;  // Oculta el formulario después de guardar
+
   }
   
   // Método para guardar nuevos datos de un profesor (ya existente) en la base de datos
   async saveProf(){
-    await this.firestoreService.createDocumentID(this.newProf, 'Profesores', this.newProf.id);
+    await this.firestoreService.createDocumentID(this.newTeacher, 'Profesores', this.newTeacher.id);
   }
   
  // Método para editar un profesor
-  editProf(prof: ProfI){
+  editProf(prof: TeacherI){
     console.log('edit -> ', prof);
-    this.newProf = prof;
+    this.newTeacher = prof;
   }
 
   // Método para eliminar un profesor de la base de datos
-  async deleteProf(prof: ProfI){
+  async deleteProf(prof: TeacherI){
     console.log('delete -> ',prof.id);
     await this.firestoreService.deleteDocumentID('Profesores', prof.id);
   }
@@ -170,10 +177,15 @@ export class HomeAdministradorPage{
   //~~~~~~~~~~~~~~~~~~~~~~~~~Student section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo estudiante a la base de datos (estudiante no existente en la BD)
   async addStud(){
-    this.newProf.id = this.firestoreService.createIDDoc();
+    this.newStud.id = this.firestoreService.createIDDoc();
     await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
-  }
+    this.showStudentForm = false;  // Oculta el formulario después de guardar
 
+  }
+   // Método para limpiar la interfaz de nueva tarea
+   cleanInterfaceStud(){ 
+    this.newStud.nombre = this.newStud.TipoDiscapacidad = this.newStud.edad = this.newStud.password = null;
+  }
   // Método para guardar nuevos datos de un estudiante (ya existente) en la base de datos
   async saveStudent(){
     await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
@@ -197,8 +209,9 @@ export class HomeAdministradorPage{
   //~~~~~~~~~~~~~~~~~~~~~~~~~Tarea section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir una nueva tarea a la base de datos (tarea no existente en la BD)
   async addTarea(){
+    this.newTarea.id = this.firestoreService.createIDDoc();
     await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.id);
-    this.showForm = false;  // Oculta el formulario después de guardar
+    this.showTaskForm = false;  // Oculta el formulario después de guardar
     this.cleanInterfaceTarea();
    }
 
@@ -233,11 +246,21 @@ export class HomeAdministradorPage{
   }
    
  
-  // Método para mostrar y ocultar el formulario de tarea
-  toggleForm() {
-    console.log('toggleForm activated');
-    this.showForm = !this.showForm;
+  // Métodos para mostrar y ocultar el formulario de tarea, alumnos y profesores
+  toggleTaskForm() {
+    console.log('toggleTaskForm activated');
+    this.showTaskForm = !this.showTaskForm;
   } 
+
+  toggleStudentForm() {
+      console.log('toggleStudentForm activated');
+      this.showStudentForm = !this.showStudentForm;
+  }
+
+  toggleTeacherForm() {
+    console.log('toggleTeacherForm activated');
+    this.showTeacherForm = !this.showTeacherForm;
+  }
 
   // ChangePassword() {
   //   this.navCtrl.navigateForward('/change-password');

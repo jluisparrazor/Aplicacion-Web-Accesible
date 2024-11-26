@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../../common/services/firestore.service';
-import { ProfI } from '../../../common/models/profesor.models';
+import { TeacherI } from '../../../common/models/teacher.models';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -43,17 +43,17 @@ export class LoginPage{
     
     //Si existe el profesor, obtenemos sus datos
       if (profId) {
-        const profDoc = await this.firestoreService.getDocument<ProfI>(`Profesores/${profId}`);
+        const profDoc = await this.firestoreService.getDocument<TeacherI>(`Profesores/${profId}`);
         const profData = profDoc.data();
 
         // console.log('profData -> ', profData);
 
         // Verificamos que sea el profesor inserte la contraseña correcta 
-        if (profData && profData.Password === this.password) {
+        if (profData && profData.password === this.password) {
 
 
           // Redirigimos a la página de inicio según si es administrativo o profesor
-          if(profData.Administrativo)
+          if(profData.administrative)
             this.router.navigate(['/homeadministrador']);//Cambiar por homeadministrador,
           else                                           //registrosemanaltareas es solo para probar
           this.router.navigate(['/homeprofesor']);

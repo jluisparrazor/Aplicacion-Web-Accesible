@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
-import { ProfI } from '../../common/models/profesor.models';
+import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
 import { UserI } from '../../common/models/users.models';
 
@@ -21,9 +21,9 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class HomePage {
-  profs: ProfI[] = [];
-  newProf: ProfI;
-  prof: ProfI;
+  profs: TeacherI[] = [];
+  newTeacher: TeacherI;
+  prof: TeacherI;
   cargando: boolean = false;
   students: UserI[] = [];
   newStud: UserI;
@@ -50,22 +50,24 @@ export class HomePage {
   
   // Profesor section
 async addprof(){
-  this.newProf.id = this.firestoreService.createIDDoc();
-  await this.firestoreService.createDocumentID(this.newProf, 'Profesores', this.newProf.id);
+  this.newTeacher.id = this.firestoreService.createIDDoc();
+  await this.firestoreService.createDocumentID(this.newTeacher, 'Profesores', this.newTeacher.id);
 }
 
   initProf(){
-    this.newProf = {
-      Nombre: null,
-      Edad: null,
+    this.newTeacher = {
+      name: null,
+      surname: null,
       id: this.firestoreService.createIDDoc(),
-      Password:null,
-      Administrativo: false
+      password: null,
+      administrative: false,
+      pictogramId: null,
+      email: null
     }
   }
 
   loadprofs(){
-  this.firestoreService.getCollectionChanges<ProfI>('Profesores').subscribe((data) => {
+  this.firestoreService.getCollectionChanges<TeacherI>('Profesores').subscribe((data) => {
     if (data) {
       this.profs = data;
     }
@@ -74,25 +76,25 @@ async addprof(){
 
   async saveProf(){
     this.cargando = true;
-    await this.firestoreService.createDocumentID(this.newProf, 'Profesores', this.newProf.id);
+    await this.firestoreService.createDocumentID(this.newTeacher, 'Profesores', this.newTeacher.id);
     this.cargando = false;
     this.cleanInterface();
   }
   
   cleanInterface(){ 
-    this.newProf.Nombre = null;
-    this.newProf.Edad = null;
-    this.newProf.Password = null;
-    this.newProf.Administrativo = null;
+    // this.newTeacher.Nombre = null;
+    // this.newTeacher.Edad = null;
+    // this.newTeacher.Password = null;
+    // this.newTeacher.Administrativo = null;
   }
 
 
-  edit(prof: ProfI){
+  edit(prof: TeacherI){
     console.log('edit -> ', prof);
-    this.newProf = prof;
+    this.newTeacher = prof;
   }
 
-  async delete(prof: ProfI){
+  async delete(prof: TeacherI){
     this.cargando = true;
     console.log('delete -> ',prof.id);
     await this.firestoreService.deleteDocumentID('Profesores', prof.id);
@@ -100,7 +102,7 @@ async addprof(){
   }
 
   async getProf(){
-    const res = await this.firestoreService.getDocument<ProfI>('Profesores/'+ this.newProf.id);
+    const res = await this.firestoreService.getDocument<TeacherI>('Profesores/'+ this.newTeacher.id);
     this.prof = res.data();
   }
 
@@ -108,7 +110,7 @@ async addprof(){
   // Students section
   
   async addStud(){
-    this.newProf.id = this.firestoreService.createIDDoc();
+    this.newTeacher.id = this.firestoreService.createIDDoc();
     await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
   }
   
@@ -138,10 +140,10 @@ async addprof(){
   }
   
   // cleanInterface(){ 
-  //   this.newProf.Nombre = null;
-  //   this.newProf.Edad = null;
-  //   this.newProf.Password = null;
-  //   this.newProf.Administrativo = null;
+  //   this.newTeacher.Nombre = null;
+  //   this.newTeacher.Edad = null;
+  //   this.newTeacher.Password = null;
+  //   this.newTeacher.Administrativo = null;
   // }
 
 
