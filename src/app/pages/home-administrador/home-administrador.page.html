@@ -85,7 +85,7 @@
             <!-- Asignado al alumno -->
             <ion-item>
               <ion-select placeholder="Selecciona alumno" label="Asignado a" labelPlacement="floating" [(ngModel)]="newTarea.Asignado">
-                <ion-select-option *ngFor="let user of students" [value]="user.nombre">{{user.nombre}}</ion-select-option>
+                <ion-select-option *ngFor="let student of students" [value]="student.name">{{student.name}}</ion-select-option>
               </ion-select>
             </ion-item>
 
@@ -94,7 +94,7 @@
       
         <!-- Lista de tareas y todos sus elementos -->
         <ion-list>
-          <ion-item *ngFor="let tarea of tareas; let i = index">
+          <ion-item *ngFor="let tarea of tasks; let i = index">
             <ion-label>
               <h3>{{ tarea.Nombre }}</h3>
               <p>Completada: {{ tarea.Completada }}</p>
@@ -140,38 +140,38 @@
           </ion-toolbar>
           <ion-list>
             <ion-item>
-              <ion-input label="Nombre" labelPlacement="floating" [(ngModel)]="newStud.nombre"></ion-input>
+              <ion-input label="Nombre" labelPlacement="floating" [(ngModel)]="newStud.name"></ion-input>
             </ion-item>
-            <ion-item>
+            <!-- <ion-item>
               <ion-input label="Edad" labelPlacement="floating" type="number" [(ngModel)]="newStud.edad"></ion-input>
-            </ion-item>
+            </ion-item> -->
             <ion-item>
-              <ion-input label="Tipo de discapacidad" labelPlacement="floating" [(ngModel)]="newStud.TipoDiscapacidad"></ion-input>
+              <!-- <ion-input label="Tipo de discapacidad" labelPlacement="floating" [(ngModel)]="newStud.TipoDiscapacidad"></ion-input> -->
             </ion-item>
           </ion-list>
         </ion-card>
 
         <!-- Lista de alumnos y todos sus elementos -->
         <ion-list>
-        @for (user of students; track $index) {
-          <ion-item>
+          <ion-item *ngFor="let stud of students; let i = index">
             <ion-label>
-              Nombre: {{user.nombre}}
-              <p>Edad: {{user.edad}}</p>
-              <p>Tipo de Discapacidad: {{user.TipoDiscapacidad.join(', ')}}</p>
-            </ion-label>        
-            <!-- Botones de editar y eliminar el alumno -->
+              <h3>{{ teacher.name }} {{ stud.surname }}</h3>
+              <p>Teléfono móvil: {{stud.phone}} </p>
+              <!-- <p>: {{stud.profileType}} </p> -->
+
+              <!-- <p *ngIf="stud.">Es administrativo</p> -->
+            </ion-label> 
+            <!-- Botones de editar y eliminar la tarea -->
             <ion-buttons slot="end">
-              <ion-button (click)="editStu(user)">
+              <ion-button (click)="editStu(stud)">
                 <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
               </ion-button>
-              <ion-button (click)="deleteStu(user)">
+              <ion-button (click)="deleteStu(stud)">
                 <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
               </ion-button>
-            </ion-buttons>       
-          </ion-item> 
-        }
-        </ion-list>    
+            </ion-buttons>
+          </ion-item>
+        </ion-list>   
       </ion-col>
 
 
@@ -191,48 +191,132 @@
           <ion-toolbar>
             <ion-title>Crear profesor</ion-title>
             <ion-buttons slot="end">
-              <ion-button (click)="addprof()" shape="round" color="primary">Añadir profesor</ion-button>
+              <ion-button (click)="addOrUpdateTeacher()" shape="round" color="primary">Añadir/Actualizar Profesor</ion-button>
               <ion-button (click)="toggleTeacherForm()" shape="round" color="danger">Cancelar</ion-button>
             </ion-buttons>
           </ion-toolbar>
+          
           <ion-list>
+            <!-- Nombre -->
             <ion-item>
-              <ion-input label="Nombre" labelPlacement="floating" [(ngModel)]="newTeacher.name"></ion-input>
+              <ion-input 
+                label="Nombre" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.name" 
+                required>
+              </ion-input>
             </ion-item>
+        
+            <!-- Apellidos -->
             <ion-item>
-              <!-- <ion-input label="Edad" labelPlacement="floating" type="number" [(ngModel)]="newTeacher.Edad"></ion-input> -->
+              <ion-input 
+                label="Apellidos" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.surname" 
+                required>
+              </ion-input>
             </ion-item>
+        
+            <!-- Nombre -->
+            <ion-item>
+              <ion-input 
+                label="DNI" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.dni" 
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- ID de Pictograma -->
+            <ion-item>
+              <ion-input 
+                label="ID de pictograma" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.pictogramId" 
+                required>
+              </ion-input>
+            </ion-item>
+        
+            <!-- Email -->
+            <ion-item>
+              <ion-input 
+                label="Correo electrónico" 
+                labelPlacement="floating" 
+                type="email" 
+                [(ngModel)]="newTeacher.email" 
+                required>
+              </ion-input>
+            </ion-item>
+        
+            <!-- Contraseña -->
+            <ion-item>
+              <ion-input 
+                label="Contraseña" 
+                labelPlacement="floating" 
+                type="password" 
+                [(ngModel)]="newTeacher.password" 
+                required>
+              </ion-input>
+            </ion-item>
+        
+            <!-- Es administrativo -->
             <ion-item>
               <ion-checkbox [(ngModel)]="newTeacher.administrative"></ion-checkbox>
               <ion-label>Es administrativo</ion-label>
             </ion-item>
+        
+            <!-- Fecha de nacimiento (opcional) -->
+            <ion-item>
+              <ion-label>Fecha de nacimiento:</ion-label>
+              <ion-datetime 
+                placeholder="Selecciona fecha"
+                [(ngModel)]="newTeacher.birthdate"
+                presentation="date">
+              </ion-datetime>
+            </ion-item>
+        
+            <!-- Teléfono (opcional) -->
+            <ion-item>
+              <ion-input 
+                label="Teléfono" 
+                labelPlacement="floating" 
+                type="number" 
+                [(ngModel)]="newTeacher.phone">
+              </ion-input>
+            </ion-item>
+        
+            <!-- Datos personales (opcional) -->
+            <ion-item>
+              <ion-textarea 
+                label="Datos personales" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.personalData">
+              </ion-textarea>
+            </ion-item>
           </ion-list>
         </ion-card>
+        
 
         <!-- Lista de profesores y todos sus elementos -->
         <ion-list>
-        @for (prof of profs; track $index) {
-          <ion-item>
-            <ion-label>Nombre: {{prof.name}}
-              <!-- <p>Edad: {{prof.Edad}}</p> -->
-              <p>Es Administrativo: {{prof.administrative}}</p>
-            </ion-label>
-        
+          <ion-item *ngFor="let teacher of teachers; let i = index">
+            <ion-label>
+              <h3>{{ teacher.name }} {{ teacher.surname }}</h3>
+              <p>Teléfono móvil: {{teacher.phone}} </p>
+              <p *ngIf="teacher.administrative">Es administrativo</p>
+            </ion-label> 
+            <!-- Botones de editar y eliminar la tarea -->
             <ion-buttons slot="end">
-              <ion-button (click)="editProf(prof)">
+              <ion-button (click)="editTeacher(teacher)">
                 <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
               </ion-button>
-                    
-              <ion-button (click)="(prof)">
+              <ion-button (click)="deleteTeacher(teacher)">
                 <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
               </ion-button>
-          
             </ion-buttons>
-                  
           </ion-item>
-        
-        }
         </ion-list>
+            
       </ion-col>
     </ion-row>
 

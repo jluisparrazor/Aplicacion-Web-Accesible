@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
 import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
-import { UserI } from '../../common/models/users.models';
+import { StudentI } from '../../common/models/student.models';
 
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
@@ -25,9 +25,9 @@ export class HomePage {
   newTeacher: TeacherI;
   prof: TeacherI;
   cargando: boolean = false;
-  students: UserI[] = [];
-  newStud: UserI;
-  stud: UserI;
+  students: StudentI[] = [];
+  newStud: StudentI;
+  stud: StudentI;
 
 
   // constructor(private firestoreService: FirestoreService) {
@@ -58,6 +58,7 @@ async addprof(){
     this.newTeacher = {
       name: null,
       surname: null,
+      dni:null,
       id: this.firestoreService.createIDDoc(),
       password: null,
       administrative: false,
@@ -111,21 +112,25 @@ async addprof(){
   
   async addStud(){
     this.newTeacher.id = this.firestoreService.createIDDoc();
-    await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
+    await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
   }
   
   initStudent(){
     this.newStud = {
       id: this.firestoreService.createIDDoc(),
-      nombre: null,
-      edad: null,
-      password:null,
-      TipoDiscapacidad: null,
+      name: null,
+      surname: null,
+      pictogramId: null,
+      phone: null,
+      personalData: null,
+      birthDate: null,
+      profileType: false,
+      loginType: false,
     }
   }
 
   loadStudent(){
-  this.firestoreService.getCollectionChanges<UserI>('Usuarios').subscribe((data) => {
+  this.firestoreService.getCollectionChanges<StudentI>('Students').subscribe((data) => {
     if (data) {
       this.students = data;
     }
@@ -134,7 +139,7 @@ async addprof(){
 
   async saveStudent(){
     this.cargando = true;
-    await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
+    await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
     this.cargando = false;
     this.cleanInterface();
   }
@@ -147,20 +152,20 @@ async addprof(){
   // }
 
 
-  editStu(student: UserI){
+  editStu(student: StudentI){
     console.log('edit -> ', student);
     this.newStud = student;
   }
 
-  async deleteStu(student: UserI){
+  async deleteStu(student: StudentI){
     this.cargando = true;
     console.log('delete -> ', student.id);
-    await this.firestoreService.deleteDocumentID('Usuarios', student.id);
+    await this.firestoreService.deleteDocumentID('Students', student.id);
     this.cargando = false;
   }
 
   async getStudent(){
-    const res = await this.firestoreService.getDocument<UserI>('Usuarios/'+ this.newStud.id);
+    const res = await this.firestoreService.getDocument<StudentI>('Students/'+ this.newStud.id);
     this.stud = res.data();
   }
   

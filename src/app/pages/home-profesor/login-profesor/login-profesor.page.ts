@@ -39,11 +39,11 @@ export class LoginPage{
     }
 
     // Verificamos si el profesor existe en la base de datos
-      const profId = await this.firestoreService.getDocumentIDByField('Profesores', 'Nombre', this.name);
+      const profId = await this.firestoreService.getDocumentIDByField('Teachers', 'name', this.name);
     
     //Si existe el profesor, obtenemos sus datos
       if (profId) {
-        const profDoc = await this.firestoreService.getDocument<TeacherI>(`Profesores/${profId}`);
+        const profDoc = await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`);
         const profData = profDoc.data();
 
         // console.log('profData -> ', profData);

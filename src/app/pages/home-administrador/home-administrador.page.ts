@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
-import { UserI } from '../../common/models/users.models';
+import { StudentI } from '../../common/models/student.models';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
@@ -20,20 +20,21 @@ import { RouterModule } from '@angular/router';
 
 
 export class HomeAdministradorPage{
+
   tempFecha: string | null = null;
   
-  profs: TeacherI[] = [];
+  teachers: TeacherI[] = [];
   newTeacher: TeacherI;
-  prof: TeacherI;
+  teacher: TeacherI;
 
-  students: UserI[] = [];
-  newStud: UserI;
-  stud: UserI;
+  students: StudentI[] = [];
+  newStud: StudentI;
+  stud: StudentI;
 
-  tareas: TareaI[] = [];
+  tasks: TareaI[] = [];
   newTarea: TareaI;
   tarea: TareaI;
-  selectedStudent: UserI; // Estudiante al que se asignará la tarea
+  selectedStudent: StudentI; // Estudiante al que se asignará la tarea
 
   showTaskForm: boolean = false;
   showStudentForm: boolean = false;
@@ -46,33 +47,50 @@ export class HomeAdministradorPage{
     this.init();
    
     //Profs
-    this.getProf();
+    this.getTeacher();
     //Students
     this.getStudent();
      //Tareas
      this.getTarea();
 
   }
+  // ngOnInit(): void {
+  //   // Cargar solo los íconos que se usan en esta página
+  //   this.ionicons.init([
+  //     'calendarOutline',
+  //     'addCircleOutline',
+  //     'create',
+  //     'trash',
+  // ]);
+  
   
   // Método para guardar los datos del profesor
   init(){
     // Inicializa los objetos de profesor, estudiante y tarea
     this.newTeacher = {
+      id: null,
       name: null,
       surname: null,
-      id: this.firestoreService.createIDDoc(),
       password: null,
+      dni:null,
       administrative: false,
       pictogramId: null,
-      email: null
+      email: null,
+      birthdate: null,
+      phone: null,
+      personalData: null,
     }
 
     this.newStud = {
       id: this.firestoreService.createIDDoc(),
-      nombre: null,
-      edad: null,
-      password:null,
-      TipoDiscapacidad: null,
+      name: null,
+      surname: null,
+      pictogramId: null,
+      phone: null,
+      personalData: null,
+      birthDate: null,
+      profileType: false,
+      loginType: false,
     }
     
     this.newTarea = { 
@@ -87,22 +105,22 @@ export class HomeAdministradorPage{
   // Método para cargar los datos de la base de datos
   load(){
     // Carga los profesores de la base de datos
-    this.firestoreService.getCollectionChanges<TeacherI>('Profesores').subscribe((data) => {
+    this.firestoreService.getCollectionChanges<TeacherI>('Teachers').subscribe((data) => {
       if (data) {
-        this.profs = data;
+        this.teachers = data;
       }
     });  
 
-    // Carga las tareas de la base de datos
+    // Carga las tasks de la base de datos
     this.firestoreService.getCollectionChanges<TareaI>('Tareas').subscribe((data) => {
       if (data) {
-        this.tareas = data;
-        console.log('tareas -> ', this.tareas);
+        this.tasks = data;
+        console.log('tasks -> ', this.tasks);
       }
     });
 
     // Carga los estudiantes de la base de datos
-    this.firestoreService.getCollectionChanges<UserI>('Usuarios').subscribe((data) => {
+    this.firestoreService.getCollectionChanges<StudentI>('Students').subscribe((data) => {
       if (data) {
         this.students = data;
       }
@@ -112,14 +130,15 @@ export class HomeAdministradorPage{
 
   // GETTERS
   // Método para obtener un profesor de la base de datos
-  async getProf(){
-    const res = await this.firestoreService.getDocument<TeacherI>('Profesores/'+ this.newTeacher.id);
-    this.prof = res.data();
+  async getTeacher(){
+    const res = await this.firestoreService.getDocument<TeacherI>('Teachers/'+ this.newTeacher.id);
+    this.teacher = res.data();
+    console.log('Profesor:', this.teacher);
   }
 
   // Método para obtener un estudiante de la base de datos
   async getStudent(){
-    const res = await this.firestoreService.getDocument<UserI>('Usuarios/'+ this.newStud.id);
+    const res = await this.firestoreService.getDocument<StudentI>('Students/'+ this.newStud.id);
     this.stud = res.data();
   }
 
@@ -133,7 +152,7 @@ export class HomeAdministradorPage{
   async getStudentFromTarea(tarea: TareaI) {
     if (tarea.Asignado) {
       const userPath = tarea.Asignado.path;
-      const usuario = await this.firestoreService.getDocument<UserI>(userPath);
+      const usuario = await this.firestoreService.getDocument<StudentI>(userPath);
       console.log('Usuario asignado:', usuario);
     }
   }
@@ -147,28 +166,76 @@ export class HomeAdministradorPage{
   
   //~~~~~~~~~~~~~~~~~~~~~~~~~Profesor section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo profesor a la base de datos (profesor no existente en la BD)
-  async addprof(){
-    this.newTeacher.id = this.firestoreService.createIDDoc();
-    await this.firestoreService.createDocumentID(this.newTeacher, 'Profesores', this.newTeacher.id);
-    this.showTeacherForm = false;  // Oculta el formulario después de guardar
-
-  }
+  // async addTeacher(){
+  //   this.newTeacher.id = this.firestoreService.createIDDoc();
+  //   await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
+  //   console.log("Nuevo profesor ->", this.newTeacher);
+  //   alert("Profesor añadido con éxito!");
+  //   this.showTeacherForm = false;  // Oculta el formulario después de guardar
+  // }
   
-  // Método para guardar nuevos datos de un profesor (ya existente) en la base de datos
-  async saveProf(){
-    await this.firestoreService.createDocumentID(this.newTeacher, 'Profesores', this.newTeacher.id);
-  }
+  // // Método para guardar nuevos datos de un profesor (ya existente) en la base de datos
+  // async saveTeacher(){
+  //   await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
+  // }
+
+
+  // Método para añadir o actualizar un profesor según el DNI
+async addOrUpdateTeacher() {
+  // if (!this.newTeacher.dni) {
+  //   alert("Por favor, ingresa un DNI válido.");
+  //   return;
+  // }
+
+  // // Buscar si existe un profesor con el DNI propuesto
+  // const existingTeacher = this.teachers.find(teacher => teacher.dni === this.newTeacher.dni);
+
+  // if (existingTeacher) {
+  //   // Si el profesor existe, actualizar los datos
+  //   this.newTeacher.id = existingTeacher.id; // Usar el mismo ID del profesor existente
+  //   this.getTeacher();
+  //   console.log("Profesor actualizado ->", this.newTeacher);
+  //   alert("Datos del profesor actualizados con éxito.");
+  // }
+  // else {
+    // Si el profesor no existe, crear uno nuevo
+    this.newTeacher.id = this.firestoreService.createIDDoc();
+    await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
+    console.log("Nuevo profesor ->", this.newTeacher);
+    alert("Profesor añadido con éxito.");
+  // }
+
+  // Limpiar el formulario y ocultar
+  this.resetTeacherForm();
+  this.showTeacherForm = false;
+}
+
+resetTeacherForm() {
+  this.newTeacher = {
+    id: null,
+    name: null,
+    surname: null,
+    dni: null,
+    password: null,
+    administrative: false,
+    pictogramId: null,
+    email: null,
+    birthdate: null,
+    phone: null,
+    personalData: null,
+  };
+}
   
  // Método para editar un profesor
-  editProf(prof: TeacherI){
+  editTeacher(prof: TeacherI){
     console.log('edit -> ', prof);
     this.newTeacher = prof;
   }
 
   // Método para eliminar un profesor de la base de datos
-  async deleteProf(prof: TeacherI){
+  async deleteTeacher(prof: TeacherI){
     console.log('delete -> ',prof.id);
-    await this.firestoreService.deleteDocumentID('Profesores', prof.id);
+    await this.firestoreService.deleteDocumentID('Teachers', prof.id);
   }
 
 
@@ -178,29 +245,34 @@ export class HomeAdministradorPage{
   // Método para añadir un nuevo estudiante a la base de datos (estudiante no existente en la BD)
   async addStud(){
     this.newStud.id = this.firestoreService.createIDDoc();
-    await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
+    await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
     this.showStudentForm = false;  // Oculta el formulario después de guardar
 
   }
    // Método para limpiar la interfaz de nueva tarea
    cleanInterfaceStud(){ 
-    this.newStud.nombre = this.newStud.TipoDiscapacidad = this.newStud.edad = this.newStud.password = null;
-  }
+      for (const key in this.newStud) {
+        if (this.newStud.hasOwnProperty(key) && key !== 'id') {
+          (this.newStud as any)[key] = null;
+        }
+      }
+    }
+      
   // Método para guardar nuevos datos de un estudiante (ya existente) en la base de datos
   async saveStudent(){
-    await this.firestoreService.createDocumentID(this.newStud, 'Usuarios', this.newStud.id);
+    await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
   }
 
   // Método para editar un estudiante
-  editStu(student: UserI){
+  editStu(student: StudentI){
     console.log('edit -> ', student);
     this.newStud = student;
   }
 
   // Método para eliminar un estudiante de la base de datos
-  async deleteStu(student: UserI){
+  async deleteStu(student: StudentI){
     console.log('delete -> ', student.id);
-    await this.firestoreService.deleteDocumentID('Usuarios', student.id);
+    await this.firestoreService.deleteDocumentID('Students', student.id);
   }
 
   
@@ -226,7 +298,7 @@ export class HomeAdministradorPage{
   
     //Si se ha seleccionado un estudiante, se asigna la tarea a ese estudiante
     if (this.selectedStudent) {
-      this.newTarea.Asignado = doc(this.firestoreService.firestore, 'Usuarios', this.selectedStudent.id);
+      this.newTarea.Asignado = doc(this.firestoreService.firestore, 'Students', this.selectedStudent.id);
     }
     // Guardamos la tarea (con o sin el estudiante) en la base de datos
     await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.id); 
