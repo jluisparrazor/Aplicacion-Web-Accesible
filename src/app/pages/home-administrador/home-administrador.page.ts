@@ -90,6 +90,7 @@ export class HomeAdministradorPage{
       edad: null,
       password:null,
       TipoDiscapacidad: null,
+      id_pictogram: null,
     }
     
     this.newTarea = { 

@@ -1,0 +1,67 @@
+ion-content {
+  --padding-bottom:10px;
+  --padding-top: 2px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--ion-toolbar-height) * 2); /* Ajusta la altura para tener en cuenta el header y el footer */
+}
+
+.full-height {
+  flex: 1;
+  
+}
+
+ion-grid {
+  height: 100%;
+  padding: 10px;
+}
+
+ion-row {
+  height: 33.33%;
+  margin-bottom: 10px;
+}
+
+ion-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.alumno-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #ccc; /* Añade un borde para que se vea como una cuadrícula */
+  padding-left: 50px;
+  padding-right: 50px;
+  box-sizing: border-box;
+  width: 80%; /* Asegura que el item ocupe todo el espacio del ion-col */
+  height: 100%; /* Asegura que el item ocupe todo el espacio del ion-col */
+}
+
+.pictogram-img {
+  width: 60%;
+  height: 60%;
+  margin-bottom: 8px;
+}
+
+.alumno-nombre {
+  font-size: 1.5vw; /* Ajusta este valor según sea necesario para hacer el texto más grande */
+}
+
+.pagination-buttons {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+ion-item {
+  --inner-border-width: 0px; /* Elimina el borde interno del ion-item */
+}
+
+ion-button {
+  margin: 0 10px;
+  font-size: 1.2em;
+}
