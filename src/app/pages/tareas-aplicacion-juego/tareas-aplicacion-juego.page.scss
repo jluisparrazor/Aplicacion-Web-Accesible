@@ -22,6 +22,18 @@
     margin-bottom: 30px;
 }
 
+/* Estilo del enlace */
+.enlace-tarea {
+    color: #2b6cb0;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.enlace-tarea:hover {
+    color: #1e4a78;
+}
+
 /* Estilo del botón */
 .boton-completar {
     background-color: #2b6cb0;
@@ -46,6 +58,12 @@
     margin-right: 30px;
 }
 
+button.boton-completar:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+} 
+
 /* Overlay inicial */
 .overlay {
     position: fixed;
@@ -60,7 +78,7 @@
     justify-content: center;
     visibility: hidden; /* Invisible por defecto */
     opacity: 0; /* Totalmente transparente */
-    transition: background-color 1s ease, opacity 1s ease; /* Transiciones suaves */
+    transition: background-color 2s ease, opacity 2s ease; /* Transiciones suaves */
 }
 
 /* Mostrar el overlay con transición */
@@ -70,34 +88,41 @@
     background-color: rgba(0, 0, 0, 0.7); /* Oscurecimiento gradual */
 }
 
-
-/* Animación de la caja del texto */
-.animacion-confeti {
-    position: absolute;
+/* Animación del texto "¡Enhorabuena!" */
+.texto-enhorabuena {
+    font-size: 32px; /* Tamaño inicial */
+    color: #ff6600;
+    opacity: 0; /* Invisible por defecto */
+    position: absolute; /* Asegura el posicionamiento sobre el confeti */
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    font-size: 24px;
-    color: #ff6600;
-    opacity: 0;
-    animation: aparecerConfeti 7s ease-in-out forwards; /* Animación de 7 segundos */
+    transform: translate(-50%, -50%) scale(0.5); /* Tamaño reducido al inicio */
+    transition: none; /* Sin animación inicial */
 }
 
-/* Texto animado */
-.texto-enhorabuena {
-    font-size: 32px;
-    color: #ff6600;
-    z-index: 2;
-    opacity: 0; /* Invisible por defecto */
-    transform: scale(0.5); /* Tamaño reducido */
-    transition: transform 0.7s ease, opacity 0.7s ease; /* Transiciones suaves */
+/* Clase para activar la animación */
+.texto-enhorabuena.animar-texto {
+    animation: textoAnimacion 6s ease-in-out forwards; /* Animación total de 7s */
 }
 
-/* Animar texto cuando visible */
-.texto-enhorabuena.visible {
-    opacity: 1; /* Totalmente visible */
-    transform: scale(1); /* Tamaño normal */
+/* Animación del texto */
+@keyframes textoAnimacion {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.0); /* Tamaño reducido */
+    }
+    37% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(5); /* Tamaño máximo */
+    }
+    85% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(5); /* Se mantiene grande */
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5); /* Regresa al tamaño reducido */
+    }
 }
 
 /* GIF de confeti */
@@ -107,27 +132,26 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1; 
-    pointer-events: none; 
-    object-fit: cover; 
+    z-index: 1; /* Queda detrás del texto */
+    pointer-events: none;
+    object-fit: cover;
+    opacity: 0; /* Invisible inicialmente */
 }
 
-/* Animación de entrada para el texto */
-@keyframes aparecerConfeti {
+/* Clase para activar la animación */
+.gif-confeti.animar-confeti {
+    animation: confetiAnimacion 7s linear forwards; /* Animación total de 7s */
+}
+
+/* Animación del confeti */
+@keyframes confetiAnimacion {
     0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0);
+        opacity: 0; /* Invisible al inicio */
     }
-    50% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(5);
-    }
-    80% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(5);
+    20% {
+        opacity: 1; /* Totalmente visible */
     }
     100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0);
+        opacity: 0; /* Vuelve a desaparecer */
     }
 }

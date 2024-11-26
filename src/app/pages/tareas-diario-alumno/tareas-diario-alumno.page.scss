@@ -1,23 +1,110 @@
-ion-card {
-    height: 30%;
-}
+/* Centrar el título de las secciones */
+.centered-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin: 20px 0;
+  }
+  
+  /* Estilo de las tarjetas */
+  .tarea-card-pendiente {
+    cursor: pointer;
+    margin: 16px auto;
+    width: 80%; /* Más ancha */
+    max-width: 900px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    padding: 20px;
+  }
 
-ion-card-content {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 50%;
-    height: 75%;
-    transform: translateY(-50%);
-}
+  .tarea-card-completada {
+    margin: 16px auto;
+    width: 80%; /* Más ancha */
+    max-width: 900px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    padding: 20px;
+  }
+  
+  /* Espaciado del pictograma */
+  .tarea-pictograma {
+    float: left;
+    margin-right: 20px;
+    width: 72px;
+    height: 72px;
+  }
+  
+  /* Estilo del título de la tarea */
+  .tarea-nombre {
+    text-align: center;
+    font-size: 2.3em; /* Más grande */
+    font-weight: bold;
+    margin: 8px 0;
+    color: black;
+  }
+  
+  /* Detalles de la tarea (fecha y estado) */
+  .tarea-detalles {
+    display: flex;
+    justify-content: space-between; /* Centrado pero no en extremos */
+    margin-top: 12px;
+  }
+  
+  .tarea-fecha {
+    margin-left: 20%;
+    font-size: 1.4em;
+    color: #555;
+  }
+  
+  .tarea-estado {
+    margin-right: 20%;
+    font-size: 1.4em;
+    color: #555;
+  }
+  
+  .text-success {
+    color: #28a745; /* Verde */
+    font-weight: bold;
+  }
+  
+  .text-danger {
+    color: #dc3545; /* Rojo */
+    font-weight: bold;
+  }
+  
+  /* Estilo cuando no hay tareas */
+  .no-tareas {
+    text-align: center;
+    color: #aaa;
+    margin: 40px 0;
+  }
+  
+  .no-tareas-icon {
+    font-size: 3.5em;
+    margin-bottom: 16px;
+  }
+  
+  .tareas-pendientes {
+    font-size: 2.5rem; /* Tamaño más grande */
+    font-weight: bold; /* Negrita para resaltar */
+    color: #0078d4; /* Un color azul elegante */
+    text-align: center; /* Centrado en la página */
+    text-transform: uppercase; /* Convertir el texto a mayúsculas */
+    letter-spacing: 2px; /* Espaciado entre letras para un diseño moderno */
+    border-bottom: 3px solid #0078d4; /* Línea decorativa debajo */
+    padding-bottom: 10px; /* Espacio entre el texto y la línea */
+  }
 
-ion-button {
-    height: 100%;
-    width: 100%;
-    // position: relative;
-    // top: 5%;
-}
-
-ion-card-title {
-    font-size: xx-large;
-}
+  .tareas-completadas {
+    font-size: 2.5rem; /* Tamaño más grande */
+    font-weight: bold; /* Negrita para resaltar */
+    color: #0078d4; /* Un color azul elegante */
+    text-align: center; /* Centrado en la página */
+    text-transform: uppercase; /* Convertir el texto a mayúsculas */
+    letter-spacing: 2px; /* Espaciado entre letras para un diseño moderno */
+    border-bottom: 3px solid #0078d4; /* Línea decorativa debajo */
+    padding-bottom: 10px; /* Espacio entre el texto y la línea */
+    margin-top: 40px;
+  }
+  

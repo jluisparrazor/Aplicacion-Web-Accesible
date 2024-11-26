@@ -5,6 +5,8 @@ import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../../common/services/firestore.service';
 import { TeacherI } from '../../../common/models/teacher.models';
+import { SessionService } from 'src/app/common/services/session.service';
+// import { ProfI } from '../../../common/models/profesor.models';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,7 +23,11 @@ export class LoginPage{
   password: string = '';
   errorMessage: string = ''; // Variable para almacenar el mensaje de error
 
-  constructor(private readonly router: Router, private readonly firestoreService: FirestoreService) { }
+  constructor(
+    private readonly router: Router,
+    private readonly firestoreService: FirestoreService,
+    private sessionService: SessionService
+  ) { }
 
 
   async login() {
@@ -53,10 +59,14 @@ export class LoginPage{
 
 
           // Redirigimos a la página de inicio según si es administrativo o profesor
-          if(profData.administrative)
-            this.router.navigate(['/homeadministrador']);//Cambiar por homeadministrador,
-          else                                           //registrosemanaltareas es solo para probar
-          this.router.navigate(['/homeprofesor']);
+          if(profData.administrative){
+            this.sessionService.setCurrentUser(profData, 'admin');
+            this.router.navigate(['/homeadministrador']);
+          }
+          else{
+            this.sessionService.setCurrentUser(profData, 'profesor');
+            this.router.navigate(['/homeprofesor']);
+          }                                       
 
         } else {
           console.log('Contraseña incorrecta');

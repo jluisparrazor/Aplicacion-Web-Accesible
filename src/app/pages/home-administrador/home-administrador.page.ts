@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { TareaI } from 'src/app/common/models/tarea.models';
 import { doc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
+import { SessionService } from 'src/app/common/services/session.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-administrador',
@@ -35,13 +37,23 @@ export class HomeAdministradorPage{
   newTarea: TareaI;
   tarea: TareaI;
   selectedStudent: StudentI; // Estudiante al que se asignará la tarea
+  //selectedStudent: UserI; // Estudiante al que se asignará la tarea
+
+ // userActual: ProfI;
+
+
+  userActual: TeacherI;
 
   showTaskForm: boolean = false;
   showStudentForm: boolean = false;
   showTeacherForm: boolean = false; 
 
 
-  constructor(private readonly firestoreService: FirestoreService) {
+  constructor(
+    private readonly firestoreService: FirestoreService,
+    private sessionService: SessionService,
+    private router: Router
+  ) {
     
     this.load();
     this.init();
@@ -57,6 +69,19 @@ export class HomeAdministradorPage{
  
   
   init(){
+
+    //Miro que admin ha iniciado sesion
+    const user = this.sessionService.getCurrentUser();
+
+  if (user && 'Administrativo' in user && user.Administrativo) {
+    this.userActual = user as TeacherI;
+    console.log('Administrador loggeado:', this.userActual.name);
+  } else {
+    console.error('El usuario actual no es válido o no tiene permisos de administrador.');
+    this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+    return; // Detenemos la ejecución si el usuario no es válido
+  }
+
     // Inicializa los objetos de profesor, estudiante y tarea
     this.newTeacher = {
       id: null,
@@ -88,6 +113,8 @@ export class HomeAdministradorPage{
         cognitive: false,
       },
       loginType: false,
+      //id_pictogram: null,
+      //correctPassword: null,
     }
     
     this.newTarea = { 
@@ -96,6 +123,8 @@ export class HomeAdministradorPage{
       Completada: null,
       Fecha: null,
       Asignado: null,
+      Tipo: null,
+      enlace: null,
     }
   }
 

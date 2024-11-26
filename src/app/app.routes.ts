@@ -8,16 +8,12 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'homeadministrador',
+    redirectTo: 'paginainicial',
     pathMatch: 'full',
   },
   {
     path: 'loginprofesor',
     loadComponent: () => import('./pages/home-profesor/login-profesor/login-profesor.page').then( m => m.LoginPage)
-  },
-  {
-    path: 'menus',
-    loadComponent: () => import('./pages/menus/menus.page').then( m => m.MenusPage)
   },
   {
     path: 'loginalumno',
@@ -58,6 +54,10 @@ export const routes: Routes = [
   {
     path: 'material-demand',
     loadComponent: () => import('./pages/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
+  },
+  {
+    path: 'choose-menus',
+    loadComponent: () => import('./pages/choose-menus/choose-menus.page').then( m => m.ChooseMenusPage)
   },
   
 ];
