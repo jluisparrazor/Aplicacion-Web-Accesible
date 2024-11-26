@@ -139,27 +139,109 @@
             </ion-buttons>
           </ion-toolbar>
           <ion-list>
+            <!-- Nombre -->
             <ion-item>
-              <ion-input label="Nombre" labelPlacement="floating" [(ngModel)]="newStud.name"></ion-input>
+              <ion-input 
+                label="Nombre" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.name" 
+                required>
+              </ion-input>
             </ion-item>
-            <!-- <ion-item>
-              <ion-input label="Edad" labelPlacement="floating" type="number" [(ngModel)]="newStud.edad"></ion-input>
-            </ion-item> -->
+            <!-- Apellido -->
             <ion-item>
-              <!-- <ion-input label="Tipo de discapacidad" labelPlacement="floating" [(ngModel)]="newStud.TipoDiscapacidad"></ion-input> -->
+              <ion-input 
+                label="Apellido" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.surname" 
+                required>
+              </ion-input>
+            </ion-item>
+            <!-- DNI -->
+            <ion-item>
+              <ion-input 
+                label="DNI" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.dni" 
+                required>
+              </ion-input>
+            </ion-item>
+            <!-- Pictograma -->
+            <ion-item>
+              <ion-input 
+                label="ID Pictograma" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.pictogramId">
+              </ion-input>
+            </ion-item>
+            <!-- Teléfono -->
+            <ion-item>
+              <ion-input 
+                label="Teléfono" 
+                labelPlacement="floating" 
+                type="tel" 
+                [(ngModel)]="newStud.phone">
+              </ion-input>
+            </ion-item>
+            <!-- Fecha de nacimiento -->
+            <ion-item>
+              <ion-datetime 
+                label="Fecha de nacimiento" 
+                presentation="date" 
+                [(ngModel)]="newStud.birthDate">
+              </ion-datetime>
+            </ion-item>
+            <!-- Datos personales -->
+            <ion-item>
+              <ion-textarea 
+                label="Datos personales" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.personalData">
+              </ion-textarea>
+            </ion-item>
+            <!-- Tipo de perfil -->
+            <ion-title>Discapacidades:</ion-title>
+            <ion-item>
+              <ion-checkbox slot="start" [(ngModel)]="newStud.disabilities.visual"></ion-checkbox>
+              <ion-label>Discapacidad Visual</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox slot="start" [(ngModel)]="newStud.disabilities.auditory"></ion-checkbox>
+              <ion-label>Discapacidad Auditiva</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox slot="start" [(ngModel)]="newStud.disabilities.motor"></ion-checkbox>
+              <ion-label>Discapacidad Motora</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox slot="start" [(ngModel)]="newStud.disabilities.cognitive"></ion-checkbox>
+              <ion-label>Discapacidad Cognitiva</ion-label>
+            </ion-item>
+            
+            <!-- Tipo de inicio de sesión -->
+            <ion-item>
+              <ion-checkbox 
+                [(ngModel)]="newStud.loginType">
+              </ion-checkbox>
+              <ion-label>Inicio de sesión especial</ion-label>
             </ion-item>
           </ion-list>
         </ion-card>
-
+        
         <!-- Lista de alumnos y todos sus elementos -->
         <ion-list>
           <ion-item *ngFor="let stud of students; let i = index">
             <ion-label>
-              <h3>{{ teacher.name }} {{ stud.surname }}</h3>
+              <h3>{{ stud.name }} {{ stud.surname }}</h3>
               <p>Teléfono móvil: {{stud.phone}} </p>
-              <!-- <p>: {{stud.profileType}} </p> -->
-
-              <!-- <p *ngIf="stud.">Es administrativo</p> -->
+              <p *ngIf="stud.disabilities">Discapacidades: 
+                <span *ngIf="stud.disabilities.visual">Visual </span>
+                <span *ngIf="stud.disabilities.auditory">Auditiva </span>
+                <span *ngIf="stud.disabilities.motor">Motora </span>
+                <span *ngIf="stud.disabilities.cognitive">Cognitiva </span>
+              </p>
+              <p *ngIf="stud.loginType">Login especial</p>
+                
             </ion-label> 
             <!-- Botones de editar y eliminar la tarea -->
             <ion-buttons slot="end">
@@ -191,7 +273,7 @@
           <ion-toolbar>
             <ion-title>Crear profesor</ion-title>
             <ion-buttons slot="end">
-              <ion-button (click)="addOrUpdateTeacher()" shape="round" color="primary">Añadir/Actualizar Profesor</ion-button>
+              <ion-button (click)="addTeacher()" shape="round" color="primary">Añadir/Actualizar Profesor</ion-button>
               <ion-button (click)="toggleTeacherForm()" shape="round" color="danger">Cancelar</ion-button>
             </ion-buttons>
           </ion-toolbar>
@@ -305,15 +387,15 @@
               <p>Teléfono móvil: {{teacher.phone}} </p>
               <p *ngIf="teacher.administrative">Es administrativo</p>
             </ion-label> 
-            <!-- Botones de editar y eliminar la tarea -->
-            <ion-buttons slot="end">
+            <!-- Botones de editar y eliminar al profesor -->
+            <!-- <ion-buttons slot="end">
               <ion-button (click)="editTeacher(teacher)">
                 <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
               </ion-button>
               <ion-button (click)="deleteTeacher(teacher)">
                 <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
               </ion-button>
-            </ion-buttons>
+            </ion-buttons> -->
           </ion-item>
         </ion-list>
             

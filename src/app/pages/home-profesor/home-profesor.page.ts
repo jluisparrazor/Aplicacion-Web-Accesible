@@ -120,11 +120,17 @@ async addprof(){
       id: this.firestoreService.createIDDoc(),
       name: null,
       surname: null,
+      dni:null,
       pictogramId: null,
       phone: null,
       personalData: null,
       birthDate: null,
-      profileType: false,
+      disabilities: {
+        visual: false,
+        auditory: false,
+        motor: false,
+        cognitive: false,
+      },
       loginType: false,
     }
   }

@@ -54,17 +54,8 @@ export class HomeAdministradorPage{
      this.getTarea();
 
   }
-  // ngOnInit(): void {
-  //   // Cargar solo los íconos que se usan en esta página
-  //   this.ionicons.init([
-  //     'calendarOutline',
-  //     'addCircleOutline',
-  //     'create',
-  //     'trash',
-  // ]);
+ 
   
-  
-  // Método para guardar los datos del profesor
   init(){
     // Inicializa los objetos de profesor, estudiante y tarea
     this.newTeacher = {
@@ -85,11 +76,17 @@ export class HomeAdministradorPage{
       id: this.firestoreService.createIDDoc(),
       name: null,
       surname: null,
+      dni: null,
       pictogramId: null,
       phone: null,
       personalData: null,
       birthDate: null,
-      profileType: false,
+      disabilities: {
+        visual: false,
+        auditory: false,
+        motor: false,
+        cognitive: false,
+      },
       loginType: false,
     }
     
@@ -157,13 +154,8 @@ export class HomeAdministradorPage{
     }
   }
 
-  confirmarFecha() {
-    if (this.tempFecha) {
-      this.newTarea.Fecha = Timestamp.fromDate(new Date(this.tempFecha)); // Asigna la fecha confirmada al modelo
-      console.log('Fecha confirmada:', this.newTarea.Fecha);
-    }
-  }
   
+    
   //~~~~~~~~~~~~~~~~~~~~~~~~~Profesor section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo profesor a la base de datos (profesor no existente en la BD)
   // async addTeacher(){
@@ -181,24 +173,8 @@ export class HomeAdministradorPage{
 
 
   // Método para añadir o actualizar un profesor según el DNI
-async addOrUpdateTeacher() {
-  // if (!this.newTeacher.dni) {
-  //   alert("Por favor, ingresa un DNI válido.");
-  //   return;
-  // }
-
-  // // Buscar si existe un profesor con el DNI propuesto
-  // const existingTeacher = this.teachers.find(teacher => teacher.dni === this.newTeacher.dni);
-
-  // if (existingTeacher) {
-  //   // Si el profesor existe, actualizar los datos
-  //   this.newTeacher.id = existingTeacher.id; // Usar el mismo ID del profesor existente
-  //   this.getTeacher();
-  //   console.log("Profesor actualizado ->", this.newTeacher);
-  //   alert("Datos del profesor actualizados con éxito.");
-  // }
-  // else {
-    // Si el profesor no existe, crear uno nuevo
+async addTeacher() {
+  
     this.newTeacher.id = this.firestoreService.createIDDoc();
     await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
     console.log("Nuevo profesor ->", this.newTeacher);
@@ -227,15 +203,15 @@ resetTeacherForm() {
 }
   
  // Método para editar un profesor
-  editTeacher(prof: TeacherI){
-    console.log('edit -> ', prof);
-    this.newTeacher = prof;
+  editTeacher(teacher: TeacherI){
+    console.log('edit -> ', teacher);
+    this.newTeacher = teacher;
   }
 
   // Método para eliminar un profesor de la base de datos
-  async deleteTeacher(prof: TeacherI){
-    console.log('delete -> ',prof.id);
-    await this.firestoreService.deleteDocumentID('Teachers', prof.id);
+  async deleteTeacher(teacher: TeacherI){
+    console.log('delete -> ',teacher.id);
+    await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
   }
 
 
@@ -244,10 +220,11 @@ resetTeacherForm() {
   //~~~~~~~~~~~~~~~~~~~~~~~~~Student section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo estudiante a la base de datos (estudiante no existente en la BD)
   async addStud(){
+    // Hacer comprobación para que al menos estén rellenos los campos obligatorios
     this.newStud.id = this.firestoreService.createIDDoc();
     await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
     this.showStudentForm = false;  // Oculta el formulario después de guardar
-
+    this.cleanInterfaceStud();
   }
    // Método para limpiar la interfaz de nueva tarea
    cleanInterfaceStud(){ 
@@ -316,7 +293,13 @@ resetTeacherForm() {
     console.log('edit -> ', tarea);
     this.newTarea = tarea;  
   }
-   
+  
+  confirmarFecha() {
+    if (this.tempFecha) {
+      this.newTarea.Fecha = Timestamp.fromDate(new Date(this.tempFecha)); // Asigna la fecha confirmada al modelo
+      console.log('Fecha confirmada:', this.newTarea.Fecha);
+    }
+  }
  
   // Métodos para mostrar y ocultar el formulario de tarea, alumnos y profesores
   toggleTaskForm() {
@@ -340,3 +323,5 @@ resetTeacherForm() {
 
 
 }
+
+

@@ -2,10 +2,16 @@ export interface StudentI{
     id: string,
     name: string,
     surname: string,
+    dni: string,
     pictogramId: string,
     phone?: number
     personalData?: string,
     birthDate?: Date
-    profileType: boolean
+    disabilities: {
+        visual: boolean;
+        auditory: boolean;
+        motor: boolean;
+        cognitive: boolean;
+      };
     loginType: boolean
 }
