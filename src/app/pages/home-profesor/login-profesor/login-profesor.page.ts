@@ -53,7 +53,7 @@ export class LoginPage{
 
 
           // Redirigimos a la página de inicio según si es administrativo o profesor
-          if(profData.Administrativo === true)
+          if(profData.Administrativo)
             this.router.navigate(['/homeadministrador']);//Cambiar por homeadministrador,
           else                                           //registrosemanaltareas es solo para probar
           this.router.navigate(['/homeprofesor']);
