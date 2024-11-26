@@ -3,11 +3,15 @@ import { TareaI } from '../models/tarea.models';
 import { collectionData, docData, Firestore} from '@angular/fire/firestore';
 import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, Query, where, getDocs, DocumentData, updateDoc } from 'firebase/firestore';import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
+
+  // Creamos un BehaviorSubject para las tareas actualizadas
+  private tareaActualizadaSubject = new BehaviorSubject<any>(null);
+  tareaActualizada$ = this.tareaActualizadaSubject.asObservable();
 
   firestore: Firestore = inject(Firestore);
   constructor() { }
@@ -102,6 +106,7 @@ export class FirestoreService {
     })) as TareaI[];
   }
 
+  // Método para actualizar la tarea en Firestore
   async actualizarTarea(tarea: TareaI) {
     try {
       const tareaRef = doc(this.firestore, 'Tareas', tarea.id); // Referencia al documento
@@ -109,6 +114,9 @@ export class FirestoreService {
         Completada: tarea.Completada
       });
       console.log('Tarea actualizada exitosamente');
+      
+      // Emitir la tarea actualizada a los suscriptores
+      this.tareaActualizadaSubject.next(tarea);
     } catch (error) {
       console.error('Error actualizando tarea:', error);
     }

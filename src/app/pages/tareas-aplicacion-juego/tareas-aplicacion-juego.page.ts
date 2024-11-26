@@ -66,6 +66,7 @@ export class TareasAplicacionJuegoPage implements OnInit {
     // Actualiza la tarea en el servicio de Firestore
     this.firestoreService.actualizarTarea(this.tarea).then(() => {
       console.log('Tarea actualizada a completada:', this.tarea);
+      // Emitimos la tarea actualizada para que otros componentes la reciban
     }).catch(error => {
       console.error('Error actualizando tarea:', error);
     });

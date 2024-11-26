@@ -18,7 +18,7 @@
 
   <div class="tarea-aplicacion">
     <img src="assets/icon/favicon.png" alt="Pictograma de la tarea" class="pictograma-tarea" />
-    <h2 class="nombre-tarea">Nombre de la Tarea</h2>
+    <h2 class="nombre-tarea">{{tarea.Nombre}}</h2>
     <p class="descripcion-tarea">
       Enlace a la tarea: 
       <a href="{{ tarea.enlace }}" target="_blank" (click)="marcarEnlaceVisitado()">

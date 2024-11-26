@@ -35,6 +35,13 @@ export class TareasDiarioAlumnoPage implements OnInit {
       this.userActual = user as UserI;
       console.log('Usuario loggeado:', this.userActual.nombre);
       this.loadTareas(); // Cargar las tareas después de validar al usuario
+      // Nos suscribimos a los cambios de tareas actualizadas
+      this.firestoreService.tareaActualizada$.subscribe((tarea: TareaI | null) => {
+        if (tarea) {
+          // Actualizamos las listas de tareas cuando la tarea es actualizada
+          this.actualizarListaTareas(tarea);
+        }
+      });
     } else {
       console.error('El usuario actual no es válido o no es un UserI.');
       this.router.navigate(['/loginalumno']);
@@ -49,16 +56,25 @@ export class TareasDiarioAlumnoPage implements OnInit {
       const todasLasTareas = await this.firestoreService.getCollection('Tareas', [
         { field: 'Asignado', operator: '==', value: nombreUsuario },
       ]);
-
-      // Dividir las tareas en completadas e incompletas
+  
+      // Filtrar y actualizar las listas de tareas
       this.tareasIncompletas = todasLasTareas.filter(tarea => !tarea.Completada);
       this.tareasCompletadas = todasLasTareas.filter(tarea => tarea.Completada);
-
+  
       console.log('Tareas incompletas:', this.tareasIncompletas);
       console.log('Tareas completadas:', this.tareasCompletadas);
     } catch (error) {
       console.error('Error al cargar las tareas:', error);
     }
+  }
+  
+  // Método para actualizar las listas de tareas cuando se recibe una tarea actualizada
+  actualizarListaTareas(tarea: any) {
+    // Eliminar la tarea de las incompletas y agregarla a las completadas
+    this.tareasIncompletas = this.tareasIncompletas.filter(t => t.id !== tarea.id);
+    this.tareasCompletadas.push(tarea);
+    console.log('Tareas incompletas actualizadas:', this.tareasIncompletas);
+    console.log('Tareas completadas actualizadas:', this.tareasCompletadas);
   }
 
   // Navegar dependiendo del tipo de tarea
