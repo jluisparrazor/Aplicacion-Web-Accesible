@@ -1,13 +1,42 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>paginaInicial</ion-title>
+    <ion-buttons slot="end">
+      <ion-button expand="round" class="login-button" [routerLink]="['/loginprofesor']">
+        <ion-icon class="icono" name="person-circle-outline"></ion-icon>
+        Login Profesor
+      </ion-button>
+    </ion-buttons>
+    <ion-title>DiversiEduca</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">paginaInicial</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="full-height">
+  <ion-spinner *ngIf="cargando" name="bubbles" style="display: block; margin: auto;"></ion-spinner>
+  <ion-grid class="full-height">
+    <ion-row *ngFor="let row of paginatedAlumnos[currentPage]">
+      <ion-col size="4" *ngFor="let alumno of row">
+        <ion-item lines="none" (click)="seleccionarAlumno(alumno)">
+          <div class="alumno-item">
+            <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + alumno.id_pictogram" alt="Pictogram image" class="pictogram-img"></ion-img>
+            <div class="alumno-nombre">{{ alumno.nombre }}</div>
+          </div>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="primary" class="pagination-buttons">
+      <ion-button (click)="prevPage()" [disabled]="currentPage === 0" expand="block" size="large">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        Anterior
+        </ion-button>
+        <ion-button (click)="nextPage()" [disabled]="!hasMorePages()" expand="block" size="large">
+        Siguiente
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

@@ -1,83 +1,74 @@
-ion-content {
-    --background: linear-gradient(135deg, #4facfe, #00f2fe);
+.login-container {
+    text-align: center;
+    padding: 20px;
+    position: relative; /* Asegura que el contenedor tenga un contexto de posicionamiento */
+    height: 100%; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
     display: flex;
-    position:relative;
+    flex-direction: column;
+    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+  }
+  
+  .pictogram-img {
+    width: 50%;
+    height: auto;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  
+  ion-grid {
+    flex: 1; /* Permite que el grid ocupe el espacio disponible */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Asegura que el grid tenga un contexto de posicionamiento */
+  }
+  
+  /* Estilos para la cuadrícula de fondo */
+  .grid-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px; /* Ajusta el espacio entre las celdas de la cuadrícula */
+    z-index: -1; /* Asegura que la cuadrícula esté detrás del contenido */
+  }
+  
+  .grid-background div {
+    border: 1px solid #ccc; /* Añade un borde a cada celda de la cuadrícula */
+    display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Asegura que el contenido ocupe toda la altura de la pantalla */
-    padding: 1rem;
-    box-sizing: border-box; /* Asegura que el padding se incluya en el tamaño total */
-}
-
-.login-container {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    max-width: 380px;
     width: 100%;
-    text-align: center;
-    animation: fadeIn 0.5s ease-in-out;
-    box-sizing: border-box; /* Asegura que el padding se incluya en el tamaño total */
-}
-
-.login-container h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-ion-item {
-    --border-width: 0;
-    --border-radius: 6px;
-    --background: rgba(0, 0, 0, 0.05);
-    margin-bottom: 1rem;
-}
-
-ion-input {
-    font-size: 1rem;
-    color: black;
-}
-
-.login-container ion-button {
-    --background: #ff046f;
-    --background-hover: #e00460;
-    --background-focused: #ff337f;
-    --border-radius: 6px;
-    padding: 0.75rem;
-    margin-top: 1rem;
-    font-size: 1.1rem;    
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.login-container .forgot-password {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #007bff;
-    cursor: pointer;
-}
-
-.login-container .forgot-password:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-    .login-container {
-        padding: 1.5rem;
-        width: 90%;
-    }
-}
-
-/* Animación para que la caja aparezca suavemente */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+    height: 100%;
+  }
+  
+  .circles-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin: 0 10px;
+  }
+  
+  .circle.correct {
+    background-color: green;
+  }
+  
+  .circle.incorrect {
+    background-color: red;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 20px;
+  }

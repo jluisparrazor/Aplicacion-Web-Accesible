@@ -2,6 +2,7 @@
   <div class="login-container">
       <h1>Login Profesores</h1>
       
+      <!-- ESTO SE CAMBIARÁ POR EL DNI EN EL FINAL, PERO PARA LAS PRUEBAS SERÁ EL NOMBRE SIMPLEMENTE -->
       <ion-item>
           <ion-input clearInput="true" label="Nombre" labelPlacement="floating" placeholder="Enter text" type="string"[(ngModel)]="name"></ion-input>
       </ion-item>
@@ -9,7 +10,10 @@
       <ion-item>
           <ion-input label="Contraseña" labelPlacement="floating" placeholder="Enter text" type="password" [(ngModel)]="password"></ion-input>
       </ion-item>
-
+    <!-- Mostrar mensaje de error -->
+    <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+    </div>
       <ion-button expand="full" (click)="login()">Login</ion-button>
       <div class="forgot-password">Forgot Password?</div>
   </div>

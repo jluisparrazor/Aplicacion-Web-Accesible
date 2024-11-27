@@ -3,5 +3,7 @@ export interface UserI{
     edad?: number;
     id: string;
     password: string;
+    correctPassword: Array<number>;
     TipoDiscapacidad: Array<string>;
+    id_pictogram: string;
 }
