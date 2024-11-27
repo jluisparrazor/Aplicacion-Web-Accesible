@@ -3,6 +3,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonIte
 import { TeacherI } from '../../common/models/teacher.models';
 import { StudentI } from '../../common/models/student.models';
 
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
@@ -17,7 +18,7 @@ import { StudentService } from 'src/app/common/services/student.service';
   standalone: true,
   imports: [IonAvatar, IonImg, IonCol, IonRow, IonGrid, IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
     IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule 
-  ],
+
 })
 export class HomePage {
   students: StudentI[] = [];
