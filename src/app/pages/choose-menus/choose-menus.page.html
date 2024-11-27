@@ -1,7 +1,7 @@
 <!-- HEADER -->
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-button color="medium" slot="start">Salir</ion-button>
+    <ion-button color="medium" slot="start" (click)="salir()">Salir</ion-button>
     <ion-title class="ion-text-center"><strong>Tarea Menús</strong></ion-title>
     <ion-button [color]="allClassesCompleted() ? 'success' : 'medium'" (click)="completeTask()" slot="end"> ¡Completar!</ion-button>
   </ion-toolbar>

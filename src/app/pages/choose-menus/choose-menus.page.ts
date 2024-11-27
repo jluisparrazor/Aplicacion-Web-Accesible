@@ -8,6 +8,7 @@ import { Timestamp } from 'firebase/firestore';
 import { ClassService } from '../../common/services/class.service';
 import { MenuService } from '../../common/services/menu.service';
 import { ArasaacService } from 'src/app/common/services/arasaac.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { ArasaacService } from 'src/app/common/services/arasaac.service';
   templateUrl: './choose-menus.page.html',
   styleUrls: ['./choose-menus.page.scss'],
   standalone: true,
-  imports: [IonImg, IonFooter, IonCol, IonRow, IonGrid, IonIcon,  IonModal, IonCardTitle, IonCardHeader, IonCardContent, IonCard, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonImg, IonFooter, IonCol, IonRow, IonGrid, IonIcon,  IonModal, IonCardTitle, IonCardContent, IonCard, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ChooseMenusPage implements OnInit  {
   // IMPORTANTE - Sería interesante añadir el estado de la clase con el número 
@@ -39,9 +40,10 @@ export class ChooseMenusPage implements OnInit  {
 
 
 
-  constructor(private classService: ClassService, 
-              private menuService: MenuService,
-              private arasaacService: ArasaacService) {}
+  constructor(private classService: ClassService,
+              private menuService: MenuService, 
+              private arasaacService: ArasaacService,
+              private router: Router,) {}
 
   ngOnInit() {
     
@@ -164,6 +166,16 @@ export class ChooseMenusPage implements OnInit  {
     return Object.values(this.infoClasses).every(info => info.state);
   }
 
+
+  getNumPict(num: number): string{
+    // return this.arasaacService.getPictogramImageUrl(this.arasaacService.numbersPictograms[num]);
+    return `../../../assets/imagenes/numbers/${num}.png`;
+  }
+
+  getPictogram(pictogramId:string): string{
+    return this.arasaacService.getPictogramImageUrl(pictogramId);
+  }  
+  
   completeTask(){
     if (this.allClassesCompleted()){
       this.menuService.createMenu(this.menu).then(() => {
@@ -174,12 +186,8 @@ export class ChooseMenusPage implements OnInit  {
     }
   }
 
-  getNumPict(num: number): string{
-    // return this.arasaacService.getPictogramImageUrl(this.arasaacService.numbersPictograms[num]);
-    return `../../../assets/imagenes/numbers/${num}.png`;
+  salir(){
+    //this.router.navigate(['/home']);
   }
 
-  getPictogram(pictogramId:string): string{
-    return this.arasaacService.getPictogramImageUrl(pictogramId);
-  }
 }
