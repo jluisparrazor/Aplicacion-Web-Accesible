@@ -233,14 +233,17 @@
           <ion-item *ngFor="let stud of students; let i = index">
             <ion-label>
               <h3>{{ stud.name }} {{ stud.surname }}</h3>
-              <p>Teléfono móvil: {{stud.phone}} </p>
+              <p *ngIf="stud.phone">Teléfono móvil: {{stud.phone}} </p>
               <p *ngIf="stud.disabilities">Discapacidades: 
                 <span *ngIf="stud.disabilities.visual">Visual </span>
                 <span *ngIf="stud.disabilities.auditory">Auditiva </span>
                 <span *ngIf="stud.disabilities.motor">Motora </span>
                 <span *ngIf="stud.disabilities.cognitive">Cognitiva </span>
               </p>
-              <p *ngIf="stud.loginType">Login especial</p>
+                <p *ngIf="stud.loginType; else noSpecialLogin">Tiene login especial</p>
+                <ng-template #noSpecialLogin>
+                <p>No tiene login especial</p>
+                </ng-template>
                 
             </ion-label> 
             <!-- Botones de editar y eliminar la tarea -->
@@ -384,8 +387,11 @@
           <ion-item *ngFor="let teacher of teachers; let i = index">
             <ion-label>
               <h3>{{ teacher.name }} {{ teacher.surname }}</h3>
-              <p>Teléfono móvil: {{teacher.phone}} </p>
+              <p *ngIf="teacher.phone">Teléfono móvil: {{teacher.phone}} </p>
+              <p>DNI: {{teacher.dni}}</p>
               <p *ngIf="teacher.administrative">Es administrativo</p>
+              <p *ngIf="teacher.email">Email: {{teacher.email}}</p>
+
             </ion-label> 
             <!-- Botones de editar y eliminar al profesor -->
             <!-- <ion-buttons slot="end">
