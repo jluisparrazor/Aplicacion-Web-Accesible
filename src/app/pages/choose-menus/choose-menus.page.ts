@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonModal, IonButtons, IonIcon, IonGrid, IonRow, IonCol, IonFooter } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonModal, IonButtons, IonIcon, IonGrid, IonRow, IonCol, IonFooter, IonImg } from '@ionic/angular/standalone';
 import { Class } from '../../common/models/class.models'; 
 import { MenuType, Menu } from '../../common/models/menu.models'; 
 import { Timestamp } from 'firebase/firestore';
 import { ClassService } from '../../common/services/class.service';
 import { MenuService } from '../../common/services/menu.service';
+import { ArasaacService } from 'src/app/common/services/arasaac.service';
 
 
 @Component({
@@ -14,7 +15,7 @@ import { MenuService } from '../../common/services/menu.service';
   templateUrl: './choose-menus.page.html',
   styleUrls: ['./choose-menus.page.scss'],
   standalone: true,
-  imports: [IonFooter, IonCol, IonRow, IonGrid, IonIcon, IonButtons,  IonModal, IonCardTitle, IonCardHeader, IonCardContent, IonCard, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonImg, IonFooter, IonCol, IonRow, IonGrid, IonIcon,  IonModal, IonCardTitle, IonCardHeader, IonCardContent, IonCard, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ChooseMenusPage implements OnInit  {
   // IMPORTANTE - Sería interesante añadir el estado de la clase con el número 
@@ -30,19 +31,23 @@ export class ChooseMenusPage implements OnInit  {
     date: Timestamp.fromDate(new Date(new Date().setHours(0, 0, 0, 0))),
     menus: {}
   };
-  currentPage: number = 0;
+  menuTypesPerPage: number = 2;
+  currentMTPage: number = 0;
+  classesPerPage: number = 4;
+  currentCPage: number = 0;
+
+
+
 
   constructor(private classService: ClassService, 
-              private menuService: MenuService) {}
+              private menuService: MenuService,
+              private arasaacService: ArasaacService) {}
 
   ngOnInit() {
     
     this.loadStructure();
   }
 
-  convertMenuToJson() {
-    return JSON.stringify(this.menu, null, 2);
-  }
 
   loadStructure() {
     this.classService.getAllClasses().subscribe(classes => {
@@ -85,7 +90,7 @@ export class ChooseMenusPage implements OnInit  {
   }
 
   incrementStudents() {
-    if (this.selectClass) {
+    if (this.selectClass && this.infoClasses[this.selectedClass.name].n < 30) {
       this.infoClasses[this.selectedClass.name].n++;
       this.updateClassState();
     }
@@ -120,22 +125,40 @@ export class ChooseMenusPage implements OnInit  {
     }
   }
 
-  getMenuTypesForCurrentPage(): MenuType[] {
-    const startIndex = this.currentPage * 3;
-    return this.menuTypes.slice(startIndex, startIndex + 3);
+  getMenuTypesForcurrentPage(): MenuType[] {
+    const startIndex = this.currentMTPage * this.menuTypesPerPage;
+    return this.menuTypes.slice(startIndex, startIndex + this.menuTypesPerPage);
   }
 
-  nextPage() {
-    if ((this.currentPage + 1) * 3 < this.menuTypes.length) {
-      this.currentPage++;
+  nextMTPage() {
+    if ((this.currentMTPage + 1) * this.menuTypesPerPage < this.menuTypes.length) {
+      this.currentMTPage++;
     }
   }
 
-  previousPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
+  previousMTPage() {
+    if (this.currentMTPage > 0) {
+      this.currentMTPage--;
     }
   }
+
+  getClassesForcurrentPage(): Class[] {
+    const startIndex = this.currentCPage * this.classesPerPage;
+    return this.classes.slice(startIndex, startIndex + this.classesPerPage);
+  }
+
+  nextCPage() {
+    if ((this.currentCPage + 1) * this.classesPerPage < this.classes.length) {
+      this.currentCPage++;
+    }
+  }
+
+  previousCPage() {
+    if (this.currentCPage > 0) {
+      this.currentCPage--;
+    }
+  }
+
 
   allClassesCompleted(){
     return Object.values(this.infoClasses).every(info => info.state);
@@ -150,4 +173,13 @@ export class ChooseMenusPage implements OnInit  {
       alert('No se pueden guardar los menús, hay clases sin completar.');
     }
   }
+
+  getNumPict(num: number): string{
+    // return this.arasaacService.getPictogramImageUrl(this.arasaacService.numbersPictograms[num]);
+    return `../../../assets/imagenes/numbers/${num}.png`;
   }
+
+  getPictogram(pictogramId:string): string{
+    return this.arasaacService.getPictogramImageUrl(pictogramId);
+  }
+}
