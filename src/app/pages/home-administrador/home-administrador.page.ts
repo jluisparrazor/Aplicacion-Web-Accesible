@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
@@ -11,6 +11,7 @@ import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { Router } from '@angular/router';
+import { TeacherService } from 'src/app/common/services/teacher.service';
 
 @Component({
   selector: 'app-home-administrador',
@@ -47,8 +48,9 @@ export class HomeAdministradorPage{
 
   constructor(
     private readonly firestoreService: FirestoreService,
-    private sessionService: SessionService,
-    private router: Router
+    private readonly sessionService: SessionService,
+    private readonly router: Router,
+    private readonly teacherService: TeacherService,
   ) {
     
     this.load();
@@ -72,31 +74,17 @@ export class HomeAdministradorPage{
     // const profId = "e1873ba9-8853-44c4-8fd3-4469d7cadb91";
     // const user =  await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`)
 
-
-  if (user && 'administrative' in user) {
-  // if(true){
-    this.userActual = user as unknown as TeacherI;
-    console.log('Administrador loggeado:', this.userActual.name);
-  } else {
-    console.error('El usuario actual no es válido o no tiene permisos de administrador.');
-    this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
-    return; // Detenemos la ejecución si el usuario no es válido
-  }
+    if (user && (user as TeacherI).administrative === true) {
+      this.userActual = user as unknown as TeacherI;
+      console.log('Administrador loggeado:', this.userActual.name);
+    } else {
+      console.error('El usuario actual no es válido o no tiene permisos de administrador. ->' , user);
+      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+      return; // Detenemos la ejecución si el usuario no es válido
+    }
 
     // Inicializa los objetos de profesor, estudiante y tarea
-    this.newTeacher = {
-      id: null,
-      name: null,
-      surname: null,
-      password: null,
-      dni:null,
-      administrative: false,
-      pictogramId: null,
-      email: null,
-      birthdate: null,
-      phone: null,
-      personalData: null,
-    }
+    this.newTeacher = this.teacherService.initTeacher();
 
     this.newStud = {
       id: this.firestoreService.createIDDoc(),
@@ -131,11 +119,9 @@ export class HomeAdministradorPage{
   // Método para cargar los datos de la base de datos
   load(){
     // Carga los profesores de la base de datos
-    this.firestoreService.getCollectionChanges<TeacherI>('Teachers').subscribe((data) => {
-      if (data) {
-        this.teachers = data;
-      }
-    });  
+    this.teacherService.loadTeachers().then((teachers) => {
+      this.teachers = teachers;
+    });
 
     // Carga las tasks de la base de datos
     this.firestoreService.getCollectionChanges<TareaI>('Tareas').subscribe((data) => {
@@ -157,8 +143,11 @@ export class HomeAdministradorPage{
   // GETTERS
   // Método para obtener un profesor de la base de datos
   async getTeacher(){
-    const res = await this.firestoreService.getDocument<TeacherI>('Teachers/'+ this.newTeacher.id);
-    this.teacher = res.data();
+    // const res = await this.firestoreService.getDocument<TeacherI>('Teachers/'+ this.newTeacher.id);
+    // this.teacher = res.data();
+    this.teacherService.getTeacher(this.newTeacher.id).then((teacher) => {
+      this.teacher = teacher;
+    });
     console.log('Profesor:', this.teacher);
   }
 
@@ -203,36 +192,41 @@ export class HomeAdministradorPage{
 
   // Método para añadir o actualizar un profesor según el DNI
 async addTeacher() {
-    this.newTeacher.id = this.firestoreService.createIDDoc();
 
-    await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
-    console.log("Nuevo profesor ->", this.newTeacher);
-    alert("Profesor añadido con éxito.");
+    // this.newTeacher.id = this.firestoreService.createIDDoc();
+
+    // await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
+    this.teacherService.addTeacher(this.newTeacher);
+    
     this.showTeacherForm = false;
-  // Limpiar el formulario y ocultar
-  this.cleanInterfaceTeacher();
-}
-
-cleanInterfaceTeacher(){ 
-  for (const key in this.newTeacher) {
-    if (this.newTeacher.hasOwnProperty(key)) {
-      (this.newTeacher as any)[key] = null;
-    }
-  }
+    // Limpiar el formulario y ocultar
+    this.teacherService.cleanTeacherInterface(this.newTeacher);
 }
   
+    // // Método para guardar nuevos datos de un profesor (ya existente) en la base de datos
+    // async saveTeacher() {
+    //   this.teacherService.editTeacher(this.newTeacher);
+    // }
+    
  // Método para editar un profesor
-  editTeacher(teacher: TeacherI){
-    console.log('edit -> ', teacher);
+   editTeacher(teacher: TeacherI){
+    // console.log('edit -> ', teacher);
+    this.teacherService.editTeacher(teacher);
     this.newTeacher = teacher;
   }
 
   // Método para eliminar un profesor de la base de datos
   async deleteTeacher(teacher: TeacherI){
-    console.log('delete -> ',teacher.id);
-    await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
+  //   console.log('delete -> ',teacher.id);
+  //   await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
+    this.teacherService.deleteTeacher(teacher.id);
+    console.log('delete -> ',teacher.name, teacher.surname);
+
   }
 
+  toggleTeacherForm() {
+    this.showTeacherForm = !this.showTeacherForm;
+  }
 
 
 
@@ -340,10 +334,7 @@ cleanInterfaceTeacher(){
       this.showStudentForm = !this.showStudentForm;
   }
 
-  toggleTeacherForm() {
-    console.log('toggleTeacherForm activated');
-    this.showTeacherForm = !this.showTeacherForm;
-  }
+
 
   // ChangePassword() {
   //   this.navCtrl.navigateForward('/change-password');
