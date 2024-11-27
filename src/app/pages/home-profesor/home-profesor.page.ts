@@ -17,9 +17,7 @@ import { StudentService } from 'src/app/common/services/student.service';
   styleUrls: ['home-profesor.page.scss'],
   standalone: true,
   imports: [IonAvatar, IonImg, IonCol, IonRow, IonGrid, IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
-    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule 
-
-})
+    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule,RouterModule]})
 export class HomePage {
   students: StudentI[] = [];
  

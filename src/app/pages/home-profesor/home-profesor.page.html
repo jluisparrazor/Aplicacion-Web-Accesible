@@ -19,14 +19,19 @@
 <ion-content [fullscreen]="true">
         <ion-grid>
           <ion-row>
-            <ion-title>Alumnos:</ion-title>
+            <ion-toolbar>
+              <ion-title>Alumnos:</ion-title>
+              <ion-buttons slot="end">
+                <!-- Botón para petición de material -->
+                <ion-button class="peticion-material" expand="block" color="primary" [routerLink]="'/material-demand'">
+                  <ion-icon slot="start" name="create-outline"></ion-icon> 
+                  Petición de material
+                </ion-button>
+                
+              </ion-buttons>
+            </ion-toolbar>
 
-            <!-- Botón para petición de material -->
-            <ion-button class="peticion-material" expand="block" color="primary" [routerLink]="'/material-demand'">
-              <ion-icon slot="start" name="create-outline"></ion-icon> 
-              Petición de material
-            </ion-button>
-            <ion-col size="6" *ngFor="let stud of students; let i = index">
+           <ion-col size="6" *ngFor="let stud of students; let i = index">
               <ion-item>
                 <!-- Imagen del pictograma -->
                 <ion-avatar slot="end">
