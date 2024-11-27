@@ -4,7 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../../common/services/firestore.service';
-import { ProfI } from '../../../common/models/profesor.models';
+import { TeacherI } from '../../../common/models/teacher.models';
+import { SessionService } from 'src/app/common/services/session.service';
+// import { ProfI } from '../../../common/models/profesor.models';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,7 +23,11 @@ export class LoginPage{
   password: string = '';
   errorMessage: string = ''; // Variable para almacenar el mensaje de error
 
-  constructor(private readonly router: Router, private readonly firestoreService: FirestoreService) { }
+  constructor(
+    private readonly router: Router,
+    private readonly firestoreService: FirestoreService,
+    private sessionService: SessionService
+  ) { }
 
 
   async login() {
@@ -39,24 +45,28 @@ export class LoginPage{
     }
 
     // Verificamos si el profesor existe en la base de datos
-      const profId = await this.firestoreService.getDocumentIDByField('Profesores', 'Nombre', this.name);
+      const profId = await this.firestoreService.getDocumentIDByField('Teachers', 'name', this.name);
     
     //Si existe el profesor, obtenemos sus datos
       if (profId) {
-        const profDoc = await this.firestoreService.getDocument<ProfI>(`Profesores/${profId}`);
+        const profDoc = await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`);
         const profData = profDoc.data();
 
         // console.log('profData -> ', profData);
 
         // Verificamos que sea el profesor inserte la contraseña correcta 
-        if (profData && profData.Password === this.password) {
+        if (profData && profData.password === this.password) {
 
 
           // Redirigimos a la página de inicio según si es administrativo o profesor
-          if(profData.Administrativo === true)
-            this.router.navigate(['/homeadministrador']);//Cambiar por homeadministrador,
-          else                                           //registrosemanaltareas es solo para probar
-          this.router.navigate(['/homeprofesor']);
+          if(profData.administrative){
+            this.sessionService.setCurrentUser(profData, 'admin');
+            this.router.navigate(['/homeadministrador']);
+          }
+          else{
+            this.sessionService.setCurrentUser(profData, 'teacher');
+            this.router.navigate(['/homeprofesor']);
+          }                                       
 
         } else {
           console.log('Contraseña incorrecta');

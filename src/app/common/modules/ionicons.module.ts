@@ -11,17 +11,15 @@ import * as icons from 'ionicons/icons';
        
 })
 export class IoniconsModule {
-    constructor(){
-        this.init();
-    }
+    constructor(){}
 
-    init(){
-        for(const key in icons){
-         if(Object.prototype.hasOwnProperty.call(icons, key)){
-            const name = key as keyof typeof icons;
-            console.log(key, '  ', icons[name])
-            addIcons({[key]: icons[name]});
-         }
-        }
-    }
+    // init(requiredIcons: (keyof typeof icons)[]) {
+    //     requiredIcons.forEach(iconName => {
+    //         if (icons[iconName]) {
+    //             addIcons({ [iconName]: icons[iconName] });
+    //         } else {
+    //             console.warn(`El ícono "${iconName}" no existe en la librería de Ionicons.`);
+    //         }
+    //     });
+    // }
 }

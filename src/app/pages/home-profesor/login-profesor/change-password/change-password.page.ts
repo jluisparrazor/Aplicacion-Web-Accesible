@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonItem, IonLabel, IonButton } from '@ionic/angular/standalone';
-import { UserI } from 'src/app/common/models/users.models';
+import { StudentI } from 'src/app/common/models/student.models';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { AlertController, NavController } from '@ionic/angular';
 
@@ -18,7 +18,7 @@ export class ChangePasswordPage {
   currentPassword: string = '';
   newPassword: string = '';
   confirmPassword: string = '';
-  user:UserI;
+  user:StudentI;
 
   constructor(
     private firestoreService: FirestoreService,
@@ -40,19 +40,19 @@ export class ChangePasswordPage {
 
   }
 
-  async changePassword(){
-    if(this.currentPassword === this.user.password){
-      if(this.newPassword === this.confirmPassword){
-        this.user.password = this.newPassword;
-       // await this.firestoreService.updateDocument(this.user, 'Usuarios', this.user.id);
-        this.navCtrl.navigateForward('homeprofesor');
-      }else{
-        this.presentAlert('Error', 'Las contraseñas no coinciden');
-      }
-    }else{
-      this.presentAlert('Error', 'La contraseña actual es incorrecta');
-    }
-  }
+  // async changePassword(){
+  //   if(this.currentPassword === this.user){
+  //     if(this.newPassword === this.confirmPassword){
+  //       this.user.password = this.newPassword;
+  //      // await this.firestoreService.updateDocument(this.user, 'Usuarios', this.user.id);
+  //       this.navCtrl.navigateForward('homeprofesor');
+  //     }else{
+  //       this.presentAlert('Error', 'Las contraseñas no coinciden');
+  //     }
+  //   }else{
+  //     this.presentAlert('Error', 'La contraseña actual es incorrecta');
+  //   }
+  // }
   
 
 }

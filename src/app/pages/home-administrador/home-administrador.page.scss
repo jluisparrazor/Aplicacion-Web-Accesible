@@ -1,18 +1,54 @@
-// .center-spinner {
-//     position: absolute;
-//     top: 50%;
-//     left: 50%;
-//     transform: translate(-50%, -50%);
-//     z-index: 9999; /* Asegura que se mantenga sobre otros elementos */
-//   }
-
 .custom-button {
-    background-color: #387ef5; /* Azul */
-    color: white;
-    border-radius: 20px; /* Bordes redondeados */
-    transition: background-color 0.3s ease;
-}
-.custom-button:hover {
-    background-color: #2b6cb0; /* Un azul más oscuro */
-}
- 
+    background-color: #4caf50;
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    transition: transform 0.2s, background-color 0.3s;
+  
+    &:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+  }
+  
+  .card-add-tarea {
+    background-color: #f4f4f4;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    margin: 1rem 0;
+  
+    ion-item {
+      margin-bottom: 0.5rem;
+    }
+  
+    ion-button {
+      margin: 0.5rem 0;
+    }
+  }
+  
+  ion-list {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+  
+    ion-item {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+  
+      ion-label {
+        h3 {
+          margin: 0;
+          font-weight: bold;
+        }
+        p {
+          margin: 0.25rem 0;
+          color: #666;
+        }
+      }
+    }
+  }
+  

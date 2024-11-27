@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonSpinner, IonList, IonImg, IonGrid, IonRow, IonCol, IonFooter, IonButton, IonButtons } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonSpinner, IonList, IonImg, IonGrid, IonRow, IonCol, IonFooter, IonButton, IonButtons, IonIcon } from '@ionic/angular/standalone';
 import { PictogramSearchComponent } from 'src/app/shared/pictogram-search/pictogram-search.component';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { UserI } from 'src/app/common/models/users.models';
+import { RouterModule, Router } from '@angular/router';
+import { SessionService } from 'src/app/common/services/session.service'; // Importa SessionService
 
 @Component({
   selector: 'app-pagina-inicial',
   templateUrl: './pagina-inicial.page.html',
   styleUrls: ['./pagina-inicial.page.scss'],
   standalone: true,
-  imports: [IonImg, IonList, IonSpinner, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonGrid, IonRow, IonCol, IonFooter, IonButton, IonButtons]
+  imports: [IonIcon, IonImg, IonList, IonSpinner, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonGrid, IonRow, IonCol, IonFooter, IonButton, IonButtons, RouterModule]
 })
 export class PaginaInicialPage implements OnInit {
   alumnos: UserI[] = [];
@@ -20,7 +22,7 @@ export class PaginaInicialPage implements OnInit {
   itemsPerPage: number = 9;
   cargando: boolean = false;
 
-  constructor(private firestoreService: FirestoreService) { }
+  constructor(private firestoreService: FirestoreService, private router: Router, private sessionService: SessionService) { }
 
   ngOnInit() {
     this.loadAlumnos();
@@ -50,8 +52,8 @@ export class PaginaInicialPage implements OnInit {
   }
 
   seleccionarAlumno(alumno: UserI) {
-    console.log('Alumno seleccionado:', alumno);
-    // Aquí puedes añadir la lógica para manejar la selección del alumno
+    this.sessionService.setCurrentUser(alumno, 'user');
+    this.router.navigate(['/loginalumno']);
   }
 
   prevPage() {

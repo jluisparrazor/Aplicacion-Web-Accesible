@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'material-demand',
+    redirectTo: 'paginainicial',
     pathMatch: 'full',
   },
   {

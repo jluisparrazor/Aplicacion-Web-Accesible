@@ -39,11 +39,11 @@
         <ion-list>
         @for (user of students; track $index) {
         <ion-item>
-          <ion-label>Nombre: {{user.nombre}}
-            <p>Edad: {{user.edad}}</p>
+          <ion-label>Nombre: {{user.name}} {{user.surname}}
+            <!-- <p>Edad: {{user.name}}</p> -->
           </ion-label>
       
-          <ion-buttons slot="end">
+          <!-- <ion-buttons slot="end">
             <ion-button (click)="editStu(user)">
               <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
             </ion-button>
@@ -52,7 +52,7 @@
               <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
             </ion-button>
         
-          </ion-buttons>
+          </ion-buttons> -->
                 
         </ion-item>
         
@@ -61,7 +61,7 @@
         </ion-list>
       </ion-col>
 
-      <ion-col>
+      <!-- <ion-col>
         <ion-toolbar>
           <ion-title>Profesores:</ion-title>
           <ion-buttons slot="end">
@@ -71,28 +71,28 @@
           </ion-buttons>
         </ion-toolbar>
         <ion-list>
-        @for (user of profs; track $index) {
+        @for (prof of profs; track $index) {
         <ion-item>
-          <ion-label>Nombre: {{user.Nombre}}
-            <p>Edad: {{user.Edad}}</p>
+          <ion-label>Nombre: {{prof.name}}
+            <p>Edad: {{prof..Edad}}</p> 
           </ion-label>
-      
-          <ion-buttons slot="end">
-            <ion-button (click)="edit(user)">
+       -->
+          <!-- <ion-buttons slot="end">
+            <ion-button (click)="edit(prof)">
               <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
             </ion-button>
                   
-            <ion-button (click)="delete(user)">
+            <ion-button (click)="delete(prof)">
               <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
             </ion-button>
         
           </ion-buttons>
-                
+                 
         </ion-item>
         
         }
         </ion-list>
-      </ion-col>
+      </ion-col>-->
     </ion-row>
   </ion-grid>
 </ion-content>

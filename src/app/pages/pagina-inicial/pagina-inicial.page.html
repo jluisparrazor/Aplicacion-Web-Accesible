@@ -1,6 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>paginaInicial</ion-title>
+    <ion-buttons slot="end">
+      <ion-button expand="round" class="login-button" [routerLink]="['/loginprofesor']">
+        <ion-icon class="icono" name="person-circle-outline"></ion-icon>
+        Login Profesor
+      </ion-button>
+    </ion-buttons>
+    <ion-title>DiversiEduca</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -23,8 +29,14 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="primary" class="pagination-buttons">
-      <ion-button (click)="prevPage()" [disabled]="currentPage === 0" expand="block" size="large">Anterior</ion-button>
-      <ion-button (click)="nextPage()" [disabled]="!hasMorePages()" expand="block" size="large">Siguiente</ion-button>
+      <ion-button (click)="prevPage()" [disabled]="currentPage === 0" expand="block" size="large">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        Anterior
+        </ion-button>
+        <ion-button (click)="nextPage()" [disabled]="!hasMorePages()" expand="block" size="large">
+        Siguiente
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+        </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>
