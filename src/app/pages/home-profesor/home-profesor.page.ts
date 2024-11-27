@@ -146,6 +146,7 @@ async addprof(){
         motor: false,
         cognitive: false,
       },
+      correctPassword:null,
       loginType: false,
 //      id_pictogram: null,
   //    correctPassword: null,

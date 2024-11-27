@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
-import { UserI } from 'src/app/common/models/users.models';
+import { StudentI } from 'src/app/common/models/student.models';
 import { TareaI } from 'src/app/common/models/tarea.models';
 
 @Component({
@@ -18,7 +18,7 @@ import { TareaI } from 'src/app/common/models/tarea.models';
 export class TareasAplicacionJuegoPage implements OnInit {
   tareaCompletada: boolean = false;
   mostrarConfeti: boolean = false;
-  userActual: UserI;
+  userActual: StudentI;
   tarea: TareaI;
   enlaceVisitado = false;
 
@@ -40,10 +40,10 @@ export class TareasAplicacionJuegoPage implements OnInit {
     const user = this.sessionService.getCurrentUser();
   
     if (user && 'password' in user) {
-      this.userActual = user as UserI;
-      console.log('Usuario loggeado:', this.userActual.nombre);
+      this.userActual = user as unknown as StudentI;
+      console.log('Usuario loggeado:', this.userActual.name);
     } else {
-      console.error('El usuario actual no es válido o no es un UserI.');
+      console.error('El usuario actual no es válido o no es un StudentI.');
       this.router.navigate(['/loginalumno']);
     }
   }

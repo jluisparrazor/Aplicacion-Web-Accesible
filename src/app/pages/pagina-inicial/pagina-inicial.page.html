@@ -17,8 +17,8 @@
       <ion-col size="4" *ngFor="let alumno of row">
         <ion-item lines="none" (click)="seleccionarAlumno(alumno)">
           <div class="alumno-item">
-            <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + alumno.id_pictogram" alt="Pictogram image" class="pictogram-img"></ion-img>
-            <div class="alumno-nombre">{{ alumno.nombre }}</div>
+            <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + alumno.pictogramId" alt="Pictogram image" class="pictogram-img"></ion-img>
+            <div class="alumno-nombre">{{ alumno.name }}</div>
           </div>
         </ion-item>
       </ion-col>

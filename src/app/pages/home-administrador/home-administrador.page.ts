@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
 import { TareaI } from 'src/app/common/models/tarea.models';
-import { doc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { Router } from '@angular/router';
@@ -67,14 +67,20 @@ export class HomeAdministradorPage{
 
   }
  
-  
-  init(){
+  //QUITAR EL ASYNC 
+  async init(){
 
     //Miro que admin ha iniciado sesion
-    const user = this.sessionService.getCurrentUser();
+    // const user = this.sessionService.getCurrentUser();
+    
+    // MODO SÓLO DE PRUEBA ID DE PAULA (ADMIN)
+    const profId = "e1873ba9-8853-44c4-8fd3-4469d7cadb91";
+    const user =  await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`)
 
-  if (user && 'administrative' in user) {
-    this.userActual = user as TeacherI;
+
+  // if (user && 'administrative' in user) {
+  if(true){
+    this.userActual = user as unknown as TeacherI;
     console.log('Administrador loggeado:', this.userActual.name);
   } else {
     console.error('El usuario actual no es válido o no tiene permisos de administrador.');
@@ -113,8 +119,9 @@ export class HomeAdministradorPage{
         cognitive: false,
       },
       loginType: false,
+      correctPassword: null,
+
       //id_pictogram: null,
-      //correctPassword: null,
     }
     
     this.newTarea = { 
@@ -203,32 +210,22 @@ export class HomeAdministradorPage{
 
   // Método para añadir o actualizar un profesor según el DNI
 async addTeacher() {
-  
     this.newTeacher.id = this.firestoreService.createIDDoc();
+
     await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
     console.log("Nuevo profesor ->", this.newTeacher);
     alert("Profesor añadido con éxito.");
-  // }
-
+    this.showTeacherForm = false;
   // Limpiar el formulario y ocultar
-  this.resetTeacherForm();
-  this.showTeacherForm = false;
+  this.cleanInterfaceTeacher();
 }
 
-resetTeacherForm() {
-  this.newTeacher = {
-    id: null,
-    name: null,
-    surname: null,
-    dni: null,
-    password: null,
-    administrative: false,
-    pictogramId: null,
-    email: null,
-    birthdate: null,
-    phone: null,
-    personalData: null,
-  };
+cleanInterfaceTeacher(){ 
+  for (const key in this.newTeacher) {
+    if (this.newTeacher.hasOwnProperty(key)) {
+      (this.newTeacher as any)[key] = null;
+    }
+  }
 }
   
  // Método para editar un profesor
@@ -254,11 +251,13 @@ resetTeacherForm() {
     await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
     this.showStudentForm = false;  // Oculta el formulario después de guardar
     this.cleanInterfaceStud();
+
+ 
   }
    // Método para limpiar la interfaz de nueva tarea
    cleanInterfaceStud(){ 
       for (const key in this.newStud) {
-        if (this.newStud.hasOwnProperty(key) && key !== 'id') {
+        if (this.newStud.hasOwnProperty(key)) {
           (this.newStud as any)[key] = null;
         }
       }
@@ -310,6 +309,13 @@ resetTeacherForm() {
     await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.id); 
   }
 
+  cleanInterfaceTask(){ 
+    for (const key in this.newTarea) {
+      if (this.newTarea.hasOwnProperty(key)) {
+        (this.newTarea as any)[key] = null;
+      }
+    }
+  }
 
  // Método para eliminar una tarea de la base de datos
   async deleteTarea(tarea: TareaI){
