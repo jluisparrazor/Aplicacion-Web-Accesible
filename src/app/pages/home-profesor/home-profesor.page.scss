@@ -82,3 +82,37 @@
 //       transform: translateY(0);
 //   }
 // }
+/* Estilos específicos para el botón de "Petición de material" */
+.peticion-material {
+    --background: #4caf50; /* Cambia el color de fondo si lo deseas */
+    --border-radius: 6px; /* Redondear bordes del botón */
+    padding: 0.6rem 1rem; /* Aumenta el padding para dar más espacio */
+    font-size: 0.8rem; /* Tamaño de fuente adecuado */
+    margin: 0 0.5rem; /* Espaciado entre botones */
+    display: flex;
+    align-items: center; /* Asegura que el ícono y el texto estén alineados */
+    justify-content: flex-start; /* Asegura que los elementos estén alineados desde el inicio */
+    
+    /* Asegura que el texto y el ícono no se compriman */
+    white-space: nowrap; /* Evita que el texto se quede en una sola línea */
+    min-width: auto; /* Evita que se queden comprimidos */
+    max-width: 220px; /* Limita el tamaño máximo para el botón */
+    text-overflow: ellipsis; /* En caso de que el texto sea demasiado largo, se corta con "..." */
+  
+    ion-icon {
+      font-size: 1.2rem; /* Aumenta el tamaño del ícono para hacerlo más visible */
+      margin-right: 0.5rem; /* Espacio entre el ícono y el texto */
+    }
+  
+    /* Responsividad para pantallas más pequeñas */
+    @media (max-width: 768px) {
+      padding: 0.4rem 0.8rem; /* Reduce el padding en pantallas pequeñas */
+      font-size: 0.9rem; /* Reduce el tamaño de la fuente */
+      max-width: 180px; /* Ajusta el tamaño del botón en pantallas pequeñas */
+      
+      ion-icon {
+        font-size: 1rem; /* Ajusta el tamaño del ícono en pantallas pequeñas */
+      }
+    }
+  }
+  

@@ -34,9 +34,17 @@
             <ion-button (click)="addStud()">
               <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
             </ion-button> 
+            <!-- Botón para petición de material -->
+            <ion-button class="peticion-material" expand="block" color="primary" [routerLink]="'/material-demand'">
+              <ion-icon slot="start" name="create-outline"></ion-icon> 
+              Petición de material
+            </ion-button>
+            
           </ion-buttons>
         </ion-toolbar>
         <ion-list>
+        
+
         @for (user of students; track $index) {
         <ion-item>
           <ion-label>Nombre: {{user.name}} {{user.surname}}
