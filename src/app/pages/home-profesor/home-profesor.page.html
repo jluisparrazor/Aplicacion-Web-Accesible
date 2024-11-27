@@ -1,98 +1,53 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Profesor</ion-title>
+    <!-- Contenedor para el título y el avatar -->
+    <ion-title>
+      <span *ngIf="userActual?.name">Profesor: {{ userActual.name }}</span>
+    </ion-title>
+    <ion-avatar slot="end" *ngIf="userActual?.pictogramId">
+      <ion-img 
+        [src]="'https://api.arasaac.org/api/pictograms/' + userActual.pictogramId" 
+        alt="Avatar del profesor"
+        class="pictogram-img">
+      </ion-img>
+    </ion-avatar>
   </ion-toolbar>
 </ion-header>
 
+
+
 <ion-content [fullscreen]="true">
-  <!-- <ion-card>
-    <ion-list lines="full">
-      <ion-item>
-        <ion-input clearInput="true" label="Nombre" labelPlacement="floating"  type="string"[(ngModel)]="newProf.Nombre"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input clearInput="true" label="Edad" labelPlacement="floating" type="number"[(ngModel)]="newProf.Edad"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input clearInput="true" label= "Administrador" labelPlacement="floating" [(ngModel)]="newProf.Administrativo"></ion-input>
-      </ion-item>
-    </ion-list>
-  </ion-card> -->
-
-       <!-- <ion-button (click)="saveStudent()" expand="block" shape="round">Guardar edición</ion-button> -->
-        <!-- <ion-button (click)="addUser()" expand="block" shape="round">Añadir Usuario</ion-button> -->
-        <!-- <ion-button (click)="ChangePassword()" expand="block" shape="round" color="tertiary">Cambiar Contraseña </ion-button>-->
-
-  <ion-spinner *ngIf="cargando" name="bubbles" style="display: block; margin: auto;"></ion-spinner>
-
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        <ion-toolbar>
-          <ion-title>Alumnos:</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="addStud()">
-              <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
-            </ion-button> 
-          </ion-buttons>
-        </ion-toolbar>
-        <ion-list>
-        @for (user of students; track $index) {
-        <ion-item>
-          <ion-label>Nombre: {{user.name}} {{user.surname}}
-            <!-- <p>Edad: {{user.name}}</p> -->
-          </ion-label>
-      
-          <!-- <ion-buttons slot="end">
-            <ion-button (click)="editStu(user)">
-              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-            </ion-button>
-                  
-            <ion-button (click)="deleteStu(user)">
-              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-            </ion-button>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" *ngFor="let stud of students; let i = index">
+              <ion-item>
+                <!-- Imagen del pictograma -->
+                <ion-avatar slot="end">
+                  <ion-img 
+                    [src]="'https://api.arasaac.org/api/pictograms/' + stud.pictogramId" 
+                    alt="Pictogram image" 
+                    class="pictogram-img">
+                  </ion-img>
+                </ion-avatar>
         
-          </ion-buttons> -->
-                
-        </ion-item>
-        
-        }
-        
-        </ion-list>
+                <!-- Información del estudiante -->
+                <ion-label>
+                  <h3>{{ stud.name }} {{ stud.surname }}</h3>
+                  <p *ngIf="stud.phone">Teléfono móvil: {{ stud.phone }}</p>
+                  <p>DNI: {{ stud.dni }}</p>
+                  <p *ngIf="stud.disabilities">Discapacidades: 
+                    <span *ngIf="stud.disabilities.visual">Visual </span>
+                    <span *ngIf="stud.disabilities.auditory">Auditiva </span>
+                    <span *ngIf="stud.disabilities.motor">Motora </span>
+                    <span *ngIf="stud.disabilities.cognitive">Cognitiva </span>
+                  </p>
+                  <p *ngIf="stud.loginType; else noSpecialLogin">Tiene login especial</p>
+                  <ng-template #noSpecialLogin>
+                    <p>No tiene login especial</p>
+                  </ng-template>
+                </ion-label>
+              </ion-item>
       </ion-col>
-
-      <!-- <ion-col>
-        <ion-toolbar>
-          <ion-title>Profesores:</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="addprof()">
-              <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
-            </ion-button> 
-          </ion-buttons>
-        </ion-toolbar>
-        <ion-list>
-        @for (prof of profs; track $index) {
-        <ion-item>
-          <ion-label>Nombre: {{prof.name}}
-            <p>Edad: {{prof..Edad}}</p> 
-          </ion-label>
-       -->
-          <!-- <ion-buttons slot="end">
-            <ion-button (click)="edit(prof)">
-              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-            </ion-button>
-                  
-            <ion-button (click)="delete(prof)">
-              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-            </ion-button>
-        
-          </ion-buttons>
-                 
-        </ion-item>
-        
-        }
-        </ion-list>
-      </ion-col>-->
     </ion-row>
   </ion-grid>
 </ion-content>
