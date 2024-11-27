@@ -37,10 +37,6 @@ export class HomeAdministradorPage{
   newTarea: TareaI;
   tarea: TareaI;
   selectedStudent: StudentI; // Estudiante al que se asignará la tarea
-  //selectedStudent: UserI; // Estudiante al que se asignará la tarea
-
- // userActual: ProfI;
-
 
   userActual: TeacherI;
 
@@ -67,19 +63,18 @@ export class HomeAdministradorPage{
 
   }
  
-  //QUITAR EL ASYNC 
-  async init(){
+  init(){
 
     //Miro que admin ha iniciado sesion
-    // const user = this.sessionService.getCurrentUser();
+    const user = this.sessionService.getCurrentUser();
     
     // MODO SÓLO DE PRUEBA ID DE PAULA (ADMIN)
-    const profId = "e1873ba9-8853-44c4-8fd3-4469d7cadb91";
-    const user =  await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`)
+    // const profId = "e1873ba9-8853-44c4-8fd3-4469d7cadb91";
+    // const user =  await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`)
 
 
-  // if (user && 'administrative' in user) {
-  if(true){
+  if (user && 'administrative' in user) {
+  // if(true){
     this.userActual = user as unknown as TeacherI;
     console.log('Administrador loggeado:', this.userActual.name);
   } else {
@@ -120,8 +115,6 @@ export class HomeAdministradorPage{
       },
       loginType: false,
       correctPassword: null,
-
-      //id_pictogram: null,
     }
     
     this.newTarea = { 
