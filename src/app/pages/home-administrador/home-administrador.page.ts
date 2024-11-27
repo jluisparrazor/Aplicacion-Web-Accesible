@@ -119,8 +119,9 @@ export class HomeAdministradorPage{
         cognitive: false,
       },
       loginType: false,
+      correctPassword: null,
+
       //id_pictogram: null,
-      //correctPassword: null,
     }
     
     this.newTarea = { 

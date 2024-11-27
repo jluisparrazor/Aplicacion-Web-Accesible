@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonSpinner, IonList, IonImg, IonGrid, IonRow, IonCol, IonFooter, IonButton, IonButtons, IonIcon } from '@ionic/angular/standalone';
 import { PictogramSearchComponent } from 'src/app/shared/pictogram-search/pictogram-search.component';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
-import { UserI } from 'src/app/common/models/users.models';
+import { StudentI } from 'src/app/common/models/student.models';
 import { RouterModule, Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service'; // Importa SessionService
 
@@ -16,8 +16,8 @@ import { SessionService } from 'src/app/common/services/session.service'; // Imp
   imports: [IonIcon, IonImg, IonList, IonSpinner, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonGrid, IonRow, IonCol, IonFooter, IonButton, IonButtons, RouterModule]
 })
 export class PaginaInicialPage implements OnInit {
-  alumnos: UserI[] = [];
-  paginatedAlumnos: UserI[][][] = [];
+  alumnos: StudentI[] = [];
+  paginatedAlumnos: StudentI[][][] = [];
   currentPage: number = 0;
   itemsPerPage: number = 9;
   cargando: boolean = false;
@@ -30,7 +30,7 @@ export class PaginaInicialPage implements OnInit {
 
   loadAlumnos() {
     this.cargando = true;
-    this.firestoreService.getCollectionChanges<UserI>('Usuarios').subscribe((data) => {
+    this.firestoreService.getCollectionChanges<StudentI>('Students').subscribe((data) => {
       if (data) {
         this.alumnos = data;
         this.paginateAlumnos();
@@ -51,8 +51,8 @@ export class PaginaInicialPage implements OnInit {
     }
   }
 
-  seleccionarAlumno(alumno: UserI) {
-    this.sessionService.setCurrentUser(alumno, 'user');
+  seleccionarAlumno(alumno: StudentI) {
+    this.sessionService.setCurrentUser(alumno, 'student');
     this.router.navigate(['/loginalumno']);
   }
 

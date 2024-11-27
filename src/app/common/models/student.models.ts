@@ -13,5 +13,6 @@ export interface StudentI{
         motor: boolean;
         cognitive: boolean;
       };
-    loginType: boolean
+    loginType: boolean,
+    correctPassword?: Array<number>,
 }
