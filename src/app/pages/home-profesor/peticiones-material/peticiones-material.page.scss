@@ -1,101 +1,100 @@
 /* General */
 ion-content {
-    display: flex;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: center;     /* Centra el contenido verticalmente */
-    padding: 20px;           /* Agrega un poco de espacio alrededor */
-  }
-  
+  display: flex;
+  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: center;     /* Centra el contenido verticalmente */
+  padding: 20px;           /* Agrega un poco de espacio alrededor */
+}
+
+form {
+  width: 100%;
+  max-width: 500px;       /* Establece un ancho máximo para el formulario */
+  margin: 20px auto;      /* Centra el formulario y agrega espacio superior e inferior */
+  background-color: #fff; /* Fondo blanco para el formulario */
+  border-radius: 8px;     /* Bordes redondeados */
+  padding: 20px;          /* Espaciado interno del formulario */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra ligera para dar profundidad */
+}
+
+ion-header {
+  --background: #f4f4f4;  /* Fondo del header */
+  --ion-text-color: #333; /* Color de texto oscuro */
+  padding: 15px;
+}
+
+ion-toolbar {
+  --background: #f4f4f4;  /* Fondo claro */
+  --color: #000;          /* Color del texto oscuro */
+}
+
+ion-title {
+  font-size: 24px;         /* Título más grande */
+  font-weight: bold;       /* Título en negrita */
+  text-align: center;      /* Alineado al centro */
+}
+
+/* Campos del formulario */
+ion-item {
+  margin-bottom: 25px;     /* Espaciado entre los items */
+}
+
+ion-label {
+  font-weight: bold;       /* Los títulos de los campos en negrita */
+  color: #333;             /* Color del texto de los labels */
+}
+
+ion-input {
+  border-radius: 5px;      /* Bordes redondeados */
+  padding-left: 10px;      /* Espacio a la izquierda */
+  padding-right: 10px;     /* Espacio a la derecha */
+  font-size: 16px;         /* Tamaño de fuente */
+}
+
+.material-row {
+  display: flex;
+  justify-content: space-between; /* Espaciado entre los campos */
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.material-item,
+.cantidad-item {
+  flex: 1;                  /* Ambos ocupan la mitad del espacio */
+  margin-right: 10px;       /* Espaciado entre los campos */
+}
+
+.cantidad-item {
+  margin-right: 0;          /* El último campo no tiene margen derecho */
+}
+
+ion-button {
+  margin-top: 20px;         /* Espaciado superior de los botones */
+  width: 100%;              /* Hace que el botón ocupe el 100% de la pantalla */
+  --border-radius: 5px;     /* Bordes redondeados */
+  font-size: 16px;          /* Aumenta el tamaño de la fuente del botón */
+}
+
+ion-button.expand {
+  margin-top: 15px;         /* Añade un poco de espacio entre botones */
+}
+
+/* Diseño responsive para pantallas más pequeñas */
+@media (max-width: 600px) {
   form {
-    width: 100%;
-    max-width: 500px;       /* Establece un ancho máximo para el formulario */
-    margin: 20px auto;      /* Centra el formulario y agrega espacio superior e inferior */
-    background-color: #fff; /* Fondo blanco para el formulario */
-    border-radius: 8px;     /* Bordes redondeados */
-    padding: 20px;          /* Espaciado interno del formulario */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra ligera para dar profundidad */
+    padding: 15px;          /* Reduce el padding en pantallas pequeñas */
+    max-width: 100%;        /* Hace que el formulario ocupe todo el ancho en pantallas pequeñas */
   }
-  
-  ion-header {
-    --background: #f4f4f4;  /* Fondo del header */
-    --ion-text-color: #333; /* Color de texto oscuro */
-    padding: 15px;
-  }
-  
-  ion-toolbar {
-    --background: #f4f4f4;  /* Fondo claro */
-    --color: #000;          /* Color del texto oscuro */
-  }
-  
+
   ion-title {
-    font-size: 24px;         /* Título más grande */
-    font-weight: bold;       /* Título en negrita */
-    text-align: center;      /* Alineado al centro */
+    font-size: 20px;         /* Reduce el tamaño del título en pantallas pequeñas */
   }
-  
-  /* Campos del formulario */
-  ion-item {
-    margin-bottom: 25px;     /* Espaciado entre los items */
-  }
-  
-  ion-label {
-    font-weight: bold;       /* Los títulos de los campos en negrita */
-    color: #333;             /* Color del texto de los labels */
-  }
-  
-  ion-input {
-    border-radius: 5px;      /* Bordes redondeados */
-    padding-left: 10px;      /* Espacio a la izquierda */
-    padding-right: 10px;     /* Espacio a la derecha */
-    font-size: 16px;         /* Tamaño de fuente */
-  }
-  
-  .material-row {
-    display: flex;
-    justify-content: space-between; /* Espaciado entre los campos */
-    align-items: center;
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  
-  .material-item,
-  .cantidad-item {
-    flex: 1;                  /* Ambos ocupan la mitad del espacio */
-    margin-right: 10px;       /* Espaciado entre los campos */
-  }
-  
-  .cantidad-item {
-    margin-right: 0;          /* El último campo no tiene margen derecho */
-  }
-  
+
   ion-button {
-    margin-top: 20px;         /* Espaciado superior de los botones */
-    width: 100%;              /* Hace que el botón ocupe el 100% de la pantalla */
-    --border-radius: 5px;     /* Bordes redondeados */
-    font-size: 16px;          /* Aumenta el tamaño de la fuente del botón */
+    font-size: 14px;         /* Reduce el tamaño de la fuente del botón */
   }
-  
-  ion-button.expand {
-    margin-top: 15px;         /* Añade un poco de espacio entre botones */
+
+  .material-item, .cantidad-item {
+    margin-right: 5px;       /* Reduce el margen entre los campos en pantallas pequeñas */
   }
-  
-  /* Diseño responsive para pantallas más pequeñas */
-  @media (max-width: 600px) {
-    form {
-      padding: 15px;          /* Reduce el padding en pantallas pequeñas */
-      max-width: 100%;        /* Hace que el formulario ocupe todo el ancho en pantallas pequeñas */
-    }
-  
-    ion-title {
-      font-size: 20px;         /* Reduce el tamaño del título en pantallas pequeñas */
-    }
-  
-    ion-button {
-      font-size: 14px;         /* Reduce el tamaño de la fuente del botón */
-    }
-  
-    .material-item, .cantidad-item {
-      margin-right: 5px;       /* Reduce el margen entre los campos en pantallas pequeñas */
-    }
-  }
-  
+}

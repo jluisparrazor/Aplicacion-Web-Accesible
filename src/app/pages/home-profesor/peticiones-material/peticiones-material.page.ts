@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
-
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-peticiones-material',
@@ -15,6 +15,7 @@ import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 })
 export class PeticionesMaterialPage implements OnInit {
   requestForm: FormGroup;
+  firestore: Firestore = inject(Firestore);
 
   constructor(private fb: FormBuilder) {}
 
@@ -45,7 +46,7 @@ export class PeticionesMaterialPage implements OnInit {
   }
 
   // Enviar formulario
-  finalizeRequests() {
+  async finalizeRequests() {
     if (this.requestForm.invalid) {
       alert('Debe completar todos los campos correctamente antes de enviar.');
       return;
@@ -53,21 +54,28 @@ export class PeticionesMaterialPage implements OnInit {
 
     // Extraer los valores del formulario
     const formData = this.requestForm.value;
-    let resumen = `Profesor: ${formData.profesor}\nClase: ${formData.clase}\nMateriales:\n`;
+    const requestData = {
+      profesor: formData.profesor,
+      clase: formData.clase,
+      materiales: formData.materiales.map((material: any) => ({
+        nombre: material.nombre,
+        cantidad: material.cantidad,
+      })),
+    };
 
-    // Iterar sobre los materiales
-    formData.materiales.forEach((material: any, index: number) => {
-      resumen += `${index + 1}. Material: ${material.nombre} - Cantidad: ${material.cantidad}\n`;
-    });
+    // Guardar en Firestore
+    try {
+      const docRef = await addDoc(collection(this.firestore, 'Requests'), requestData);
+      console.log('Solicitud enviada con ID: ', docRef.id);
+      alert('Solicitud enviada correctamente.');
 
-    // Mostrar los datos en una alerta
-    alert(resumen);
-
-    // Reiniciar el formulario
-    this.requestForm.reset();
-
-    // Restaurar la estructura inicial del formulario
-    this.materiales.clear();
-    this.materiales.push(this.createMaterialGroup());
+      // Reiniciar el formulario
+      this.requestForm.reset();
+      this.materiales.clear();
+      this.materiales.push(this.createMaterialGroup());
+    } catch (e) {
+      console.error('Error añadiendo el documento: ', e);
+      alert('Hubo un error al enviar la solicitud.');
+    }
   }
 }

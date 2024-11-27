@@ -4,6 +4,7 @@ import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
 import { StudentI } from '../../common/models/student.models';
 
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { NavController } from '@ionic/angular';
@@ -17,7 +18,7 @@ import { SessionService } from 'src/app/common/services/session.service';
   styleUrls: ['home-profesor.page.scss'],
   standalone: true,
   imports: [IonCol, IonRow, IonGrid, IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
-    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule 
+    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule,RouterModule
   ],
 })
 export class HomePage {
