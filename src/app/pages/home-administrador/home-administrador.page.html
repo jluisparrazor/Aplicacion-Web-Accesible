@@ -46,37 +46,97 @@
           </ion-toolbar>
           <ion-list lines="full">
 
-            <!-- Nombre -->
+            <!-- Título de la tarea (title en Description) -->
             <ion-item>
-              <ion-input label="Nombre" labelPlacement="floating" type="string" [(ngModel)]="newTarea.Nombre"></ion-input>
+              <ion-input 
+                label="Título" 
+                labelPlacement="floating" 
+                type="text" 
+                [(ngModel)]="newTaskDescription.title">
+              </ion-input>
             </ion-item>
-            
-            <!-- Completada -->
+
+            <!-- Descripcion de la tarea (text en Description) -->
             <ion-item>
-              <ion-select placeholder="Selecciona estado" label="Completada" [(ngModel)]="newTarea.Completada">
-                <ion-select-option [value]="true">Completada</ion-select-option>
-                <ion-select-option [value]="false">Pendiente</ion-select-option>
+              <ion-textarea 
+                label="Descripción" 
+                labelPlacement="stacked" 
+                placeholder="Introduce una descripción de la tarea..." 
+                [(ngModel)]="newTaskDescription.text">
+              </ion-textarea>
+            </ion-item>
+
+            <!-- Tipo de tarea -->
+            <ion-item>
+              <ion-select 
+                placeholder="Selecciona el tipo de tarea" 
+                label="Tipo de tarea" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTarea.type">
+                <ion-select-option value="StepTask">Tarea por pasos</ion-select-option>
+                <ion-select-option value="MenuTask">Tarea de menú</ion-select-option>
+                <ion-select-option value="AppTask">Tarea de aplicación/juego</ion-select-option>
+                <ion-select-option value="RequestTask">Tarea de material</ion-select-option>
+                <ion-select-option value="NormalTask">Tarea normal</ion-select-option>
               </ion-select>
             </ion-item>
+
+            <!-- Enlace (solo para AppTask) -->
+          <ion-item *ngIf="newTarea.type === 'AppTask'">
+            <ion-input 
+              label="Enlace" 
+              labelPlacement="floating" 
+              type="url" 
+              placeholder="Introduce el enlace de la aplicación/juego..." 
+              [(ngModel)]="newTaskDescription.link">
+            </ion-input>
+          </ion-item>
       
-            <!-- OPCIÓN PARA NO PONER FECHA -->
-            <!-- Fecha de cumplimiento-->
+            <!-- Fecha de inicio -->
             <ion-item>
-              <ion-label>Fecha de cumplimiento:</ion-label>
-              <ion-datetime #datetime locale="es-ES" hourCycle="h12" 
-              [(ngModel)]="tempFecha" presentation="date-time">
-      
+              <ion-label>Fecha de inicio:</ion-label>
+              <ion-datetime 
+                #datetimeInicio 
+                locale="es-ES" 
+                hourCycle="h12" 
+                [(ngModel)]="tempFechaInicio" 
+                presentation="date-time">
                 <ion-buttons slot="buttons">
-                  <ion-button color="danger" (click)="datetime.reset()">Resetea</ion-button>
-                  <ion-button color="primary" (click)="confirmarFecha()">Aceptar</ion-button>
+                  <ion-button color="danger" (click)="resetFechaInicio(datetimeInicio)">Resetea</ion-button>
+                  <ion-button color="primary" (click)="confirmarFechaInicio()">Aceptar</ion-button>
                 </ion-buttons>
               </ion-datetime>
             </ion-item>
 
-            <!-- Mostrar la fecha seleccionada -->
+            <!-- Mostrar la fecha de inicio seleccionada -->
+            <ion-item>
+              <ion-label>Fecha de inicio:</ion-label>
+              <p *ngIf="newTarea.startTime; else noFechaInicio">{{ newTarea.startTime.toDate() | date }}</p>
+              <ng-template #noFechaInicio>
+                <p>No hay fecha de inicio seleccionada</p>
+              </ng-template>
+            </ion-item>
+
+            <!-- Fecha de cumplimiento -->
+            <ion-item>
+              <ion-label>Fecha de cumplimiento:</ion-label>
+              <ion-datetime 
+                #datetime 
+                locale="es-ES" 
+                hourCycle="h12" 
+                [(ngModel)]="tempFechaCumplimiento" 
+                presentation="date-time">
+                <ion-buttons slot="buttons">
+                  <ion-button color="danger" (click)="resetFechaCumplimiento(datetime)">Resetea</ion-button>
+                  <ion-button color="primary" (click)="confirmarFechaCumplimiento()">Aceptar</ion-button>
+                </ion-buttons>
+              </ion-datetime>
+            </ion-item>
+
+            <!-- Mostrar la fecha de cumplimiento seleccionada -->
             <ion-item>
               <ion-label>Fecha seleccionada:</ion-label>
-              <p *ngIf="newTarea.Fecha; else noFecha">{{ newTarea.Fecha.toDate() | date }}</p>
+              <p *ngIf="newTarea.endTime; else noFecha">{{ newTarea.endTime.toDate() | date }}</p>
               <ng-template #noFecha>
                 <p>No hay fecha seleccionada</p>
               </ng-template>
@@ -84,7 +144,7 @@
       
             <!-- Asignado al alumno -->
             <ion-item>
-              <ion-select placeholder="Selecciona alumno" label="Asignado a" labelPlacement="floating" [(ngModel)]="newTarea.Asignado">
+              <ion-select placeholder="Selecciona alumno" label="Asignado a" labelPlacement="floating" [(ngModel)]="newTarea.assigned">
                 <ion-select-option *ngFor="let student of students" [value]="student.name">{{student.name}}</ion-select-option>
               </ion-select>
             </ion-item>
@@ -96,11 +156,59 @@
         <ion-list>
           <ion-item *ngFor="let tarea of tasks; let i = index">
             <ion-label>
-              <h3>{{ tarea.Nombre }}</h3>
-              <p>Completada: {{ tarea.Completada }}</p>
-              <p *ngIf="tarea.Fecha">Fecha: {{ tarea.Fecha.toDate() | date }}</p>
-              <p *ngIf="tarea.Asignado">Asignado a: {{ tarea.Asignado }}</p>
+
+              <!--Nombre de la tarea-->
+              <h3>{{ tarea.descriptionData?.title }}</h3>
+
+              <!-- Mostrar el tipo de tarea -->
+              <p>Tipo: 
+                <ng-container [ngSwitch]="tarea.type">
+                  <span *ngSwitchCase="'StepTask'">Tarea por pasos</span>
+                  <span *ngSwitchCase="'MenuTask'">Tarea de menú</span>
+                  <span *ngSwitchCase="'AppTask'">Tarea de aplicación/juego</span>
+                  <span *ngSwitchCase="'RequestTask'">Tarea de material</span>
+                  <span *ngSwitchCase="'NormalTask'">Tarea normal</span>
+                </ng-container>
+              </p>
+
+              <!-- Estado de la tarea -->
+              <p>Completada: {{ tarea.completed ? 'Sí' : 'No' }}</p>
+
+              <!-- Fecha de inicio -->
+              <p>
+                Fecha de inicio: 
+                <span *ngIf="tarea.startTime; else noFechaInicio">
+                  {{ tarea.startTime.toDate() | date: 'short' }}
+                </span>
+                <ng-template #noFechaInicio>
+                  Sin fecha de inicio
+                </ng-template>
+              </p>
+
+              <!-- Fecha de finalización -->
+              <p *ngIf="tarea.completed">
+                Fecha de finalización: 
+                <span *ngIf="tarea.doneTime">
+                  {{ tarea.doneTime.toDate() | date: 'short' }}
+                </span>
+              </p>
+
+              <!-- Fecha de cumplimiento -->
+              <p>
+                Fecha de cumplimiento: 
+                <span *ngIf="tarea.endTime; else noFechaFin">
+                  {{ tarea.endTime.toDate() | date: 'short' }}
+                </span>
+                <ng-template #noFechaFin>
+                  Sin fecha de cumplimiento
+                </ng-template>
+              </p>
+
+              <!--Asignado a-->
+              <p *ngIf="tarea.assigned">Asignado a: {{ tarea.assigned }}</p>
+
             </ion-label> 
+
             <!-- Botones de editar y eliminar la tarea -->
             <ion-buttons slot="end">
               <ion-button (click)="editTarea(tarea)">
@@ -115,8 +223,6 @@
             
       </ion-col>
 
-        
-
     <!-- ALUMNOS -->
       <ion-col>
         <ion-toolbar>
@@ -127,8 +233,7 @@
             </ion-button>
           </ion-buttons>
         </ion-toolbar>
-       
-       
+
         <!-- Formulario de alumnos -->
         <ion-card *ngIf="showStudentForm" class="card-add-tarea">
           <ion-toolbar>
@@ -256,7 +361,6 @@
         </ion-list>   
       </ion-col>
 
-
       <!-- PROFESORES -->
       <ion-col>
         <ion-toolbar>
@@ -378,7 +482,6 @@
           </ion-list>
         </ion-card>
         
-
         <!-- Lista de profesores y todos sus elementos -->
         <ion-list>
           <ion-item *ngFor="let teacher of teachers; let i = index">

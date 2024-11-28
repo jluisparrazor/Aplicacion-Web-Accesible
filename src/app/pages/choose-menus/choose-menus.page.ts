@@ -187,7 +187,7 @@ export class ChooseMenusPage implements OnInit  {
   }
 
   salir(){
-    //this.router.navigate(['/home']);
+    this.router.navigate(['/tareasdiarioalumno']);
   }
 
 }

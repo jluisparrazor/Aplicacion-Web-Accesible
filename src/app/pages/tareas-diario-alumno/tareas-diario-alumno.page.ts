@@ -6,7 +6,9 @@ import { UserI } from 'src/app/common/models/users.models';
 import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
-import { TareaI } from 'src/app/common/models/tarea.models';
+import { TasksService } from 'src/app/common/services/tasks.service';
+import { TaskI } from 'src/app/common/models/task.models';
+import { DescriptionI } from 'src/app/common/models/task.models';
 
 @Component({
   selector: 'app-tareas-diario-alumno',
@@ -20,11 +22,13 @@ export class TareasDiarioAlumnoPage implements OnInit {
   userActual: UserI;
   tareasIncompletas: any[] = []; 
   tareasCompletadas: any[] = [];
+  descripcionesMap: { [key: string]: DescriptionI } = {};
 
   constructor(
     private router: Router,
     private sessionService: SessionService,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    private tasksService: TasksService
   ) { }
 
   ngOnInit() {
@@ -36,7 +40,7 @@ export class TareasDiarioAlumnoPage implements OnInit {
       console.log('Usuario loggeado:', this.userActual.nombre);
       this.loadTareas(); // Cargar las tareas después de validar al usuario
       // Nos suscribimos a los cambios de tareas actualizadas
-      this.firestoreService.tareaActualizada$.subscribe((tarea: TareaI | null) => {
+      this.tasksService.updatedTask$.subscribe((tarea: TaskI | null) => {
         if (tarea) {
           // Actualizamos las listas de tareas cuando la tarea es actualizada
           this.actualizarListaTareas(tarea);
@@ -50,64 +54,87 @@ export class TareasDiarioAlumnoPage implements OnInit {
 
   // Método para cargar las tareas desde Firestore
   async loadTareas() {
-    const nombreUsuario = this.userActual.nombre; // Nombre del usuario actual
+    const nombreUsuario = this.userActual.nombre;
+    console.log('Cargando tareas para el usuario:', nombreUsuario); // Depuración
+    
     try {
       // Cargar todas las tareas asignadas al usuario
-      const todasLasTareas = await this.firestoreService.getCollection('Tareas', [
-        { field: 'Asignado', operator: '==', value: nombreUsuario },
+      const todasLasTareas = await this.firestoreService.getCollection('Tasks', [
+        { field: 'assigned', operator: '==', value: nombreUsuario },
       ]);
   
+      console.log('Tareas encontradas:', todasLasTareas); // Depuración
+      
+      // Obtener los IDs únicos de las descripciones asociadas
+      const descripcionIds = [...new Set(todasLasTareas.map(tarea => tarea.associatedDescriptionId))];
+    
+      // Cargar todas las descripciones asociadas
+      const descripciones = await Promise.all(
+        descripcionIds.map(id => this.firestoreService.getDocument<DescriptionI>(`Description/${id}`))
+      );
+    
+      // Crear un mapa de descripciones para un acceso rápido
+      this.descripcionesMap = descripciones.reduce((map, descSnap, index) => {
+        map[descripcionIds[index]] = descSnap.data() as DescriptionI;
+        return map;
+      }, {} as { [key: string]: DescriptionI });
+    
       // Filtrar y actualizar las listas de tareas
-      this.tareasIncompletas = todasLasTareas.filter(tarea => !tarea.Completada);
-      this.tareasCompletadas = todasLasTareas.filter(tarea => tarea.Completada);
-  
+      this.tareasIncompletas = todasLasTareas.filter(tarea => !tarea.completed);
+      this.tareasCompletadas = todasLasTareas.filter(tarea => tarea.completed);
+    
       console.log('Tareas incompletas:', this.tareasIncompletas);
       console.log('Tareas completadas:', this.tareasCompletadas);
+      console.log('Descripciones:', this.descripcionesMap);
     } catch (error) {
       console.error('Error al cargar las tareas:', error);
     }
   }
   
+  
   // Método para actualizar las listas de tareas cuando se recibe una tarea actualizada
   actualizarListaTareas(tarea: any) {
     // Eliminar la tarea de las incompletas y agregarla a las completadas
-    this.tareasIncompletas = this.tareasIncompletas.filter(t => t.id !== tarea.id);
+    this.tareasIncompletas = this.tareasIncompletas.filter(t => t.taskID !== tarea.taskID);
     this.tareasCompletadas.push(tarea);
     console.log('Tareas incompletas actualizadas:', this.tareasIncompletas);
     console.log('Tareas completadas actualizadas:', this.tareasCompletadas);
   }
 
   // Navegar dependiendo del tipo de tarea
-  navegarTarea(tarea: TareaI) {
-    switch (tarea.Tipo) {
-      case 'aplicacionJuego':
-      console.log('Tarea: ', tarea.Nombre, 'Tipo: ', tarea.Tipo, 'Id: ', tarea.id);
-      this.router.navigate(['/tareasaplicacionjuego'], {
-        state: { tarea: tarea } // Pasamos la tarea seleccionada
-      });
-      break;
+  navegarTarea(tarea: TaskI) {
+    switch (tarea.type) {
+      case 'AppTask':
+        const descripcion = this.descripcionesMap[tarea.associatedDescriptionId];
+        this.router.navigate(['/tareasaplicacionjuego'], {
+          state: { 
+            taskID: tarea.taskID,  // Solo pasamos el ID de la tarea
+            associatedDescriptionId: tarea.associatedDescriptionId,
+            completed: tarea.completed
+          } 
+        });
+        break;
 
-      case 'porPasos':
+      case 'StepTask':
         this.router.navigate(['/tareasporpasos']);
         break;
 
-      case 'normal':
+      case 'NormalTask':
         // Navegación pendiente de implementar
         console.warn('La redirección para "normal" no está implementada.');
         break;
 
-      case 'menu':
-        // Navegación pendiente de implementar
-        console.warn('La redirección para "menu" no está implementada.');
+      case 'MenuTask':
+        this.router.navigate(['/choose-menus']);
         break;
 
-      case 'material':
+      case 'RequestTask':
         // Navegación pendiente de implementar
         console.warn('La redirección para "material" no está implementada.');
         break;
 
       default:
-        console.error(`Tipo de tarea desconocido: ${tarea.Tipo}`);
+        console.error(`Tipo de tarea desconocido: ${tarea.type}`);
     }
   }
 }

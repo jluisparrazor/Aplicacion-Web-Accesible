@@ -18,19 +18,21 @@
 
   <div class="tarea-aplicacion">
     <img src="assets/icon/favicon.png" alt="Pictograma de la tarea" class="pictograma-tarea" />
-    <h2 class="nombre-tarea">{{tarea.Nombre}}</h2>
-    <p class="descripcion-tarea">
-      Enlace a la tarea: 
-      <a href="{{ tarea.enlace }}" target="_blank" (click)="marcarEnlaceVisitado()">
-        {{ tarea.enlace }}
-      </a>
-    </p>
-    <button 
-      class="boton-completar" 
-      (click)="completarTarea()" 
-      [disabled]="!enlaceVisitado">
-      <p>He completado la tarea</p>
-    </button>
+    <div *ngIf="descripcion">
+      <h2 class="nombre-tarea">{{ descripcion?.title }}</h2>
+      <p class="descripcion-tarea">
+        Enlace a la tarea: 
+        <a href="{{ descripcion.link }}" target="_blank" (click)="marcarEnlaceVisitado()">
+          {{ descripcion.link }}
+        </a>
+      </p>
+      <button 
+        class="boton-completar" 
+        (click)="completarTarea()" 
+        [disabled]="!enlaceVisitado">
+        <p>He completado la tarea</p>
+      </button>
+    </div>
   </div>
 
   <!-- Contenedor de la animación con overlay -->

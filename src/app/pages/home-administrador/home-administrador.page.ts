@@ -3,10 +3,12 @@ import { IonicModule } from '@ionic/angular';
 import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
 import { StudentI } from '../../common/models/student.models';
+import { TasksService } from 'src/app/common/services/tasks.service';
+import { getDoc } from 'firebase/firestore';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
-import { TareaI } from 'src/app/common/models/tarea.models';
+import { DescriptionI, TaskI } from 'src/app/common/models/task.models';
 import { doc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
@@ -23,7 +25,8 @@ import { Router } from '@angular/router';
 
 export class HomeAdministradorPage{
 
-  tempFecha: string | null = null;
+  tempFechaInicio: any = null;
+  tempFechaCumplimiento: any = null;
   
   teachers: TeacherI[] = [];
   newTeacher: TeacherI;
@@ -33,9 +36,14 @@ export class HomeAdministradorPage{
   newStud: StudentI;
   stud: StudentI;
 
-  tasks: TareaI[] = [];
-  newTarea: TareaI;
-  tarea: TareaI;
+  tasks: TaskI[] = [];
+  newTarea: TaskI;
+  tarea: TaskI;
+
+  tasksDescriptions: DescriptionI[] = [];
+  newTaskDescription: DescriptionI;
+  description: DescriptionI;
+  
   selectedStudent: StudentI; // Estudiante al que se asignará la tarea
   //selectedStudent: UserI; // Estudiante al que se asignará la tarea
 
@@ -73,7 +81,7 @@ export class HomeAdministradorPage{
     //Miro que admin ha iniciado sesion
     const user = this.sessionService.getCurrentUser();
 
-  if (user && 'administrative' in user) {
+  if (user && 'administrative' in user && user.administrative) {
     this.userActual = user as TeacherI;
     console.log('Administrador loggeado:', this.userActual.name);
   } else {
@@ -116,15 +124,26 @@ export class HomeAdministradorPage{
       //id_pictogram: null,
       //correctPassword: null,
     }
+
+    this.newTaskDescription = {
+      title: null,
+      descriptionId: null,
+      imagesId: null,
+      pictogramsId: null,
+      text: null,
+      link: null
+    }
     
     this.newTarea = { 
-      id: this.firestoreService.createIDDoc(),
-      Nombre: null,
-      Completada: null,
-      Fecha: null,
-      Asignado: null,
-      Tipo: null,
-      enlace: null,
+      taskID: this.firestoreService.createIDDoc(),
+      startTime: null,
+      endTime: null,
+      doneTime: null,
+      type: null,
+      completed: null,
+      assigned: null,
+      associatedDescriptionId: null,
+      descriptionData: null
     }
   }
 
@@ -137,11 +156,36 @@ export class HomeAdministradorPage{
       }
     });  
 
-    // Carga las tasks de la base de datos
-    this.firestoreService.getCollectionChanges<TareaI>('Tareas').subscribe((data) => {
+    // Carga las descripciones de la base de datos
+    this.firestoreService.getCollectionChanges<DescriptionI>('Description').subscribe((data) => {
+      if (data) {
+        this.tasksDescriptions = data;
+      }
+    });
+
+    // Cargar las tareas desde Firestore
+    this.firestoreService.getCollectionChanges<TaskI>('Tasks').subscribe(async (data) => {
       if (data) {
         this.tasks = data;
-        console.log('tasks -> ', this.tasks);
+
+        // Usamos Promise.all para obtener todas las descripciones en paralelo
+        await Promise.all(this.tasks.map(async (task) => {
+          try {
+            // Usamos associatedDescriptionId para buscar el documento de descripción
+            const descriptionDocRef = doc(this.firestoreService.firestore, 'Description', task.associatedDescriptionId);
+            const descriptionDoc = await getDoc(descriptionDocRef);
+
+            if (descriptionDoc.exists()) {
+              // Accedemos a los datos de la descripción sin cambiar la referencia
+              task['descriptionData'] = descriptionDoc.data() as DescriptionI; // Guardamos los datos en un campo temporal 'descriptionData'
+            }
+          } catch (error) {
+            console.error(`Error fetching description for task ${task.associatedDescriptionId}:`, error);
+          }
+        }));
+
+        // Ahora tienes las tareas con las descripciones cargadas
+        console.log('tasks with descriptions -> ', this.tasks);
       }
     });
 
@@ -151,7 +195,6 @@ export class HomeAdministradorPage{
         this.students = data;
       }
     });
-    
   }
 
   // GETTERS
@@ -170,14 +213,20 @@ export class HomeAdministradorPage{
 
   // Método para obtener una tarea de la base de datos
   async getTarea(){
-    const res = await this.firestoreService.getDocument<TareaI>('Tareas/'+ this.newTarea.id);
+    const res = await this.firestoreService.getDocument<TaskI>('Tasks/'+ this.newTarea.taskID);
     this.tarea = res.data();
   }
 
+  // Método para obtener una descripcion de la base de datos
+  async getDescripcion(){
+    const res = await this.firestoreService.getDocument<DescriptionI>('Description/'+ this.newTaskDescription.descriptionId);
+    this.description = res.data();
+  }
+
   // Método para obtener un estudiante de una tarea
-  async getStudentFromTarea(tarea: TareaI) {
-    if (tarea.Asignado) {
-      const userPath = tarea.Asignado.path;
+  async getStudentFromTarea(tarea: TaskI) {
+    if (tarea.assigned) {
+      const userPath = tarea.assigned.path;
       const usuario = await this.firestoreService.getDocument<StudentI>(userPath);
       console.log('Usuario asignado:', usuario);
     }
@@ -256,7 +305,7 @@ resetTeacherForm() {
     this.cleanInterfaceStud();
   }
    // Método para limpiar la interfaz de nueva tarea
-   cleanInterfaceStud(){ 
+    cleanInterfaceStud(){ 
       for (const key in this.newStud) {
         if (this.newStud.hasOwnProperty(key) && key !== 'id') {
           (this.newStud as any)[key] = null;
@@ -281,55 +330,106 @@ resetTeacherForm() {
     await this.firestoreService.deleteDocumentID('Students', student.id);
   }
 
-  
-  
-  
+
+
+
   //~~~~~~~~~~~~~~~~~~~~~~~~~Tarea section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir una nueva tarea a la base de datos (tarea no existente en la BD)
   async addTarea(){
-    this.newTarea.id = this.firestoreService.createIDDoc();
-    await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.id);
-    this.showTaskForm = false;  // Oculta el formulario después de guardar
-    this.cleanInterfaceTarea();
-   }
+    this.newTarea.taskID = this.firestoreService.createIDDoc();
+    this.newTarea.completed = false;
+    this.newTaskDescription.descriptionId = this.firestoreService.createIDDoc();
 
-   // Método para limpiar la interfaz de nueva tarea
-   cleanInterfaceTarea(){ 
-    this.newTarea.Nombre = this.newTarea.Asignado = 
-    this.newTarea.Completada = this.newTarea.Fecha = null;
+    //Creo la descripcion en la bd
+    await this.firestoreService.createDocumentID(this.newTaskDescription, 'Description', this.newTaskDescription.descriptionId);
+
+    //Asocio esa descripcion a la tarea, usando la variable description  tipo Reference
+    const descriptionRef = this.firestoreService.getDocumentReference('Description', this.newTaskDescription.descriptionId);
+    this.newTarea.associatedDescriptionId = this.newTaskDescription.descriptionId;
+    
+    //Creo la tarea en la bd
+    await this.firestoreService.createDocumentID(this.newTarea, 'Tasks', this.newTarea.taskID);
+
+    this.showTaskForm = false;
+    this.cleanInterfaceTarea();
+  }
+
+  // Método para limpiar la interfaz de nueva tarea
+  cleanInterfaceTarea(){ 
+    this.newTarea.startTime = null;
+    this.newTarea.endTime = null;
+    this.newTarea.type = null;
+    this.newTarea.completed = null;
+    this.newTarea.assigned = null;
+    this.newTaskDescription.title = null;
+    this.newTaskDescription.text = null;
+    this.newTaskDescription.link = null;
   }
   
   // Método para guardar nuevos datos de una tarea (ya existente) en la base de datos
-  async saveTarea() {    
+  async saveTarea() {
   
     //Si se ha seleccionado un estudiante, se asigna la tarea a ese estudiante
     if (this.selectedStudent) {
-      this.newTarea.Asignado = doc(this.firestoreService.firestore, 'Students', this.selectedStudent.id);
+      this.newTarea.assigned = doc(this.firestoreService.firestore, 'Students', this.selectedStudent.id);
     }
     // Guardamos la tarea (con o sin el estudiante) en la base de datos
-    await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.id); 
+    await this.firestoreService.createDocumentID(this.newTarea, 'Tareas', this.newTarea.taskID); 
   }
-
 
  // Método para eliminar una tarea de la base de datos
-  async deleteTarea(tarea: TareaI){
-    console.log('delete -> ', tarea.id);
-    await this.firestoreService.deleteDocumentID('Tareas', tarea.id);
+ async deleteTarea(tarea: TaskI) {
+  console.log('delete -> ', tarea.taskID);
+
+  try {
+    // Eliminar la tarea
+    await this.firestoreService.deleteDocumentID('Tasks', tarea.taskID);
+
+    // Eliminar la descripción asociada
+    if (tarea.associatedDescriptionId) {
+      console.log('Eliminando la descripción asociada con ID: ', tarea.associatedDescriptionId);
+      await this.firestoreService.deleteDocumentID('Description', tarea.associatedDescriptionId);
+    }
+  } catch (error) {
+    console.error('Error al eliminar la tarea o la descripción:', error);
   }
+}
+
 
   // Método para editar una tarea
-  editTarea(tarea: TareaI){
+  editTarea(tarea: TaskI){
     console.log('edit -> ', tarea);
     this.newTarea = tarea;  
   }
-  
-  confirmarFecha() {
-    if (this.tempFecha) {
-      this.newTarea.Fecha = Timestamp.fromDate(new Date(this.tempFecha)); // Asigna la fecha confirmada al modelo
-      console.log('Fecha confirmada:', this.newTarea.Fecha);
+
+  //Fechas tareas
+  // Función para confirmar la fecha de inicio
+  confirmarFechaInicio() {
+    if (this.tempFechaInicio) {
+      this.newTarea.startTime = Timestamp.fromDate(new Date(this.tempFechaInicio)); // Asigna la fecha de inicio al modelo
+      console.log('Fecha de inicio confirmada:', this.newTarea.startTime);
     }
   }
- 
+  
+  // Función para confirmar la fecha de cumplimiento
+  confirmarFechaCumplimiento() {
+    if (this.tempFechaCumplimiento) {
+      this.newTarea.endTime = Timestamp.fromDate(new Date(this.tempFechaCumplimiento)); // Asigna la fecha de cumplimiento al modelo
+      console.log('Fecha de cumplimiento confirmada:', this.newTarea.endTime);
+    }
+  }
+
+  // Funciones de reset
+  resetFechaInicio(datetime: any) {
+    this.tempFechaInicio = null; // Resetea la fecha de inicio
+    datetime.reset(); // Resetea el componente de fecha
+  }
+
+  resetFechaCumplimiento(datetime: any) {
+    this.tempFechaCumplimiento = null; // Resetea la fecha de cumplimiento
+    datetime.reset(); // Resetea el componente de fecha
+  }
+
   // Métodos para mostrar y ocultar el formulario de tarea, alumnos y profesores
   toggleTaskForm() {
     console.log('toggleTaskForm activated');

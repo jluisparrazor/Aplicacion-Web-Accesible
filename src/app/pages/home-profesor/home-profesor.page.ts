@@ -53,7 +53,7 @@ export class HomePage {
     //Miro que profesor ha iniciado sesion
     const user = this.sessionService.getCurrentUser();
 
-    if (user && 'administrative' in user) {
+    if (user && 'administrative' in user && !user.administrative) {
       this.userActual = user as TeacherI;
       console.log('Profesor loggeado:', this.userActual.name);
     } else {
