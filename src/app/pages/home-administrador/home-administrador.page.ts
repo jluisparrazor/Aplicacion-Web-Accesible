@@ -13,13 +13,14 @@ import { SessionService } from 'src/app/common/services/session.service';
 import { Router } from '@angular/router';
 import { TeacherService } from 'src/app/common/services/teacher.service';
 import { StudentService } from 'src/app/common/services/student.service';
+import { PictogramSearchComponent } from 'src/app/shared/pictogram-search/pictogram-search.component';
 
 @Component({
   selector: 'app-home-administrador',
   templateUrl: './home-administrador.page.html',
   styleUrls: ['./home-administrador.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, IoniconsModule, CommonModule, RouterModule],
+  imports: [IonicModule, FormsModule, IoniconsModule, CommonModule, RouterModule, PictogramSearchComponent],
 })
 
 
@@ -104,12 +105,12 @@ export class HomeAdministradorPage{
   // Método para cargar los datos de la base de datos
   load(){
     // Carga los profesores de la base de datos
-    this.teacherService.loadTeachers().then((teachers) => {
-      this.teachers = teachers;
-    });
+    // this.teacherService.loadTeachers().then((teachers) => {
+    //   this.teachers = teachers;
+    // });
 
     // Carga las tasks de la base de datos
-    this.firestoreService.getCollectionChanges<TareaI>('Tareas').subscribe((data) => {
+    this.firestoreService.getCollectionChanges<TareaI>('Tasks').subscribe((data) => {
       if (data) {
         this.tasks = data;
         console.log('tasks -> ', this.tasks);
@@ -117,10 +118,22 @@ export class HomeAdministradorPage{
     });
 
     // Carga los estudiantes de la base de datos
-    this.studentService.loadStudents().then((students) => {
-      this.students = students;
+    // this.studentService.loadStudents().then((students) => {
+    //   this.students = students;
+    // });
+    this.firestoreService.getCollectionChanges<StudentI>('Students').subscribe((data) => {
+      if (data) {
+        this.students = data;
+        console.log('Estudiantes -> ', this.students);
+      }
     });
     
+    this.firestoreService.getCollectionChanges<TeacherI>('Teachers').subscribe((data) => {
+      if (data) {
+        this.teachers = data;
+        console.log('Profesores -> ', this.teachers);
+      }
+    });
   }
 
   // GETTERS
