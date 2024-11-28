@@ -5,6 +5,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { SessionService } from 'src/app/common/services/session.service'; // Importa el servicio
 
 @Component({
   selector: 'app-peticiones-material',
@@ -16,12 +18,28 @@ import { inject } from '@angular/core';
 export class PeticionesMaterialPage implements OnInit {
   requestForm: FormGroup;
   firestore: Firestore = inject(Firestore);
+  userActual: any;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder,
+              private sessionService: SessionService,  // Inyecta el servicio
+              private router: Router // Para redirigir si no tiene permisos
+  ) {}
 
   ngOnInit() {
+    // Verificar si el usuario está logueado y tiene permisos de administrador
+    const user = this.sessionService.getCurrentUser();
+    if (user && 'administrative' in user && !user.administrative)  {
+      this.userActual = user;
+      console.log('Profesor loggeado:', this.userActual.name);
+    } else {
+      console.error('El usuario actual no es válido o no tiene permisos de administrador.');
+      this.router.navigate(['/loginprofesor']); // Redirigir al login si no tiene permisos
+      return; // Detenemos la ejecución si el usuario no es válido
+    }
+
+    // Inicialización del formulario
     this.requestForm = this.fb.group({
-      profesor: ['', [Validators.required]],
+      profesor: [this.userActual.name, [Validators.required]],
       clase: ['', [Validators.required]],
       materiales: this.fb.array([this.createMaterialGroup()]), // Inicializa con un grupo para material
     });
@@ -73,6 +91,12 @@ export class PeticionesMaterialPage implements OnInit {
       this.requestForm.reset();
       this.materiales.clear();
       this.materiales.push(this.createMaterialGroup());
+
+      // Reestablecer el valor de 'profesor' con el nombre del usuario logueado después del reset
+      this.requestForm.patchValue({
+        profesor: this.userActual.name,
+      });
+
     } catch (e) {
       console.error('Error añadiendo el documento: ', e);
       alert('Hubo un error al enviar la solicitud.');
