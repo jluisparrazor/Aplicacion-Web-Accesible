@@ -53,7 +53,7 @@ export class PaginaInicialPage implements OnInit {
 
   seleccionarAlumno(alumno: StudentI) {
     this.sessionService.setCurrentUser(alumno, 'student');
-    this.router.navigate(['/loginalumno']);
+    this.router.navigate(['/tareasdiarioalumno']);
   }
 
   prevPage() {
