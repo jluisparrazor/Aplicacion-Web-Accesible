@@ -1,0 +1,85 @@
+<ion-header *ngIf="!printMode" [translucent]="true">
+  <ion-toolbar>
+    <ion-button color="medium" slot="start" (click)="salir()">Salir</ion-button>
+    <ion-title class="ion-text-center"><strong>Menus por día</strong></ion-title>
+    <ion-button color="medium" (click)="imprimir()" slot="end"> Imprimir</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-header *ngIf="printMode">
+  <ion-toolbar>
+    <ion-title class="ion-text-center"><strong>Menu del día {{ showingDate }}</strong></ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div *ngIf="!printMode" style="display: flex; justify-content: center; align-items: center;">
+    <ion-datetime 
+      presentation="date"
+      displayFormat="DD/MM/YYYY" 
+      max="{{ actualDate }}" 
+      [(ngModel)]="showingDate"
+      (ionChange)="loadMenuForDate()">
+      <span slot="title">Elige la fecha</span>
+  </ion-datetime>
+  </div>
+
+  <ng-container *ngIf="showMenu; else noMenu">
+
+    <ion-segment *ngIf="!printMode">
+      <ion-segment-button (click)="viewMode='classView'">
+      <ion-label>Vista Clases</ion-label>
+      </ion-segment-button>
+      <ion-segment-button id="printButton" (click)="viewMode='menuView'">
+      <ion-label>Vista Menús</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <ng-container *ngIf="viewMode === 'classView'">
+      <ion-card *ngFor="let className of classNames">
+        <ion-card-header class="ion-align-items-center">
+          <ion-card-title>{{ className }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid >
+            <ion-row>
+              <ion-col class="col-border"><strong>Tipo de Menú</strong></ion-col>
+              <ion-col class="col-border"><strong>Cantidad</strong></ion-col>
+            </ion-row>
+            <ion-row *ngFor="let menuTypeName of menuTypeNames">
+              <ion-col class="col-border">{{ menuTypeName }}</ion-col>
+              <ion-col class="col-border">{{ showMenu.menus[className][menuTypeName] }}</ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode === 'menuView'">
+      <ion-card>
+        <ion-card-header class="ion-align-items-center">
+          <ion-card-title>Menús Totales</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid >
+            <ion-row>
+              <ion-col class="col-border"><strong>Tipo de Menú</strong></ion-col>
+              <ion-col class="col-border"><strong>Cantidad</strong></ion-col>
+            </ion-row>
+            <ion-row *ngFor="let menuTypeName of menuTypeNames">
+              <ion-col class="col-border">{{ menuTypeName }}</ion-col>
+              <ion-col class="col-border">{{ totalMenuTypes.get(menuTypeName) }}</ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+  </ng-container>
+
+  <ng-template #noMenu>
+    <div style="text-align: center;">
+    <p><strong>NO HAY MENÚS PARA ESTE DÍA</strong></p>
+    </div>
+  </ng-template>
+</ion-content>
