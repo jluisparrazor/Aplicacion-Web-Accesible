@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardTitle, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardTitle, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonImg, IonAvatar } from '@ionic/angular/standalone';
 // import { UserI } from 'src/app/common/models/users.models';
 import { StudentI } from 'src/app/common/models/student.models';
 import { Router } from '@angular/router';
@@ -16,7 +16,7 @@ import { DescriptionI } from 'src/app/common/models/task.models';
   templateUrl: './tareas-diario-alumno.page.html',
   styleUrls: ['./tareas-diario-alumno.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonCard, IonCardTitle, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon]
+  imports: [IonAvatar, IonImg, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonCard, IonCardTitle, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon]
 })
 export class TareasDiarioAlumnoPage implements OnInit {
 
