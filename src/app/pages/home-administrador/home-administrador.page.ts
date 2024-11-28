@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TeacherI } from '../../common/models/teacher.models';
 import { FirestoreService } from '../../common/services/firestore.service';
@@ -13,13 +13,16 @@ import { doc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { Router } from '@angular/router';
+import { TeacherService } from 'src/app/common/services/teacher.service';
+import { StudentService } from 'src/app/common/services/student.service';
+import { PictogramSearchComponent } from 'src/app/shared/pictogram-search/pictogram-search.component';
 
 @Component({
   selector: 'app-home-administrador',
   templateUrl: './home-administrador.page.html',
   styleUrls: ['./home-administrador.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, IoniconsModule, CommonModule, RouterModule],
+  imports: [IonicModule, FormsModule, IoniconsModule, CommonModule, RouterModule, PictogramSearchComponent],
 })
 
 
@@ -45,10 +48,6 @@ export class HomeAdministradorPage{
   description: DescriptionI;
   
   selectedStudent: StudentI; // Estudiante al que se asignará la tarea
-  //selectedStudent: UserI; // Estudiante al que se asignará la tarea
-
- // userActual: ProfI;
-
 
   userActual: TeacherI;
 
@@ -59,8 +58,10 @@ export class HomeAdministradorPage{
 
   constructor(
     private readonly firestoreService: FirestoreService,
-    private sessionService: SessionService,
-    private router: Router
+    private readonly sessionService: SessionService,
+    private readonly router: Router,
+    private readonly teacherService: TeacherService,
+    private readonly studentService: StudentService,
   ) {
     
     this.load();
@@ -75,56 +76,25 @@ export class HomeAdministradorPage{
 
   }
  
-  
   init(){
 
     //Miro que admin ha iniciado sesion
     const user = this.sessionService.getCurrentUser();
 
-  if (user && 'administrative' in user && user.administrative) {
-    this.userActual = user as TeacherI;
-    console.log('Administrador loggeado:', this.userActual.name);
-  } else {
-    console.error('El usuario actual no es válido o no tiene permisos de administrador.');
-    this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
-    return; // Detenemos la ejecución si el usuario no es válido
-  }
+    if (user as TeacherI && (user as TeacherI).administrative) {
+      this.userActual = user as unknown as TeacherI;
+      console.log('Administrador loggeado:', this.userActual.name);
+    } else {
+      console.error('El usuario actual no es válido o no tiene permisos de administrador. ->' , user);
+      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+      return; // Detenemos la ejecución si el usuario no es válido
+    }
 
     // Inicializa los objetos de profesor, estudiante y tarea
-    this.newTeacher = {
-      id: null,
-      name: null,
-      surname: null,
-      password: null,
-      dni:null,
-      administrative: false,
-      pictogramId: null,
-      email: null,
-      birthdate: null,
-      phone: null,
-      personalData: null,
-    }
+    this.newTeacher = this.teacherService.initTeacher();
 
-    this.newStud = {
-      id: this.firestoreService.createIDDoc(),
-      name: null,
-      surname: null,
-      dni: null,
-      pictogramId: null,
-      phone: null,
-      personalData: null,
-      birthDate: null,
-      disabilities: {
-        visual: false,
-        auditory: false,
-        motor: false,
-        cognitive: false,
-      },
-      loginType: false,
-      //id_pictogram: null,
-      //correctPassword: null,
-    }
-
+    this.newStud = this.studentService.initStudent();
+    
     this.newTaskDescription = {
       title: null,
       descriptionId: null,
@@ -132,8 +102,8 @@ export class HomeAdministradorPage{
       pictogramsId: null,
       text: null,
       link: null
-    }
-    
+    } 
+
     this.newTarea = { 
       taskID: this.firestoreService.createIDDoc(),
       startTime: null,
@@ -150,11 +120,9 @@ export class HomeAdministradorPage{
   // Método para cargar los datos de la base de datos
   load(){
     // Carga los profesores de la base de datos
-    this.firestoreService.getCollectionChanges<TeacherI>('Teachers').subscribe((data) => {
-      if (data) {
-        this.teachers = data;
-      }
-    });  
+    // this.teacherService.loadTeachers().then((teachers) => {
+    //   this.teachers = teachers;
+    // });
 
     // Carga las descripciones de la base de datos
     this.firestoreService.getCollectionChanges<DescriptionI>('Description').subscribe((data) => {
@@ -163,7 +131,8 @@ export class HomeAdministradorPage{
       }
     });
 
-    // Cargar las tareas desde Firestore
+
+    // Cargar las tareas desde la BD
     this.firestoreService.getCollectionChanges<TaskI>('Tasks').subscribe(async (data) => {
       if (data) {
         this.tasks = data;
@@ -189,27 +158,33 @@ export class HomeAdministradorPage{
       }
     });
 
+
     // Carga los estudiantes de la base de datos
-    this.firestoreService.getCollectionChanges<StudentI>('Students').subscribe((data) => {
-      if (data) {
-        this.students = data;
-      }
-    });
+    // this.studentService.loadStudents().then((students) => {
+    //   this.students = students;
+    // });
   }
 
   // GETTERS
   // Método para obtener un profesor de la base de datos
-  async getTeacher(){
-    const res = await this.firestoreService.getDocument<TeacherI>('Teachers/'+ this.newTeacher.id);
-    this.teacher = res.data();
+  getTeacher(){
+    // const res = await this.firestoreService.getDocument<TeacherI>('Teachers/'+ this.newTeacher.id);
+    // this.teacher = res.data();
+    this.teacherService.getTeacher(this.newTeacher.id).then((teacher) => {
+      this.teacher = teacher;
+    });
     console.log('Profesor:', this.teacher);
   }
 
   // Método para obtener un estudiante de la base de datos
-  async getStudent(){
-    const res = await this.firestoreService.getDocument<StudentI>('Students/'+ this.newStud.id);
-    this.stud = res.data();
-  }
+   getStudent(){
+  //   const res = await this.firestoreService.getDocument<StudentI>('Students/'+ this.newStud.id);
+  //   this.stud = res.data();
+  this.studentService.getStudent(this.newStud.id).then((student) => {
+    this.stud = student;
+  });
+  console.log('Estudiante:', this.stud);  
+}
 
   // Método para obtener una tarea de la base de datos
   async getTarea(){
@@ -251,67 +226,60 @@ export class HomeAdministradorPage{
 
 
   // Método para añadir o actualizar un profesor según el DNI
-async addTeacher() {
-  
-    this.newTeacher.id = this.firestoreService.createIDDoc();
-    await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
-    console.log("Nuevo profesor ->", this.newTeacher);
-    alert("Profesor añadido con éxito.");
-  // }
+  addTeacher() {
 
-  // Limpiar el formulario y ocultar
-  this.resetTeacherForm();
-  this.showTeacherForm = false;
-}
+    // this.newTeacher.id = this.firestoreService.createIDDoc();
 
-resetTeacherForm() {
-  this.newTeacher = {
-    id: null,
-    name: null,
-    surname: null,
-    dni: null,
-    password: null,
-    administrative: false,
-    pictogramId: null,
-    email: null,
-    birthdate: null,
-    phone: null,
-    personalData: null,
-  };
-}
+    // await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
+    this.teacherService.addTeacher(this.newTeacher);
+    
+    this.showTeacherForm = false;
+    // Limpiar el formulario y ocultar
+    this.teacherService.cleanTeacherInterface(this.newTeacher);
+  }
   
+    // // Método para guardar nuevos datos de un profesor (ya existente) en la base de datos
+    // async saveTeacher() {
+    //   this.teacherService.editTeacher(this.newTeacher);
+    // }
+    
  // Método para editar un profesor
-  editTeacher(teacher: TeacherI){
-    console.log('edit -> ', teacher);
+   editTeacher(teacher: TeacherI){
+    // console.log('edit -> ', teacher);
+    this.teacherService.editTeacher(teacher);
     this.newTeacher = teacher;
   }
 
   // Método para eliminar un profesor de la base de datos
-  async deleteTeacher(teacher: TeacherI){
-    console.log('delete -> ',teacher.id);
-    await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
+  deleteTeacher(teacher: TeacherI){
+  //   console.log('delete -> ',teacher.id);
+  //   await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
+    this.teacherService.deleteTeacher(teacher.id);
+    console.log('delete teacher -> ',teacher.name, teacher.surname);
+
   }
 
+  toggleTeacherForm() {
+    this.showTeacherForm = !this.showTeacherForm;
+  }
 
 
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~Student section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo estudiante a la base de datos (estudiante no existente en la BD)
-  async addStud(){
+  addStud(){
     // Hacer comprobación para que al menos estén rellenos los campos obligatorios
-    this.newStud.id = this.firestoreService.createIDDoc();
-    await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
-    this.showStudentForm = false;  // Oculta el formulario después de guardar
-    this.cleanInterfaceStud();
+    // this.newStud.id = this.firestoreService.createIDDoc();
+    // await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
+    // this.showStudentForm = false;  // Oculta el formulario después de guardar
+    // this.cleanInterfaceStud();
+    this.studentService.addStudent(this.newStud);
+    
+    this.showStudentForm = false;
+    // Limpiar el formulario y ocultar
+    this.studentService.cleanStudentInterface(this.newStud);
+ 
   }
-   // Método para limpiar la interfaz de nueva tarea
-    cleanInterfaceStud(){ 
-      for (const key in this.newStud) {
-        if (this.newStud.hasOwnProperty(key) && key !== 'id') {
-          (this.newStud as any)[key] = null;
-        }
-      }
-    }
       
   // Método para guardar nuevos datos de un estudiante (ya existente) en la base de datos
   async saveStudent(){
@@ -320,18 +288,20 @@ resetTeacherForm() {
 
   // Método para editar un estudiante
   editStu(student: StudentI){
-    console.log('edit -> ', student);
+    this.studentService.editStudent(student);
     this.newStud = student;
   }
 
   // Método para eliminar un estudiante de la base de datos
-  async deleteStu(student: StudentI){
-    console.log('delete -> ', student.id);
-    await this.firestoreService.deleteDocumentID('Students', student.id);
+  deleteStu(student: StudentI){
+    this.studentService.deleteStudent(student.id);
+    console.log('delete student -> ',student.name, student.surname);
   }
 
-
-
+  toggleStudentForm() {
+    console.log('toggleStudentForm activated');
+    this.showStudentForm = !this.showStudentForm;
+  }
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~Tarea section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir una nueva tarea a la base de datos (tarea no existente en la BD)
@@ -365,6 +335,14 @@ resetTeacherForm() {
     this.newTaskDescription.text = null;
     this.newTaskDescription.link = null;
   }
+  /*
+  cleanInterfaceTask(){ 
+    for (const key in this.newTarea) {
+      if (this.newTarea.hasOwnProperty(key)) {
+        (this.newTarea as any)[key] = null;
+      }
+    }
+  }*/
   
   // Método para guardar nuevos datos de una tarea (ya existente) en la base de datos
   async saveTarea() {
@@ -394,7 +372,6 @@ resetTeacherForm() {
     console.error('Error al eliminar la tarea o la descripción:', error);
   }
 }
-
 
   // Método para editar una tarea
   editTarea(tarea: TaskI){
@@ -436,15 +413,7 @@ resetTeacherForm() {
     this.showTaskForm = !this.showTaskForm;
   } 
 
-  toggleStudentForm() {
-      console.log('toggleStudentForm activated');
-      this.showStudentForm = !this.showStudentForm;
-  }
 
-  toggleTeacherForm() {
-    console.log('toggleTeacherForm activated');
-    this.showTeacherForm = !this.showTeacherForm;
-  }
 
   // ChangePassword() {
   //   this.navCtrl.navigateForward('/change-password');

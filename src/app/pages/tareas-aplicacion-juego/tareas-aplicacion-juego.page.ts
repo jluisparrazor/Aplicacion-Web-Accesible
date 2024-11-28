@@ -6,7 +6,7 @@ import { SessionService } from 'src/app/common/services/session.service';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
-import { UserI } from 'src/app/common/models/users.models';
+import { StudentI } from 'src/app/common/models/student.models';
 import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI } from 'src/app/common/models/task.models';
 
@@ -20,11 +20,13 @@ import { DescriptionI } from 'src/app/common/models/task.models';
 export class TareasAplicacionJuegoPage implements OnInit {
   tareaCompletada: boolean = false;
   mostrarConfeti: boolean = false;
-  userActual: UserI;
-  enlaceVisitado = false;
+  userActual: StudentI;
 
   tarea: TaskI;
   descripcion: DescriptionI;
+
+  enlaceVisitado = false;
+
 
   //Cosas pasadas por state
   taskID: string;
@@ -64,10 +66,10 @@ export class TareasAplicacionJuegoPage implements OnInit {
     const user = this.sessionService.getCurrentUser();
   
     if (user && 'password' in user) {
-      this.userActual = user as UserI;
-      console.log('Usuario loggeado:', this.userActual.nombre);
+      this.userActual = user as unknown as StudentI;
+      console.log('Usuario loggeado:', this.userActual.name);
     } else {
-      console.error('El usuario actual no es válido o no es un UserI.');
+      console.error('El usuario actual no es válido o no es un StudentI.');
       this.router.navigate(['/loginalumno']);
     }
   }

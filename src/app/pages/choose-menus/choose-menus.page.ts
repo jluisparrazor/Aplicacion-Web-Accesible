@@ -46,7 +46,6 @@ export class ChooseMenusPage implements OnInit  {
               private router: Router,) {}
 
   ngOnInit() {
-    
     this.loadStructure();
   }
 
