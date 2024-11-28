@@ -53,7 +53,7 @@ export const routes: Routes = [
   },
   {
     path: 'material-demand',
-    loadComponent: () => import('./pages/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
+    loadComponent: () => import('./pages/home-profesor/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
   },
   {
     path: 'choose-menus',

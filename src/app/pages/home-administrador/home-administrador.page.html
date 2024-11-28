@@ -93,15 +93,20 @@
         </ion-card>
       
         <!-- Lista de tareas y todos sus elementos -->
-        <ion-list>
-          <ion-item *ngFor="let tarea of tasks; let i = index">
-            <ion-label>
-              <h3>{{ tarea.Nombre }}</h3>
-              <p>Completada: {{ tarea.Completada }}</p>
-              <p *ngIf="tarea.Fecha">Fecha: {{ tarea.Fecha.toDate() | date }}</p>
-              <p *ngIf="tarea.Asignado">Asignado a: {{ tarea.Asignado }}</p>
-            </ion-label> 
-            <!-- Botones de editar y eliminar la tarea -->
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" *ngFor="let tarea of tasks; let i = index">
+              <ion-item>
+                
+                <!-- Información del estudiante -->
+                <ion-label>
+                  <h3>{{ tarea.Nombre }}</h3>
+                  <p>Completada: {{ tarea.Completada }}</p>
+                  <p *ngIf="tarea.Fecha">Fecha: {{ tarea.Fecha.toDate() | date }}</p>
+                  <p *ngIf="tarea.Asignado">Asignado a: {{ tarea.Asignado }}</p>
+                </ion-label>
+        
+                 <!-- Botones de editar y eliminar la tarea -->
             <ion-buttons slot="end">
               <ion-button (click)="editTarea(tarea)">
                 <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
@@ -110,12 +115,16 @@
                 <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
               </ion-button>
             </ion-buttons>
-          </ion-item>
-        </ion-list>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
             
       </ion-col>
+    </ion-row>
 
-        
+      <ion-row>
+
 
     <!-- ALUMNOS -->
       <ion-col>
@@ -168,7 +177,7 @@
             </ion-item>
             <!-- Pictograma -->
             <ion-item>
-              <ion-input 
+              <ion-input
                 label="ID Pictograma" 
                 labelPlacement="floating" 
                 [(ngModel)]="newStud.pictogramId">
@@ -228,34 +237,54 @@
           </ion-list>
         </ion-card>
         
-        <!-- Lista de alumnos y todos sus elementos -->
-        <ion-list>
-          <ion-item *ngFor="let stud of students; let i = index">
-            <ion-label>
-              <h3>{{ stud.name }} {{ stud.surname }}</h3>
-              <p>Teléfono móvil: {{stud.phone}} </p>
-              <p *ngIf="stud.disabilities">Discapacidades: 
-                <span *ngIf="stud.disabilities.visual">Visual </span>
-                <span *ngIf="stud.disabilities.auditory">Auditiva </span>
-                <span *ngIf="stud.disabilities.motor">Motora </span>
-                <span *ngIf="stud.disabilities.cognitive">Cognitiva </span>
-              </p>
-              <p *ngIf="stud.loginType">Login especial</p>
-                
-            </ion-label> 
-            <!-- Botones de editar y eliminar la tarea -->
-            <ion-buttons slot="end">
-              <ion-button (click)="editStu(stud)">
-                <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-              </ion-button>
-              <ion-button (click)="deleteStu(stud)">
-                <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
-        </ion-list>   
-      </ion-col>
 
+        <!-- Lista de alumnos y todos sus elementos -->
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" *ngFor="let stud of students; let i = index">
+              <ion-item>
+                <!-- Imagen del pictograma -->
+                <ion-avatar slot="start">
+                  <ion-img 
+                    [src]="'https://api.arasaac.org/api/pictograms/' + stud.pictogramId" 
+                    alt="Pictogram image" 
+                    class="pictogram-img">
+                  </ion-img>
+                </ion-avatar>
+        
+                <!-- Información del estudiante -->
+                <ion-label>
+                  <h3>{{ stud.name }} {{ stud.surname }}</h3>
+                  <p *ngIf="stud.phone">Teléfono móvil: {{ stud.phone }}</p>
+                  <p>DNI: {{ stud.dni }}</p>
+                  <p *ngIf="stud.disabilities">Discapacidades: 
+                    <span *ngIf="stud.disabilities.visual">Visual </span>
+                    <span *ngIf="stud.disabilities.auditory">Auditiva </span>
+                    <span *ngIf="stud.disabilities.motor">Motora </span>
+                    <span *ngIf="stud.disabilities.cognitive">Cognitiva </span>
+                  </p>
+                  <p *ngIf="stud.loginType; else noSpecialLogin">Tiene login especial</p>
+                  <ng-template #noSpecialLogin>
+                    <p>No tiene login especial</p>
+                  </ng-template>
+                </ion-label>
+        
+                <!-- Botones de editar y eliminar -->
+                <ion-buttons slot="end">
+                  <ion-button (click)="editStu(stud)">
+                    <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="deleteStu(stud)">
+                    <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+</ion-row>
+<ion-row>
 
       <!-- PROFESORES -->
       <ion-col>
@@ -380,24 +409,42 @@
         
 
         <!-- Lista de profesores y todos sus elementos -->
-        <ion-list>
-          <ion-item *ngFor="let teacher of teachers; let i = index">
-            <ion-label>
-              <h3>{{ teacher.name }} {{ teacher.surname }}</h3>
-              <p>Teléfono móvil: {{teacher.phone}} </p>
-              <p *ngIf="teacher.administrative">Es administrativo</p>
-            </ion-label> 
-            <!-- Botones de editar y eliminar al profesor -->
-            <!-- <ion-buttons slot="end">
-              <ion-button (click)="editTeacher(teacher)">
-                <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
-              </ion-button>
-              <ion-button (click)="deleteTeacher(teacher)">
-                <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
-              </ion-button>
-            </ion-buttons> -->
-          </ion-item>
-        </ion-list>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" *ngFor="let teacher of teachers; let i = index">
+              <ion-item>
+                <!-- Imagen del pictograma -->
+                <ion-avatar slot="start">
+                  <ion-img 
+                    [src]="'https://api.arasaac.org/api/pictograms/' + teacher.pictogramId" 
+                    alt="Pictogram image" 
+                    class="pictogram-img">
+                  </ion-img>
+                </ion-avatar>
+        
+                <!-- Información del profesor -->
+                <ion-label>
+                  <h3>{{ teacher.name }} {{ teacher.surname }}</h3>
+                  <p *ngIf="teacher.phone">Teléfono móvil: {{ teacher.phone }}</p>
+                  <p>DNI: {{ teacher.dni }}</p>
+                  <p *ngIf="teacher.administrative">Es administrativo</p>
+                  <p *ngIf="teacher.email">Email: {{ teacher.email }}</p>
+                </ion-label>
+        
+                <!-- Botones de editar y eliminar -->
+                <!-- <ion-buttons slot="end">
+                  <ion-button (click)="editTeacher(teacher)">
+                    <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="deleteTeacher(teacher)">
+                    <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-buttons> -->
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        
             
       </ion-col>
     </ion-row>
