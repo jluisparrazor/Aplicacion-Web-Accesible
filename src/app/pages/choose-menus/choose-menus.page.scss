@@ -1,19 +1,6 @@
-$base-font-size: 20px;
 
-.numbers-count {
-    font-size: 20px;
-}
 
-.numbers-count {
-    font-size: $base-font-size;
-}
 .button-increm-decrem {
-    font-size: $base-font-size;
-    color: black;
-    border: none;
-}
-.button-increm-decrem {
-    font-size: 20px;
     color: black;
     border: none;
 }
@@ -34,30 +21,7 @@ $base-font-size: 20px;
 .small-card-title {
     text-align: center;
     text-justify: auto;
-    font-size: 16px; /* Ajusta el tamaño según tus necesidades */
-    font-weight: normal; /* Ajusta el peso de la fuente si es necesario */
+    font-size: 16px; 
+    font-weight: normal; 
   }
 
-ion-button [color="success"] {
-    --background: #4CAF50;
-    --color: #ffffff;
-  }
-
-.modal-content {
-  height: calc(100% - 56px); /* Adjust the height to fit within the modal */
-  overflow-y: auto; /* Enable vertical scrolling if needed */
-}
-
-.modal-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-
-.class-card {
-  height: 150px;
-}
-
-.menutype-card {
-  height: 150px;
-}

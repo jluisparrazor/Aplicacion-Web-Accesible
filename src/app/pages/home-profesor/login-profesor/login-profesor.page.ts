@@ -50,9 +50,8 @@ export class LoginPage{
     //Si existe el profesor, obtenemos sus datos
       if (profId) {
         const profDoc = await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`);
+        console.log('Profesor admin:', profDoc);
         const profData = profDoc.data();
-
-        // console.log('profData -> ', profData);
 
         // Verificamos que sea el profesor inserte la contraseña correcta 
         if (profData && profData.password === this.password) {

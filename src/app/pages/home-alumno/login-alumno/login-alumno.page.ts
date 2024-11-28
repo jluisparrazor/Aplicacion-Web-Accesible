@@ -6,7 +6,7 @@ import { IoniconsModule } from 'src/app/common/modules/ionicons.module';
 import { Router } from '@angular/router';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { SessionService } from 'src/app/common/services/session.service';
-import { UserI } from 'src/app/common/models/users.models';
+import { StudentI } from 'src/app/common/models/student.models';
 
 @Component({
   selector: 'app-login',
@@ -40,15 +40,15 @@ export class LoginAlumnoPage implements OnInit {
   constructor(private firestoreService: FirestoreService, private sessionService: SessionService, private router: Router) { }
 
   ngOnInit() {
-    const currentUser = this.sessionService.getCurrentUser() as UserI;
+    const currentUser = this.sessionService.getCurrentUser() as StudentI;
     if (currentUser) {
-      this.name = currentUser.nombre;
+      this.name = currentUser.name;
       this.loadCorrectPassword(currentUser.id);
     }
   }
 
   loadCorrectPassword(userId: string) {
-    this.firestoreService.getDocument<UserI>(`Usuarios/${userId}`).then(docSnap => {
+    this.firestoreService.getDocument<StudentI>(`Students/${userId}`).then(docSnap => {
       if (docSnap.exists()) {
         const user = docSnap.data();
         if (user && user.correctPassword) {
@@ -80,7 +80,7 @@ export class LoginAlumnoPage implements OnInit {
         // Lógica para iniciar sesión
         console.log('Login exitoso');
         this.errorMessage = '';
-        this.router.navigate(['/paginainicial']); // Navegar al perfil del alumno
+        this.router.navigate(['/registrosemanaltareas']); // Navegar al perfil del alumno
       } else {
         // Mostrar mensaje de error
         this.errorMessage = 'Contraseña incorrecta';
