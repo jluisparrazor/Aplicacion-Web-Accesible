@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonInput, IonCard, IonButton, IonSpinner, IonButtons, IonIcon, IonThumbnail, IonImg, IonCardContent } from '@ionic/angular/standalone';
@@ -16,7 +16,9 @@ export class PictogramSearchComponent {
   keyword: string = '';
   pictograms: any[] = [];
   cargando: boolean = false;
+  @Output() pictogramSelect: EventEmitter<any> = new EventEmitter();
   selectedPictogram: any = null;
+  showPictogramList: boolean = true;
 
   constructor(private arasaacService: ArasaacService) {}
 
@@ -25,6 +27,7 @@ export class PictogramSearchComponent {
     try {
       const data = await this.arasaacService.getPictograms(this.keyword);
       this.pictograms = data.slice(0, 5);
+      this.showPictogramList = true;
     } catch (error) {
       console.error('Error al buscar pictogramas:', error);
     } finally {
@@ -38,6 +41,9 @@ export class PictogramSearchComponent {
 
   selectPictogram(pictogram: any) {
     this.selectedPictogram = pictogram;
+    console.log('Pictograma seleccionado:', pictogram._id);
+    this.pictogramSelect.emit(pictogram._id);
+    this.showPictogramList = false;
   }
 
 }

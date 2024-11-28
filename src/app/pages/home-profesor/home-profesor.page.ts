@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonRow, IonCol, IonImg, IonAvatar } from '@ionic/angular/standalone';
 import { TeacherI } from '../../common/models/teacher.models';
 import { StudentI } from '../../common/models/student.models';
+import { FirestoreService } from '../../common/services/firestore.service';
 
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +25,7 @@ export class HomePage {
   userActual: TeacherI;
 
   constructor(
+    private readonly firestoreService: FirestoreService,
     private readonly sessionService: SessionService,
     private readonly router: Router,
     private readonly studentService: StudentService,
@@ -31,8 +33,13 @@ export class HomePage {
     this.load();
 
     //Students
-    this.loadStudents();
-  }
+    
+    this.firestoreService .getCollectionChanges<StudentI>('Students').subscribe((data) => {
+      if (data) {
+        this.students = data;
+        console.log('Estudiantes -> ', this.students);
+      }
+    });  }
 
   load(){
     //Miro que profesor ha iniciado sesion
@@ -47,10 +54,10 @@ export class HomePage {
     }
   }
  
-  loadStudents(){
-  // Carga los estudiantes de la base de datos
-  this.studentService.loadStudents().then((students) => {
-    this.students = students;
-  });
-  }
+  // loadStudents(){
+  // // Carga los estudiantes de la base de datos
+  // this.studentService.loadStudents().then((students) => {
+  //   this.students = students;
+  // });
+  // }
 }

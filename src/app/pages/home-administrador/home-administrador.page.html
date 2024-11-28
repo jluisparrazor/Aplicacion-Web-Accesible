@@ -176,12 +176,14 @@
               </ion-input>
             </ion-item>
             <!-- Pictograma -->
-            <ion-item>
-              <ion-input
-                label="ID Pictograma" 
-                labelPlacement="floating" 
-                [(ngModel)]="newStud.pictogramId">
-              </ion-input>
+            <app-pictogram-search (pictogramSelect)="newStud.pictogramId = $event"></app-pictogram-search>
+            <ion-item *ngIf="newStud.pictogramId">
+              <ion-label>
+                Pictograma Seleccionado
+              </ion-label>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newStud.pictogramId" alt="Pictogram image"></ion-img>
+              </ion-thumbnail>
             </ion-item>
             <!-- Teléfono -->
             <ion-item>
@@ -339,13 +341,14 @@
             </ion-item>
 
             <!-- ID de Pictograma -->
-            <ion-item>
-              <ion-input 
-                label="ID de pictograma" 
-                labelPlacement="floating" 
-                [(ngModel)]="newTeacher.pictogramId" 
-                required>
-              </ion-input>
+            <app-pictogram-search (pictogramSelect)="newTeacher.pictogramId = $event"></app-pictogram-search>
+            <ion-item *ngIf="newTeacher.pictogramId">
+              <ion-label>
+                Pictograma Seleccionado
+              </ion-label>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newTeacher.pictogramId" alt="Pictogram image"></ion-img>
+              </ion-thumbnail>
             </ion-item>
         
             <!-- Email -->
