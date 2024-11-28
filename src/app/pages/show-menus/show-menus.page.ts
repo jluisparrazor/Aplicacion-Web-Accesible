@@ -5,6 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonItem, IonLab
 import { MenuService } from 'src/app/common/services/menu.service';
 import { Menu } from 'src/app/common/models/menu.models';
 import { Timestamp } from 'firebase/firestore';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-show-menus',
@@ -26,7 +27,7 @@ export class ShowMenusPage implements OnInit {
   viewMode: string = "classView";
   printMode: boolean = false;
 
-  constructor(private menuService: MenuService) { }
+  constructor(private menuService: MenuService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadStructure();
@@ -48,7 +49,6 @@ export class ShowMenusPage implements OnInit {
       return menuString;
     }
   }
-
 
   loadStructure() {
     this.menuService.getAllMenus().subscribe((menus) => {
@@ -80,17 +80,18 @@ export class ShowMenusPage implements OnInit {
   
   convertDate(date: Date): string {
     return new Date(date.getTime() +  60 * 60 * 1000).toISOString().split('T')[0];
-}
-
+  }
 
   imprimir() {
     if (this.showMenu !== undefined){
       this.printMode = true;
       this.viewMode = "menuView";
+      this.cdr.detectChanges(); // Force change detection
       setTimeout(() => {
         window.print();
-      }, 3000);  
-      this.printMode = false;
+        this.printMode = false;
+        this.cdr.detectChanges(); // Force change detection
+      }, 1000);  
     } else {
       alert('No hay menú para la fecha seleccionada');
     }

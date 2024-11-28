@@ -26,12 +26,12 @@
 
   <ng-container *ngIf="showMenu; else noMenu">
 
-    <ion-segment *ngIf="!printMode" id="segment">
+    <ion-segment *ngIf="!printMode">
       <ion-segment-button (click)="viewMode='classView'">
-        <ion-label>Vista Clases</ion-label>
+      <ion-label>Vista Clases</ion-label>
       </ion-segment-button>
       <ion-segment-button id="printButton" (click)="viewMode='menuView'">
-        <ion-label>Vista Menús</ion-label>
+      <ion-label>Vista Menús</ion-label>
       </ion-segment-button>
     </ion-segment>
 
