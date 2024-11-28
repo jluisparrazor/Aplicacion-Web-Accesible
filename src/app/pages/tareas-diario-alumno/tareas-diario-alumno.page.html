@@ -21,7 +21,7 @@
     <div *ngIf="tareasIncompletas.length > 0; else noIncompletas">
       <ion-card class="tarea-card-pendiente" *ngFor="let tarea of tareasIncompletas" (click)="navegarTarea(tarea)">
         <div class="tarea-contenido">
-          <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma">
+          <!-- <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma"> -->
           <div class="tarea-info">
             <h3 class="tarea-nombre">{{ descripcionesMap[tarea.associatedDescriptionId]?.title || 'Sin título disponible' }}</h3>
             <div class="tarea-detalles">
@@ -55,7 +55,7 @@
     <div *ngIf="tareasCompletadas.length > 0; else noCompletadas">
       <ion-card class="tarea-card-completada" *ngFor="let tarea of tareasCompletadas">
         <div class="tarea-contenido">
-          <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma">
+          <!-- <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma"> -->
           <div class="tarea-info">
             <h3 class="tarea-nombre">{{ descripcionesMap[tarea.associatedDescriptionId]?.title || 'Sin título disponible' }}</h3>
             <div class="tarea-detalles">
