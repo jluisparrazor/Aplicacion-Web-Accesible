@@ -91,7 +91,6 @@ export class TareasDiarioAlumnoPage implements OnInit {
     }
   }
   
-  
   // Método para actualizar las listas de tareas cuando se recibe una tarea actualizada
   actualizarListaTareas(tarea: any) {
     // Eliminar la tarea de las incompletas y agregarla a las completadas
