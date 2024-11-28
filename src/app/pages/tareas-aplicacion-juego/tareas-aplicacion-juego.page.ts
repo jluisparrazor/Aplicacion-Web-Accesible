@@ -65,7 +65,7 @@ export class TareasAplicacionJuegoPage implements OnInit {
 
     const user = this.sessionService.getCurrentUser();
   
-    if (user && 'password' in user) {
+    if (user && 'correctPassword' in user) {
       this.userActual = user as unknown as StudentI;
       console.log('Usuario loggeado:', this.userActual.name);
     } else {

@@ -36,7 +36,7 @@ export class TareasDiarioAlumnoPage implements OnInit {
     console.log('Comprobando sesión...');
     const user = this.sessionService.getCurrentUser();
   
-    if (user && 'password' in user) {
+    if (user && 'correctPassword' in user) {
       this.userActual = user as unknown as StudentI;
       console.log('Usuario loggeado:', this.userActual.name);
       this.loadTareas(); // Cargar las tareas después de validar al usuario
