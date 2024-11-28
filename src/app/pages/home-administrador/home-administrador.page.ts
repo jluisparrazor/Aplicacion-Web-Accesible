@@ -124,45 +124,31 @@ export class HomeAdministradorPage{
     //   this.teachers = teachers;
     // });
 
-    // Carga las descripciones de la base de datos
-    this.firestoreService.getCollectionChanges<DescriptionI>('Description').subscribe((data) => {
-      if (data) {
-        this.tasksDescriptions = data;
-      }
-    });
-
-
-    // Cargar las tareas desde la BD
-    this.firestoreService.getCollectionChanges<TaskI>('Tasks').subscribe(async (data) => {
+    // Carga las tasks de la base de datos
+    this.firestoreService.getCollectionChanges<TaskI>('Tasks').subscribe((data) => {
       if (data) {
         this.tasks = data;
-
-        // Usamos Promise.all para obtener todas las descripciones en paralelo
-        await Promise.all(this.tasks.map(async (task) => {
-          try {
-            // Usamos associatedDescriptionId para buscar el documento de descripción
-            const descriptionDocRef = doc(this.firestoreService.firestore, 'Description', task.associatedDescriptionId);
-            const descriptionDoc = await getDoc(descriptionDocRef);
-
-            if (descriptionDoc.exists()) {
-              // Accedemos a los datos de la descripción sin cambiar la referencia
-              task['descriptionData'] = descriptionDoc.data() as DescriptionI; // Guardamos los datos en un campo temporal 'descriptionData'
-            }
-          } catch (error) {
-            console.error(`Error fetching description for task ${task.associatedDescriptionId}:`, error);
-          }
-        }));
-
-        // Ahora tienes las tareas con las descripciones cargadas
-        console.log('tasks with descriptions -> ', this.tasks);
+        console.log('tasks -> ', this.tasks);
       }
     });
-
 
     // Carga los estudiantes de la base de datos
     // this.studentService.loadStudents().then((students) => {
     //   this.students = students;
     // });
+    this.firestoreService.getCollectionChanges<StudentI>('Students').subscribe((data) => {
+      if (data) {
+        this.students = data;
+        console.log('Estudiantes -> ', this.students);
+      }
+    });
+    
+    this.firestoreService.getCollectionChanges<TeacherI>('Teachers').subscribe((data) => {
+      if (data) {
+        this.teachers = data;
+        console.log('Profesores -> ', this.teachers);
+      }
+    });
   }
 
   // GETTERS
