@@ -172,7 +172,7 @@ export class ChooseMenusPage implements OnInit  {
   }
 
   getPictogram(pictogramId:string): string{
-    return this.arasaacService.getPictogramImageUrl(pictogramId);
+    return `https://api.arasaac.org/api/pictograms/${pictogramId}`;
   }  
   
   completeTask(){
