@@ -23,16 +23,16 @@
         <div class="tarea-contenido">
           <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma">
           <div class="tarea-info">
-            <h3 class="tarea-nombre">{{ tarea.Nombre }}</h3>
+            <h3 class="tarea-nombre">{{ descripcionesMap[tarea.associatedDescriptionId]?.title || 'Sin título disponible' }}</h3>
             <div class="tarea-detalles">
               <p class="tarea-fecha">
-                Fecha: 
-                {{ tarea.Fecha ? (tarea.Fecha.toDate() | date: 'dd/MM/yyyy') : '' }}
+                Fecha límite: 
+                {{ tarea.endTime ? (tarea.endTime.toDate() | date: 'dd/MM/yyyy') : '' }}
               </p>
               <p class="tarea-estado">
                 Completada:
-                <span [class.text-success]="tarea.Completada" [class.text-danger]="!tarea.Completada">
-                  {{ tarea.Completada ? 'Sí' : 'No' }}
+                <span [class.text-success]="tarea.completed" [class.text-danger]="!tarea.completed">
+                  {{ tarea.completed ? 'Sí' : 'No' }}
                 </span>
               </p>
             </div>
@@ -57,11 +57,11 @@
         <div class="tarea-contenido">
           <img src="assets/icon/favicon.png" alt="Pictograma" class="tarea-pictograma">
           <div class="tarea-info">
-            <h3 class="tarea-nombre">{{ tarea.Nombre }}</h3>
+            <h3 class="tarea-nombre">{{ descripcionesMap[tarea.associatedDescriptionId]?.title || 'Sin título disponible' }}</h3>
             <div class="tarea-detalles">
               <p class="tarea-fecha">
-                Fecha: 
-                {{ tarea.Fecha ? (tarea.Fecha.toDate() | date: 'dd/MM/yyyy') : '' }}
+                Fecha de finalización: 
+                {{ tarea.doneTime ? (tarea.doneTime.toDate() | date: 'dd/MM/yyyy') : '' }}
               </p>
               <p class="tarea-estado">
                 Completada: <span class="text-success">Sí</span>

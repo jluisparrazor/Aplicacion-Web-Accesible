@@ -80,7 +80,7 @@ export class LoginAlumnoPage implements OnInit {
         // Lógica para iniciar sesión
         console.log('Login exitoso');
         this.errorMessage = '';
-        this.router.navigate(['/registrosemanaltareas']); // Navegar al perfil del alumno
+        this.router.navigate(['/tareasdiarioalumno']); // Navegar al perfil del alumno
       } else {
         // Mostrar mensaje de error
         this.errorMessage = 'Contraseña incorrecta';

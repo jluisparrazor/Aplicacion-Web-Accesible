@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { TareaI } from '../models/tarea.models';
+import { TaskI } from '../models/task.models';
 import { collectionData, docData, Firestore} from '@angular/fire/firestore';
 import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, Query, where, getDocs, DocumentData, updateDoc } from 'firebase/firestore';import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,10 +8,6 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class FirestoreService {
-
-  // Creamos un BehaviorSubject para las tareas actualizadas
-  private tareaActualizadaSubject = new BehaviorSubject<any>(null);
-  tareaActualizada$ = this.tareaActualizadaSubject.asObservable();
 
   firestore: Firestore = inject(Firestore);
   constructor() { }
@@ -31,6 +27,11 @@ export class FirestoreService {
     console.log('getDocumentChanges -> ', path);
     const document= doc(this.firestore, path);
     return docData(document) as Observable<tipo[]>;
+  }
+
+  getDocumentReference(collection: string, docId: string){
+    const docRef = doc(this.firestore, collection, docId);
+    return docRef;
   }
 
   //Create 
@@ -86,40 +87,24 @@ export class FirestoreService {
   }
 
   // Obtener tareas por usuario
-  async getTareasPorUsuario(usuarioId: string): Promise<TareaI[]> {
-    const tareasRef = collection(this.firestore, '/Tareas');
-    const usuarioRef = doc(this.firestore, `/Usuarios/${usuarioId}`);
+  async getTareasPorUsuario(usuarioId: string): Promise<TaskI[]> {
+    const tareasRef = collection(this.firestore, '/Tasks');
+    const usuarioRef = doc(this.firestore, `/Students/${usuarioId}`);
     const usuarioDoc = await getDoc(usuarioRef);
     
     if (!usuarioDoc.exists()) {
       throw new Error('Usuario no encontrado');
     }
 
-    const usuarioNombre = usuarioDoc.data()?.['nombre'];
+    const usuarioNombre = usuarioDoc.data()?.['name'];
 
-    const q = query(tareasRef, where('Asignado', '==', usuarioNombre)); // Ahora comparamos con la referencia del usuario
+    const q = query(tareasRef, where('assigned', '==', usuarioNombre)); // Ahora comparamos con la referencia del usuario
     const snapshot = await getDocs(q);
     
     return snapshot.docs.map((doc) => ({
-      id: doc.id,
+      taskID: doc.id,
       ...doc.data(),
-    })) as TareaI[];
-  }
-
-  // Método para actualizar la tarea en Firestore
-  async actualizarTarea(tarea: TareaI) {
-    try {
-      const tareaRef = doc(this.firestore, 'Tareas', tarea.id); // Referencia al documento
-      await updateDoc(tareaRef, {
-        Completada: tarea.Completada
-      });
-      console.log('Tarea actualizada exitosamente');
-      
-      // Emitir la tarea actualizada a los suscriptores
-      this.tareaActualizadaSubject.next(tarea);
-    } catch (error) {
-      console.error('Error actualizando tarea:', error);
-    }
+    })) as TaskI[];
   }
 }
 
