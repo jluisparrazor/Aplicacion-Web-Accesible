@@ -12,9 +12,9 @@ import { Router } from '@angular/router';
 
 
 @Component({
-  selector: 'app-choose-menus',
-  templateUrl: './choose-menus.page.html',
-  styleUrls: ['./choose-menus.page.scss'],
+  selector: 'app-task-menus',
+  templateUrl: './task-menus.page.html',
+  styleUrls: ['./task-menus.page.scss'],
   standalone: true,
   imports: [IonImg, IonFooter, IonCol, IonRow, IonGrid, IonIcon,  IonModal, IonCardTitle, IonCardContent, IonCard, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })

@@ -57,7 +57,7 @@ export const routes: Routes = [
   },
   {
     path: 'choose-menus',
-    loadComponent: () => import('./pages/choose-menus/choose-menus.page').then( m => m.ChooseMenusPage)
+    loadComponent: () => import('./pages/task-menus/task-menus.page').then( m => m.ChooseMenusPage)
   },
   {
     path: 'show-menus',
