@@ -13,29 +13,46 @@
       </ion-button>
     </ion-buttons>
   </ion-item-divider>
-  <ion-list class="lista-alumnos">
+
+  <!-- Mostrar spinner mientras los datos están cargando -->
+  <div *ngIf="cargando" class="spinner-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando datos, por favor espera...</p>
+  </div>
+
+  <!-- Mostrar lista de alumnos solo si no está cargando -->
+  <ion-list *ngIf="!cargando" class="lista-alumnos">
     <ion-item
       *ngFor="let alumno of alumnos"
       button
       (click)="cargarTareas(alumno.id, alumno.name)"
       class="alumno-item"
     >
-      <ion-label class="alumno-nombre">{{ alumno.name }}</ion-label>
+      <ion-label class="alumno-nombre">{{ alumno.name }} {{ alumno.surname }}</ion-label>
     </ion-item>
   </ion-list>
-  
-  <div *ngIf="seleccionado">
+
+  <!-- Mostrar tareas solo si un alumno está seleccionado y los datos están cargados -->
+  <div *ngIf="seleccionado && !cargando">
     <ion-item-divider color="light" class="tareas-header">
       <span class="titulo-principal">Tareas de {{ seleccionado }}</span>
     </ion-item-divider>
 
     <div class="tareas-container">
+      <!-- Columna de tareas pendientes -->
       <div class="columna">
         <ion-title class="titulo-tareas">Tareas Pendientes</ion-title>
         <ion-list>
           <ion-item *ngFor="let tarea of tareasPendientes" class="tarea-item">
+            <ion-avatar slot="start">
+              <ion-img 
+                [src]="'https://api.arasaac.org/api/pictograms/' + descripcionesMap[tarea.associatedDescriptionId]?.pictogramId" 
+                alt="Pictogram image" 
+                class="pictogram-img">
+              </ion-img>
+            </ion-avatar>
             <ion-label>
-              <h3>{{ descripcionesMap[tarea.associatedDescriptionId]?.title || 'Sin título disponible' }}</h3>
+              <h3>{{ tarea.title || 'Sin título disponible' }}</h3>
               <p>
                 Fecha límite: 
                 <span *ngIf="tarea.endTime; else noFechaLimite">
@@ -48,29 +65,39 @@
             </ion-label>
           </ion-item>
           <ion-item *ngIf="tareasPendientes.length === 0" class="tarea-item">
-            <ion-label class="sin-tareas">
-              Sin tareas pendientes
-            </ion-label>
+            <ion-label class="sin-tareas">Sin tareas pendientes</ion-label>
           </ion-item>
         </ion-list>
       </div>
 
+      <!-- Columna de tareas completadas -->
       <div class="columna">
         <ion-title class="titulo-tareas">Tareas Completadas</ion-title>
         <ion-list>
           <ion-item *ngFor="let tarea of tareasCompletadas" class="tarea-item">
+            <ion-avatar slot="start">
+              <ion-img 
+                [src]="'https://api.arasaac.org/api/pictograms/' + descripcionesMap[tarea.associatedDescriptionId]?.pictogramId" 
+                alt="Pictogram image" 
+                class="pictogram-img">
+              </ion-img>
+            </ion-avatar>
             <ion-label>
-              <h3>{{ descripcionesMap[tarea.associatedDescriptionId]?.title || 'Sin título disponible' }}</h3>
-              <p>Fecha de finalización: {{ tarea.doneTime?.toDate() | date: 'medium' }}</p>
+              <h3>{{ tarea.title || 'Sin título disponible' }}</h3>
+              <p *ngIf="tarea.completed.length > 0">
+                Fecha de finalización: 
+                <ng-container *ngFor="let doneTime of getDoneTime(tarea, seleccionado)">
+                  {{ doneTime.toDate() | date: 'medium' }}
+                </ng-container>
+              </p>
             </ion-label>
           </ion-item>
           <ion-item *ngIf="tareasCompletadas.length === 0" class="tarea-item">
-            <ion-label class="sin-tareas">
-              Sin tareas completadas
-            </ion-label>
+            <ion-label class="sin-tareas">Sin tareas completadas</ion-label>
           </ion-item>
         </ion-list>
       </div>
     </div>
   </div>
 </ion-content>
+

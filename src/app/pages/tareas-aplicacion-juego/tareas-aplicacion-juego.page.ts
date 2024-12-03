@@ -5,17 +5,18 @@ import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonAvatar, IonImg } from '@ionic/angular/standalone';
 import { StudentI } from 'src/app/common/models/student.models';
 import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI } from 'src/app/common/models/task.models';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-tareas-aplicacion-juego',
   templateUrl: './tareas-aplicacion-juego.page.html',
   styleUrls: ['./tareas-aplicacion-juego.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule]
+  imports: [IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule]
 })
 export class TareasAplicacionJuegoPage implements OnInit {
   tareaCompletada: boolean = false;
@@ -27,12 +28,10 @@ export class TareasAplicacionJuegoPage implements OnInit {
 
   enlaceVisitado = false;
 
-
   //Cosas pasadas por state
   taskID: string;
   associatedDescriptionId: string;
-  estadoTarea: boolean = false;
-
+  estadoTarea: boolean[] = []; // Ahora es un array de booleanos
 
   constructor(
     private router: Router,
@@ -52,7 +51,7 @@ export class TareasAplicacionJuegoPage implements OnInit {
 
       console.log('Tarea seleccionada:', this.taskID);
       console.log('ID de la descripción asociada:', this.associatedDescriptionId);
-      console.log('Estado de la tarea:', this.estadoTarea);
+      console.log('Estado de la tarea (array de completados):', this.estadoTarea);
 
       // Cargar la descripción asociada desde Firestore
       if (this.associatedDescriptionId) {
@@ -74,18 +73,31 @@ export class TareasAplicacionJuegoPage implements OnInit {
     }
   }
 
-  // Método para cargar la tarea usando taskID
   async loadTarea(taskID: string) {
     try {
+      // Cargar la tarea desde Firestore usando taskID
       const tareaDoc = await this.firestoreService.getDocument<TaskI>(`Tasks/${taskID}`);
       this.tarea = tareaDoc.data();  // Ahora tenemos la tarea completa
       console.log('Tarea cargada:', this.tarea);
-      this.tareaCompletada = this.tarea.completed;  // Actualizamos el estado de la tarea
+  
+      // No marcar la tarea como completada aún, esto se hace solo cuando el usuario la marca como completada
+      // Obtener el nombre del estudiante logueado
+      const userName = this.userActual.name;  // Nombre del estudiante logueado
+  
+      // Buscar el índice del alumno en el array 'assigned' usando el nombre del estudiante
+      const studentIndex = this.tarea.assigned.findIndex(name => name === userName);  // Compara por nombre
+    
+      if (studentIndex !== -1) {
+        // Aquí no marcamos la tarea como completada aún
+        console.log(`El estudiante ${userName} está asignado a esta tarea.`);
+      } else {
+        console.log(`El estudiante ${userName} no está asignado a esta tarea.`);
+      }
     } catch (error) {
       console.error('Error al cargar la tarea:', error);
     }
   }
-
+  
   // Método para cargar la descripción asociada
   async loadDescripcion(associatedDescriptionId: string) {
     try {
@@ -102,30 +114,37 @@ export class TareasAplicacionJuegoPage implements OnInit {
     this.router.navigate(['/tareasdiarioalumno']); // Aquí va la ruta a la página del listado
   }
 
-  // Función para marcar la tarea como completada
   completarTarea() {
-    this.tareaCompletada = true;
-    this.tarea.completed = true;
-
-    // Mostrar confeti 1.7s después de que empiece la animación del texto
-    setTimeout(() => {
-      this.mostrarConfeti = true;
-    }, 1600);  // 1700 ms = 1.7 segundos
-
-    // Actualiza la tarea en el servicio de Firestore
-    this.tasksService.actualizarTarea(this.tarea).then(() => {
-      console.log('Tarea actualizada a completada:', this.tarea);
-      // Emitimos la tarea actualizada para que otros componentes la reciban
-    }).catch(error => {
-      console.error('Error actualizando tarea:', error);
-    });
-
-    // Después de la animación, redirige al listado
-    setTimeout(() => {
-      this.volverListado(); // Redirige al listado de tareas
-    }, 6000); // Espera para volver al listado de tareas
+    const userName = this.userActual.name;  // Nombre del estudiante logueado
+    const studentIndex = this.tarea.assigned.findIndex(name => name === userName);  // Compara con el nombre logueado
+  
+    if (studentIndex !== -1) {
+      // Marcamos la tarea como completada para este alumno
+      this.tarea.completed[studentIndex] = true;
+      this.tarea.doneTime[studentIndex] = Timestamp.now();
+      this.tareaCompletada = true;
+    
+      // Mostrar confeti 1.7s después de que empiece la animación del texto
+      setTimeout(() => {
+        this.mostrarConfeti = true;
+      }, 1600);  // 1700 ms = 1.7 segundos
+  
+      // Actualiza la tarea en el servicio de Firestore
+      this.tasksService.actualizarTarea(this.tarea, studentIndex).then(() => {
+        console.log('Tarea actualizada a completada:', this.tarea);
+      }).catch(error => {
+        console.error('Error actualizando tarea:', error);
+      });
+  
+      // Después de la animación, redirige al listado
+      setTimeout(() => {
+        this.volverListado(); // Redirige al listado de tareas
+      }, 6000); // Espera para volver al listado de tareas
+    } else {
+      console.error('El estudiante no está asignado a esta tarea.');
+    }
   }
-
+  
   marcarEnlaceVisitado(){
     this.enlaceVisitado = true;
   }

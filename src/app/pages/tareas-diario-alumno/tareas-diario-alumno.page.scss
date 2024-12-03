@@ -1,110 +1,225 @@
-/* Centrar el título de las secciones */
-.centered-title {
-    text-align: center;
-    font-size: 1.8em;
-    margin: 20px 0;
-  }
-  
-  /* Estilo de las tarjetas */
-  .tarea-card-pendiente {
-    cursor: pointer;
-    margin: 16px auto;
-    width: 80%; /* Más ancha */
-    max-width: 900px;
-    border-radius: 10px;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    padding: 20px;
-  }
+/* Estilo de las tareas con dos columnas */
+.tareas-grid.dos-columnas {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las tarjetas salten a la siguiente fila */
+  gap: 0.5rem;
+  justify-content: space-between; /* Distribución uniforme */
+  margin-right: 6%;
+  margin-left: 6%;
+}
 
-  .tarea-card-completada {
-    margin: 16px auto;
-    width: 80%; /* Más ancha */
-    max-width: 900px;
-    border-radius: 10px;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    padding: 20px;
-  }
-  
-  /* Espaciado del pictograma */
-  .tarea-pictograma {
-    float: left;
-    margin-right: 20px;
-    width: 72px;
-    height: 72px;
-  }
-  
-  /* Estilo del título de la tarea */
-  .tarea-nombre {
-    text-align: center;
-    font-size: 2.3em; /* Más grande */
-    font-weight: bold;
-    margin: 8px 0;
-    color: black;
-  }
-  
-  /* Detalles de la tarea (fecha y estado) */
-  .tarea-detalles {
-    display: flex;
-    justify-content: space-between; /* Centrado pero no en extremos */
-    margin-top: 12px;
-  }
-  
-  .tarea-fecha {
-    margin-left: 20%;
-    font-size: 1.4em;
-    color: #555;
-  }
-  
-  .tarea-estado {
-    margin-right: 20%;
-    font-size: 1.4em;
-    color: #555;
-  }
-  
-  .text-success {
-    color: #28a745; /* Verde */
-    font-weight: bold;
-  }
-  
-  .text-danger {
-    color: #dc3545; /* Rojo */
-    font-weight: bold;
-  }
-  
-  /* Estilo cuando no hay tareas */
-  .no-tareas {
-    text-align: center;
-    color: #aaa;
-    margin: 40px 0;
-  }
-  
-  .no-tareas-icon {
-    font-size: 3.5em;
-    margin-bottom: 16px;
-  }
-  
-  .tareas-pendientes {
-    font-size: 2.5rem; /* Tamaño más grande */
-    font-weight: bold; /* Negrita para resaltar */
-    color: #0078d4; /* Un color azul elegante */
-    text-align: center; /* Centrado en la página */
-    text-transform: uppercase; /* Convertir el texto a mayúsculas */
-    letter-spacing: 2px; /* Espaciado entre letras para un diseño moderno */
-    border-bottom: 3px solid #0078d4; /* Línea decorativa debajo */
-    padding-bottom: 10px; /* Espacio entre el texto y la línea */
-  }
+/* Estilo para una sola columna */
+.tareas-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Una sola columna */
+  gap: 1rem;
+  padding: 1rem;
+}
 
-  .tareas-completadas {
-    font-size: 2.5rem; /* Tamaño más grande */
-    font-weight: bold; /* Negrita para resaltar */
-    color: #0078d4; /* Un color azul elegante */
-    text-align: center; /* Centrado en la página */
-    text-transform: uppercase; /* Convertir el texto a mayúsculas */
-    letter-spacing: 2px; /* Espaciado entre letras para un diseño moderno */
-    border-bottom: 3px solid #0078d4; /* Línea decorativa debajo */
-    padding-bottom: 10px; /* Espacio entre el texto y la línea */
-    margin-top: 40px;
-  }
+/* Contenedor principal */
+.listas-tareas {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Estilo común para las listas */
+.lista-tareas {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateX(100%); /* Por defecto fuera de la vista (a la derecha) */
+  transition: transform 0.4s ease-in-out;
+  opacity: 0;
+  margin: 0; /* Elimina márgenes adicionales */
+  padding: 20px 0; /* Espaciado interno para separar tareas */
+  max-height: calc(100vh - 200px); /* Ajusta la altura máxima según el diseño */
+}
+
+/* Mostrar la lista activa */
+.lista-tareas.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Transición de tareas pendientes a completadas */
+.lista-tareas.tareas-pendientes.transicion-derecha {
+  transform: translateX(-100%); /* Fuera de la vista (a la izquierda) */
+}
+
+/* Transición de tareas completadas a pendientes */
+.lista-tareas.tareas-completadas.transicion-izquierda {
+  transform: translateX(100%); /* Fuera de la vista (a la derecha) */
+}
+
+/* Estructura de la cuadrícula para las tareas */
+.tarea-grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr; /* Tres columnas: izquierda y derecha estrechas, centro más amplia */
+  align-items: center; /* Centrar verticalmente */
+  gap: 12px; /* Separación entre columnas */
+}
+
+/* Columnas individuales */
+.tarea-columna {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tarea-pictograma-izq,
+.tarea-pictograma-der {
+  width: 50px;
+  height: 50px;
+}
+
+/* Espaciado del pictograma */
+.tarea-pictograma {
+  float: left;
+  margin-right: 20px;
+  width: 100px; /* Aumentado el tamaño del ancho */
+  height: 100px; /* Aumentado el tamaño del alto */
+  margin-top: -10px;
+}
+
+.tarea-contenido {
+  display: flex; /* Activar flexbox */
+  flex-direction: column; /* Apilar elementos verticalmente */
+  justify-content: center; /* Centrar verticalmente */
+  text-align: left; /* Alinear texto a la izquierda */
+  gap: 5px; /* Espaciado entre el título y la fecha */
+}
+
+.tarea-nombre {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0; /* Sin margen adicional */
+  color: black;
+  margin-top: 30px;
+  margin-left: 30px;
+}
+
+/* Estilo de la fecha */
+.tarea-fecha {
+  font-size: 1.3rem;
+  color: #555;
+  margin-left: 30px;
+}
+
+/* Estilo de las tarjetas */
+.tarea-card-pendiente,
+.tarea-card-completada {
+  margin: 8px auto;
+  width: 80%; /* Más ancha */
+  max-width: 900px;
+  border-radius: 10px;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  padding: 30px; /* Incrementado para mayor espacio interno */
+  min-height: 130px; /* Altura mínima aumentada */
+  flex: 1 1 calc(50% - 1rem); /* Dos columnas ajustadas */
+}
+
+.tarea-card-pendiente {
+  cursor: pointer;
+}
+
+/* Estilo cuando no hay tareas */
+.no-tareas {
+  text-align: center;
+  color: #aaa;
+  margin: 40px 0;
+}
+
+.no-tareas-icon {
+  font-size: 3.5em;
+  margin-bottom: 16px;
+}
+
+.no-tareas-message {
+  font-size: 1.4rem;
+  color: #666;
+}
   
+.tareas-pendientes {
+  font-size: 2rem; /* Tamaño más grande */
+  font-weight: bold; /* Negrita para resaltar */
+  color: #0078d4; /* Un color azul elegante */
+  text-align: center; /* Centrado en la página */
+  letter-spacing: 2px; /* Espaciado entre letras para un diseño moderno */
+  padding-bottom: 10px; /* Espacio entre el texto y la línea */
+  margin-top: -30px;
+}
+
+.tareas-completadas {
+  font-size: 2rem; /* Tamaño más grande */
+  font-weight: bold; /* Negrita para resaltar */
+  color: #0078d4; /* Un color azul elegante */
+  text-align: center; /* Centrado en la página */
+  letter-spacing: 2px; /* Espaciado entre letras para un diseño moderno */
+  padding-bottom: 10px; /* Espacio entre el texto y la línea */
+  margin-top: -30px;
+}
+
+/* Contenedor del título en cuadrícula */
+.titulo-grid {
+  display: flex; /* Usar flexbox */
+  align-items: baseline; /* Alinear el icono y texto en la misma línea base */
+  justify-content: center; /* Centrar el conjunto icono-texto */
+  gap: 20px; /* Espacio entre icono y texto */
+  border-bottom: 3px solid #0078d4; /* Línea decorativa debajo */
+}
+
+/* Tamaño del icono del título */
+.titulo-icono ion-img {
+  width: 60px; /* Ancho del icono */
+  height: 60px; /* Alto del icono */
+  margin-top: 20px;
+}
+
+.titulo-texto {
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #0078d4;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+
+/* Botones redondos */
+.btn-nav {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  width: 50px; /* Tamaño del botón */
+  height: 50px;
+  border-radius: 50%; /* Hace el botón circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px; /* Tamaño del icono */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  position: fixed; /* Fija los botones en una posición relativa a la pantalla */
+  z-index: 1000; /* Asegura que esté por encima del contenido */
+}
+
+.btn-nav:hover {
+  background-color: #0056b3;
+}
+
+/* Posición de los botones */
+.izquierda {
+  top: 50%; /* Centra verticalmente */
+  left: 20px; /* Separa del borde izquierdo */
+  transform: translateY(-50%); /* Ajusta para el centrado vertical */
+}
+
+.derecha {
+  top: 50%; /* Centra verticalmente */
+  right: 20px; /* Separa del borde derecho */
+  transform: translateY(-50%); /* Ajusta para el centrado vertical */
+}

@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { TaskI } from '../models/task.models';
+import { StudentI } from '../models/student.models';
 import { collectionData, docData, Firestore} from '@angular/fire/firestore';
 import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, Query, where, getDocs, DocumentData, updateDoc } from 'firebase/firestore';import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -34,6 +35,29 @@ export class FirestoreService {
     return docRef;
   }
 
+  // Método en firestoreService para obtener un estudiante por su nombre completo
+  async getStudentByName(studentName: string): Promise<StudentI | null> {
+    try {
+      // Filtro para buscar al estudiante por su nombre completo
+      const filters = [
+        { field: 'fullName', operator: '==', value: studentName }  // Asegúrate de usar el nombre correcto del campo en Firestore
+      ];
+  
+      // Llamamos al método getCollection con el filtro
+      const students = await this.getCollection('students', filters);  // 'students' es el nombre de la colección
+  
+      if (students.length > 0) {
+        return students[0];  // Asumimos que hay solo un estudiante con ese nombre
+      } else {
+        console.log(`No se encontró el estudiante con el nombre: ${studentName}`);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener el estudiante:', error);
+      return null;
+    }
+  }
+  
   //Create 
   createDocument(data: any, path: string){
     const document= doc(this.firestore, path);
@@ -53,6 +77,10 @@ export class FirestoreService {
     const document= doc(this.firestore, `${path}/${idDoc}`);
     console.log("Se va a eliminar el ID: " + idDoc);
     return deleteDoc(document);
+  }
+
+  async updateDocument(ref: DocumentReference, data: any): Promise<void> {
+    return await updateDoc(ref, data);
   }
   
   // Obtener ID de un documento por un campo específico 
@@ -86,7 +114,6 @@ export class FirestoreService {
     }));
   }
 
-  // Obtener tareas por usuario
   async getTareasPorUsuario(usuarioId: string): Promise<TaskI[]> {
     const tareasRef = collection(this.firestore, '/Tasks');
     const usuarioRef = doc(this.firestore, `/Students/${usuarioId}`);
@@ -95,12 +122,20 @@ export class FirestoreService {
     if (!usuarioDoc.exists()) {
       throw new Error('Usuario no encontrado');
     }
-
+  
+    // Recuperar el nombre del usuario desde el documento
     const usuarioNombre = usuarioDoc.data()?.['name'];
-
-    const q = query(tareasRef, where('assigned', '==', usuarioNombre)); // Ahora comparamos con la referencia del usuario
+    console.log('Nombre del usuario:', usuarioNombre);
+  
+    // Consultar tareas donde el campo assigned contiene el nombre del usuario
+    const q = query(tareasRef, where('assigned', 'array-contains', usuarioNombre));
     const snapshot = await getDocs(q);
-    
+  
+    if (snapshot.empty) {
+      console.log('No se encontraron tareas asignadas al usuario:', usuarioNombre);
+    }
+  
+    // Mapear resultados
     return snapshot.docs.map((doc) => ({
       taskID: doc.id,
       ...doc.data(),
