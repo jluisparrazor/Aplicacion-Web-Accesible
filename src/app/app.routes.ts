@@ -67,6 +67,10 @@ export const routes: Routes = [
     path: 'inicio',
     loadComponent: () => import('./pages/inicio/inicio.page').then( m => m.InicioPage)
   },
+  {
+    path: 'material-update',
+    loadComponent: () => import('./pages/home-administrador/material-update/material-update.page').then( m => m.MaterialUpdatePage)
+  },
   
 ];
 @NgModule({
