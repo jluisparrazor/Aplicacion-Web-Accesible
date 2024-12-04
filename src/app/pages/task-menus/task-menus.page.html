@@ -1,17 +1,20 @@
 <!-- HEADER -->
-<ion-header [translucent]="true">
+<ion-header id="main-header" [translucent]="true">
   <ion-toolbar>
-    <ion-button color="medium" slot="start" (click)="salir()">Salir</ion-button>
-    <ion-title class="ion-text-center"><strong>Tarea Menús</strong></ion-title>
-    <ion-button [color]="allClassesCompleted() ? 'success' : 'medium'" (click)="completeTask()" slot="end"> ¡Completar!</ion-button>
+    <ion-button color="medium" slot="start" (click)="salir()" shape="round">
+      Salir <ion-icon name="exit-outline" style="margin-left: 8px;"></ion-icon> 
+    </ion-button>
+    <ion-title  class="ion-text-center"><strong>Tarea Menús</strong></ion-title>
+    <ion-button [color]="allClassesCompleted() ? 'success' : 'medium'" (click)="completeTask()" slot="end" shape="round">
+      <ion-icon name="checkbox-outline" style="margin-right: 8px;"></ion-icon> ¡Completar!</ion-button>
   </ion-toolbar>
 </ion-header>
 
 <!-- CONTENT -->
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" scroll-y="false">
 
   <!-- CLASS CARDS -->
-  <ion-card *ngFor="let cls of getClassesForcurrentPage()" (click)="selectClass(cls)">
+  <ion-card class="cards-size" *ngFor="let cls of getClassesForcurrentPage()" (click)="selectClass(cls)">
     <ion-card-content>
     <ion-grid>
       <ion-row>
@@ -23,7 +26,7 @@
         </ion-col>
         <ion-col size="4"class="center-content">
           <ion-button [color]="infoClasses[cls.name]?.state ? 'success' : 'light'" (click)="showPendingMenus(cls)">
-            {{ infoClasses[cls.name]?.state ? 'Finalizado' : 'Pendiente' }}
+            <span style="margin-right: 4px;">Estado:</span><strong>{{ infoClasses[cls.name]?.state ? 'Finalizado' : 'Pendiente' }}</strong>
           </ion-button>
         </ion-col>
       </ion-row>
@@ -31,32 +34,12 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- FOOTER -->
-  <ion-footer style="position: absolute; bottom: 0; width: 100%;"> 
-    <ion-grid>
-        <ion-row>
-          <ion-col size="4" class="ion-text-left">
-            <ion-button *ngIf="currentCPage > 0" (click)="previousCPage()">
-              <ion-icon name="arrow-back-outline"></ion-icon>
-            </ion-button>
-          </ion-col>
-          <ion-col size="4">
-          </ion-col>
-          <ion-col size="4" class="ion-text-right">
-            <ion-button *ngIf="(currentCPage + 1) * classesPerPage < classes.length" (click)="nextCPage()">
-              <ion-icon name="arrow-forward-outline"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-footer>
-  
 
   <!-- MENUS MODAL -->
-  <ion-modal [isOpen]="selectedClass !== null" (ionModalDidDismiss)="selectedClass = null">
+  <ion-modal class="fullscreen-modal"[isOpen]="selectedClass !== null" (ionModalDidDismiss)="selectedClass = null">
     <ng-template>
       <!-- MODAL HEADER -->
-      <ion-header>
+      <ion-header id="modal-header">
           <ion-grid>
             <ion-row>
               <ion-col class="center-content">                  
@@ -68,7 +51,7 @@
                 </div>
                 <div class="center-content" style="margin-top: 10px;">
                   <ion-button [color]="infoClasses[selectedClass.name]?.state ? 'success' : 'light'" (click)="showPendingMenus(selectedClass)">
-                    {{ infoClasses[selectedClass.name]?.state ? 'Finalizado' : 'Pendiente' }}
+                    <span style="margin-right: 4px;">Estado:</span><strong>{{ infoClasses[selectedClass.name]?.state ? 'Finalizado' : 'Pendiente' }}</strong>
                   </ion-button>  
                 </div>
               </ion-col>
@@ -88,7 +71,7 @@
           </ion-grid>
       </ion-header>
     <!-- MODAL CONTENT -->
-    <ion-content>
+    <ion-content scroll-y="false">
       <ion-list>
         <!-- MENUTYPE CARD -->
         <ion-card *ngFor="let menuType of getMenuTypesForcurrentPage()">
@@ -117,28 +100,53 @@
           </ion-card-content>
         </ion-card>
       </ion-list>
-      <!-- MODAL FOOTER -->
-      <ion-footer style="position: absolute; bottom: 0; width: 100%;"> 
-        <ion-grid>
-            <ion-row>
-              <ion-col size="4" class="ion-text-left">
-                <ion-button *ngIf="currentMTPage > 0" (click)="previousMTPage()">
-                  <ion-icon name="arrow-back-outline"></ion-icon>
-                </ion-button>
-              </ion-col>
-              <ion-col size="4" class="ion-text-center">
-                <ion-button (click)="selectClass(null)">Terminado</ion-button>
-              </ion-col>
-              <ion-col size="4" class="ion-text-right">
-                <ion-button *ngIf="(currentMTPage + 1) * menuTypesPerPage < menuTypes.length" (click)="nextMTPage()">
-                  <ion-icon name="arrow-forward-outline"></ion-icon>
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-footer>
     </ion-content>
+    <!-- MODAL FOOTER -->
+    <ion-footer id="modal-footer"> 
+      <ion-grid>
+          <ion-row>
+            <ion-col size="3"></ion-col>
+            <ion-col size="2" class="ion-text-left">
+              <ion-button *ngIf="currentMTPage > 0" (click)="previousMTPage()" shape="round">
+                <ion-icon name="arrow-back-outline" style="margin-right: 8px;"></ion-icon> Anterior
+              </ion-button>
+            </ion-col>
+            <ion-col size="2" class="ion-text-center">
+              <ion-button [color]="infoClasses[selectedClass.name]?.state ? 'success' : 'light'" (click)="selectClass(null)" shape="round">
+                <ion-icon name="exit-outline" style="margin-right: 8px;"></ion-icon> Salir de la clase
+              </ion-button>
+            </ion-col>
+            <ion-col size="2" class="ion-text-right">
+              <ion-button *ngIf="(currentMTPage + 1) * menuTypesPerPage < menuTypes.length" (click)="nextMTPage()" shape="round">
+                Siguiente <ion-icon name="arrow-forward-outline" style="margin-left: 8px;"></ion-icon>
+              </ion-button>
+            </ion-col>
+            <ion-col size="3"></ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-footer>    
   </ng-template>
   </ion-modal>
 
 </ion-content>
+
+<!-- FOOTER -->
+<!-- <ion-footer style="position: absolute; bottom: 0; width: 100%;">  -->
+<ion-footer id="main-footer"> 
+  <ion-grid>
+      <ion-row>
+        <ion-col size="3"></ion-col>
+        <ion-col size="3" class="ion-text-left">
+          <ion-button *ngIf="currentCPage > 0" (click)="previousCPage()" shape="round">
+            <ion-icon name="arrow-back-outline" style="margin-right: 8px;"></ion-icon> Anterior
+          </ion-button>
+        </ion-col>
+        <ion-col size="3" class="ion-text-right">
+          <ion-button *ngIf="(currentCPage + 1) * classesPerPage < classes.length" (click)="nextCPage()" shape="round">
+            Siguiente <ion-icon name="arrow-forward-outline" style="margin-left: 8px;"></ion-icon> 
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-footer>
+  
