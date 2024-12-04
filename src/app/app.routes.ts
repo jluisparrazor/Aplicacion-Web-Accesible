@@ -56,8 +56,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home-profesor/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
   },
   {
-    path: 'choose-menus',
-    loadComponent: () => import('./pages/task-menus/task-menus.page').then( m => m.ChooseMenusPage)
+    path: 'task-menus',
+    loadComponent: () => import('./pages/task-menus/task-menus.page').then( m => m.TaskMenusPage)
   },
   {
     path: 'show-menus',

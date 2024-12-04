@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonModal, IonButtons, IonIcon, IonGrid, IonRow, IonCol, IonFooter, IonImg } from '@ionic/angular/standalone';
@@ -18,11 +18,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [IonImg, IonFooter, IonCol, IonRow, IonGrid, IonIcon,  IonModal, IonCardTitle, IonCardContent, IonCard, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
-export class ChooseMenusPage implements OnInit  {
-  // IMPORTANTE - Sería interesante añadir el estado de la clase con el número 
-  // de integrantes de cada una para así controlar cuando están completas y que 
-  // no se pueda añadir más menús que alumnos.
-  
+export class TaskMenusPage implements OnInit  {  
   classes: Class[] = [];
   infoClasses: { [key: string]: {n:number, state:boolean }} = {};
   menuTypes: MenuType[] = [];
@@ -37,7 +33,7 @@ export class ChooseMenusPage implements OnInit  {
   classesPerPage: number = 4;
   currentCPage: number = 0;
 
-
+  readonly cardsHeight: number = 150;
 
 
   constructor(private classService: ClassService,
@@ -47,6 +43,14 @@ export class ChooseMenusPage implements OnInit  {
 
   ngOnInit() {
     this.loadStructure();
+    this.calculateNumClassesPerPage();
+    this.calculateNumMenuTypesPerPage();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.calculateNumClassesPerPage();
+    this.calculateNumMenuTypesPerPage();
   }
 
 
@@ -65,6 +69,27 @@ export class ChooseMenusPage implements OnInit  {
       });
     });
   }
+
+  calculateNumClassesPerPage() {
+    const headerHeight = 80;
+    const footerHeight = 80;
+    const contentHeight = window.innerHeight - headerHeight - footerHeight;
+
+    console.log('window.innerHeight', window.innerHeight, ' headerHeight', headerHeight, ' footerHeight', footerHeight);
+
+    this.classesPerPage = Math.floor(contentHeight / this.cardsHeight);
+  }
+
+  calculateNumMenuTypesPerPage() {
+    const headerHeight = 150;
+    const footerHeight = 80;
+    const contentHeight = window.innerHeight - headerHeight - footerHeight;
+
+    console.log('window.innerHeight', window.innerHeight, ' headerHeight', headerHeight, ' footerHeight', footerHeight);
+
+    this.menuTypesPerPage = Math.floor(contentHeight / this.cardsHeight);
+  }
+
 
 
   selectClass(cls: Class) {
@@ -119,10 +144,15 @@ export class ChooseMenusPage implements OnInit  {
   showPendingMenus(cls: Class) {
     if (!this.infoClasses[cls.name].state){
       let pendingMenus = this.infoClasses[cls.name].n;
-      this.menuTypes.forEach(menuType => {
-        pendingMenus -= this.menu.menus[cls.name][menuType.name];
-      });
-      alert(`Quedan por asignar ${pendingMenus} menús a la clase ${cls.name}`);
+      if (pendingMenus == 0) {
+        alert("No hay alumnos en la clase.");
+      }
+      else {
+          this.menuTypes.forEach(menuType => {
+          pendingMenus -= this.menu.menus[cls.name][menuType.name];
+        });
+        alert(`Quedan por asignar ${pendingMenus} menús a la clase ${cls.name}`);
+      }
     }
   }
 
