@@ -202,7 +202,7 @@ export class TaskMenusPage implements OnInit  {
   }
 
   getPictogram(pictogramId:string): string{
-    return this.arasaacService.getPictogramImageUrl(pictogramId);
+    return `https://api.arasaac.org/api/pictograms/${pictogramId}`;
   }  
   
   completeTask(){
@@ -216,7 +216,7 @@ export class TaskMenusPage implements OnInit  {
   }
 
   salir(){
-    //this.router.navigate(['/home']);
+    this.router.navigate(['/tareasdiarioalumno']);
   }
 
 }

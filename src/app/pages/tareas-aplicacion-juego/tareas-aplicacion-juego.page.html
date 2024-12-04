@@ -17,29 +17,30 @@
   </ion-header>
 
   <div class="tarea-aplicacion">
-    <img src="assets/icon/favicon.png" alt="Pictograma de la tarea" class="pictograma-tarea" />
-    <h2 class="nombre-tarea">{{tarea.Nombre}}</h2>
-    <p class="descripcion-tarea">
-      Enlace a la tarea: 
-      <a href="{{ tarea.enlace }}" target="_blank" (click)="marcarEnlaceVisitado()">
-        {{ tarea.enlace }}
-      </a>
-    </p>
-    <button 
-      class="boton-completar" 
-      (click)="completarTarea()" 
-      [disabled]="!enlaceVisitado">
-      <p>He completado la tarea</p>
-    </button>
-  </div>
-
-  <!-- Contenedor de la animación con overlay -->
-  <div class="overlay" [class.oscuro]="tareaCompletada">
-    <div class="animacion-confeti">
-      <!-- Texto animado -->
-      <h2 class="texto-enhorabuena" [class.animar-texto]="tareaCompletada">¡Enhorabuena!</h2>
-      <!-- GIF animado -->
-      <img *ngIf="mostrarConfeti" src="assets/imagenes/confeti.gif" alt="Confeti" class="gif-confeti">
+    <div *ngIf="tarea">
+      <div class="tarea-aplicacion-texto">
+        <ion-avatar>
+          <ion-img 
+            [src]="'https://api.arasaac.org/api/pictograms/' + descripcion.pictogramId" 
+            alt="Pictogram" 
+            class="pictograma-tarea">
+          </ion-img>
+        </ion-avatar>
+        <h2 class="nombre-tarea">{{ tarea.title }}</h2>
+        <p class="descripcion-tarea">{{ descripcion.text }}</p>
+        <p class="enlace-tarea">
+          Enlace a la tarea: 
+          <a href="{{ descripcion.link }}" target="_blank" (click)="marcarEnlaceVisitado()">
+            {{ descripcion.link }}
+          </a>
+        </p>
+      </div>
+      <button 
+        class="boton-completar" 
+        (click)="completarTarea()" 
+        [disabled]="!enlaceVisitado">
+        <p>He completado la tarea</p>
+      </button>
     </div>
   </div>
 

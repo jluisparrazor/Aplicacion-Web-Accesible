@@ -1,7 +1,7 @@
 
 <ion-card>
   <ion-item>
-    <ion-label>Buscar pictograma: </ion-label>
+    <ion-label>Seleccionar pictograma: </ion-label>
     <ion-input type="text" [(ngModel)]="keyword" style="margin-left: 10px;"></ion-input>
     <ion-button (click)="searchPictograms()" expand="block" shape="round" style="margin-left: 10px;">
       Buscar
@@ -9,7 +9,7 @@
   </ion-item>
 </ion-card>
 
-<ion-list>
+<ion-list *ngIf="showPictogramList">
   <ion-item *ngFor="let pictogram of pictograms" (click)="selectPictogram(pictogram)">
     <ion-thumbnail slot="start">
       <ion-img [src]="getPictogramImageUrl(pictogram)" alt="Pictogram image"></ion-img>
@@ -20,9 +20,3 @@
   </ion-item>
 </ion-list>
 
-<ion-card *ngIf="selectedPictogram" style="text-align: center; margin-top: 20px;  align-items: center;">
-  <ion-img style="height: 25%; width: 25%; text-align: center; align-items: center;" [src]="getPictogramImageUrl(selectedPictogram)" alt="Selected Pictogram image"></ion-img>
-  <ion-card-content>
-    <h2 >{{ selectedPictogram.keywords[0]?.keyword }}</h2>
-  </ion-card-content>
-</ion-card>

@@ -128,3 +128,26 @@ ion-item-divider {
 .custom-button:hover {
   --background: #1a365d; /* Azul más oscuro */
 }
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  text-align: center;
+  background-color: #f9f9f9; /* Fondo suave para que destaque el spinner */
+}
+
+.spinner-container ion-spinner {
+  --spinner-color: #007bff; /* Color personalizado del spinner */
+  --spinner-width: 40px;
+  --spinner-height: 40px;
+}
+
+.spinner-container p {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #555; /* Color del texto */
+  font-family: Arial, sans-serif; /* Fuente moderna y limpia */
+}
