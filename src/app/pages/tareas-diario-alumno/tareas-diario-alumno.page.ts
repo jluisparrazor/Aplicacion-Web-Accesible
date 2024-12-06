@@ -195,7 +195,7 @@ export class TareasDiarioAlumnoPage implements OnInit {
         break;
 
       case 'MenuTask':
-        this.router.navigate(['/choose-menus']);
+        this.router.navigate(['/task-menus']);
         break;
 
       case 'RequestTask':

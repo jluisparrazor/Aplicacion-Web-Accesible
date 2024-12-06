@@ -1,27 +1,36 @@
 <ion-content>
-    <div class="login-container">
+  <div class="login-container">
+    <!-- Header de la página -->
+    <div class="header-container">
+      <ion-img src="https://api.arasaac.org/api/pictograms/6522" alt="Pictograma Hola" class="header-pictogram"></ion-img>
       <h1>Hola, {{ name }}</h1>
-      
-      <ion-grid>
-        <div class="grid-background">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div> <!-- Cuadrícula de fondo -->
-        <ion-row>
-          <ion-col size="4" *ngFor="let pictogram of pictograms; let i = index">
-            <ion-img [src]="pictogram.src" alt="Pictogram image" (click)="selectPictogram(i)" class="pictogram-img"></ion-img>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-  
-      <div class="circles-container">
-        <div *ngFor="let circle of circles; let i = index" [ngClass]="{'circle': true, 'correct': circle.correct, 'incorrect': circle.incorrect}"></div>
-      </div>
-  
-      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + alumno.pictogramId" alt="Pictograma Nombre alumno" class="header-pictogram"></ion-img>
     </div>
-  </ion-content>
+    
+    <!-- Cuadrícula de fondo -->
+    <ion-grid>
+      <div class="grid-background">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div> 
+      <ion-row>
+        <!-- Pictogramas de la contraseña -->
+        <ion-col size="4" *ngFor="let pictogram of pictograms; let i = index">
+          <ion-img [src]="pictogram.src" alt="Pictogram image" (click)="selectPictogram(i)" class="pictogram-img" [class.disabled]="!pictogramsEnabled"></ion-img>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Círculos de abajo -->
+    <div class="circles-container">
+      <div *ngFor="let circle of circles; let i = index" [ngClass]="{'circle': true, 'correct': circle.correct, 'incorrect': circle.incorrect}">
+        <ion-img *ngIf="circle.correct || circle.incorrect" [src]="circle.src" class="pictogram-img-bien"></ion-img>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

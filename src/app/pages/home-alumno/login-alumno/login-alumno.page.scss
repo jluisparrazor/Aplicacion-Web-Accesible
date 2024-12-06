@@ -1,74 +1,96 @@
 .login-container {
-    text-align: center;
-    padding: 20px;
-    position: relative; /* Asegura que el contenedor tenga un contexto de posicionamiento */
-    height: 100%; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Distribuye el espacio entre los elementos */
-  }
-  
-  .pictogram-img {
-    width: 50%;
-    height: auto;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  
-  ion-grid {
-    flex: 1; /* Permite que el grid ocupe el espacio disponible */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative; /* Asegura que el grid tenga un contexto de posicionamiento */
-  }
-  
-  /* Estilos para la cuadrícula de fondo */
-  .grid-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 10px; /* Ajusta el espacio entre las celdas de la cuadrícula */
-    z-index: -1; /* Asegura que la cuadrícula esté detrás del contenido */
-  }
-  
-  .grid-background div {
-    border: 1px solid #ccc; /* Añade un borde a cada celda de la cuadrícula */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .circles-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .circle {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #ccc;
-    margin: 0 10px;
-  }
-  
-  .circle.correct {
-    background-color: green;
-  }
-  
-  .circle.incorrect {
-    background-color: red;
-  }
-  
-  .error-message {
-    color: red;
-    margin-top: 20px;
-  }
+  text-align: center;
+  padding: 20px;
+  position: relative; /* Asegura que el contenedor tenga un contexto de posicionamiento */
+  height: 100%; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribuye el espacio entre los elementos */
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-pictogram {
+  width: 50px;
+  height: 50px;
+  margin: 0 10px;
+}
+
+.pictogram-img {
+  width: 50%;
+  height: auto;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.pictogram-img.disabled {
+  pointer-events: none; /* Deshabilitar la interacción */
+  opacity: 0.5; /* Reducir la opacidad para indicar que está deshabilitado */
+}
+
+.pictogram-img-bien {
+  width: 100%;
+  height: 100%;
+}
+
+ion-grid {
+  flex: 1; /* Permite que el grid ocupe el espacio disponible */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Asegura que el grid tenga un contexto de posicionamiento */
+}
+
+/* Estilos para la cuadrícula de fondo */
+.grid-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px; /* Ajusta el espacio entre las celdas de la cuadrícula */
+  z-index: -1; /* Asegura que la cuadrícula esté detrás del contenido */
+}
+
+.grid-background div {
+  border: 1px solid #ccc; /* Añade un borde a cada celda de la cuadrícula */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.circles-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin: 0 10px;
+}
+
+.circle.correct {
+  background-color: green;
+}
+
+.circle.incorrect {
+  background-color: red;
+}
+
+.error-message {
+  color: red;
+  margin-top: 20px;
+}
