@@ -31,11 +31,14 @@ export class LoginAlumnoPage implements OnInit {
   selectedPictograms: number[] = [];
   correctPassword: number[] = [];
   errorMessage: string = '';
+  cargando: boolean = false;
+  alumno: StudentI;
   circles = [
-    { correct: false, incorrect: false },
-    { correct: false, incorrect: false },
-    { correct: false, incorrect: false }
+    { correct: false, incorrect: false, src: '' },
+    { correct: false, incorrect: false, src: '' },
+    { correct: false, incorrect: false, src: '' }
   ];
+  pictogramsEnabled: boolean = true; // Nueva bandera para controlar la habilitación de los pictogramas
 
   constructor(private firestoreService: FirestoreService, private sessionService: SessionService, private router: Router) { }
 
@@ -43,10 +46,16 @@ export class LoginAlumnoPage implements OnInit {
     const currentUser = this.sessionService.getCurrentUser() as StudentI;
     if (currentUser) {
       this.name = currentUser.name;
+      this.alumno = currentUser;
       this.loadCorrectPassword(currentUser.id);
     }
   }
 
+  /**
+   * Loads the correct password for the given user ID from Firestore.
+   * 
+   * @param userId - The ID of the user.
+   */
   loadCorrectPassword(userId: string) {
     this.firestoreService.getDocument<StudentI>(`Students/${userId}`).then(docSnap => {
       if (docSnap.exists()) {
@@ -58,49 +67,71 @@ export class LoginAlumnoPage implements OnInit {
     });
   }
 
+  /**
+   * Handles the selection of a pictogram.
+   * 
+   * @param index - The index of the selected pictogram.
+   */
   selectPictogram(index: number) {
+    if (!this.pictogramsEnabled) {
+      return;
+    }
+
     const selectedId = this.pictograms[index].id;
     const currentIndex = this.selectedPictograms.length;
     this.selectedPictograms.push(selectedId);
 
     if (selectedId === this.correctPassword[currentIndex]) {
       this.circles[currentIndex].correct = true;
+      this.circles[currentIndex].src = this.pictograms[index].src;
     } else {
       this.circles[currentIndex].incorrect = true;
+      this.circles[currentIndex].src = 'https://api.arasaac.org/api/pictograms/5504';
       this.errorMessage = 'Contraseña incorrecta';
+      this.pictogramsEnabled = false;
       setTimeout(() => {
-        this.resetIncorrectCircles(); // Reiniciar solo los círculos incorrectos
-        this.selectedPictograms = this.selectedPictograms.slice(0, currentIndex); // Mantener solo los correctos
-      }, 200); // Espera 1 segundo antes de reiniciar los incorrectos
+        this.resetIncorrectCircles();
+        this.selectedPictograms = this.selectedPictograms.slice(0, currentIndex);
+        this.pictogramsEnabled = true;
+      }, 1000);
       return;
     }
 
     if (this.selectedPictograms.length === this.correctPassword.length) {
       if (this.isPasswordCorrect()) {
-        // Lógica para iniciar sesión
         console.log('Login exitoso');
         this.errorMessage = '';
-        this.router.navigate(['/tareasdiarioalumno']); // Navegar al perfil del alumno
+        this.router.navigate(['/tareasdiarioalumno']);
       } else {
-        // Mostrar mensaje de error
         this.errorMessage = 'Contraseña incorrecta';
+        this.pictogramsEnabled = false;
         setTimeout(() => {
-          this.resetIncorrectCircles(); // Reiniciar solo los círculos incorrectos
-          this.selectedPictograms = this.selectedPictograms.slice(0, currentIndex); // Mantener solo los correctos
-        }, 1000); // Espera 1 segundo antes de reiniciar los incorrectos
+          this.resetIncorrectCircles();
+          this.selectedPictograms = this.selectedPictograms.slice(0, currentIndex);
+          this.pictogramsEnabled = true;
+        }, 1000);
       }
     }
   }
 
+  /**
+   * Checks if the selected pictograms match the correct password.
+   * 
+   * @returns True if the selected pictograms match the correct password, false otherwise.
+   */
   isPasswordCorrect(): boolean {
     return this.selectedPictograms.every((val, index) => val === this.correctPassword[index]);
   }
 
+  /**
+   * Resets the incorrect circles to their initial state.
+   */
   resetIncorrectCircles() {
     this.circles.forEach((circle, index) => {
       if (circle.incorrect) {
         circle.correct = false;
         circle.incorrect = false;
+        circle.src = '';
       }
     });
   }
