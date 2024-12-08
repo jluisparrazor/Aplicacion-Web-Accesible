@@ -1,0 +1,74 @@
+<ion-header id="main-header" [translucent]="true">
+  <ion-toolbar>
+    <ion-button color="medium" slot="start" (click)="salir()" shape="round">
+      Salir <ion-icon name="exit-outline" style="margin-left: 8px;"></ion-icon> 
+    </ion-button>
+    <ion-title class="ion-text-center"><strong>Tipos de Menús</strong></ion-title>
+    <ion-button (click)="menuTypeFormFunciton()" slot="end" shape="round">
+      <ion-icon name="add-circle-outline" style="margin-right: 8px;"></ion-icon> Añadir tipo de menú
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card *ngIf="showMenuTypeForm">
+    <ion-toolbar>
+      <ion-title>{{ editingMenuType ? 'Editar tipo de menú' : 'Crear tipo de menú' }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="editingMenuType ? saveMenuType() : addMenuType()" shape="round" color="primary">
+          {{ editingMenuType ? 'Guardar cambios' : 'Añadir tipo de menú' }}
+        </ion-button>
+        <ion-button (click)="menuTypeFormFunciton()" shape="round" color="danger">Cancelar</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+
+    <ion-list lines="full">
+      <!-- Nombre de la tipo de menú -->
+      <ion-item>
+        <ion-input 
+          label="Nombre" 
+          labelPlacement="floating" 
+          type="text" 
+          [(ngModel)]="actualMenuType.name">
+        </ion-input>
+      </ion-item>
+      <!-- Pictograma -->
+      <app-pictogram-search (pictogramSelect)="actualMenuType.pictogramId = $event"></app-pictogram-search>
+      <ion-item *ngIf="actualMenuType.pictogramId">
+        <ion-label slot="start">
+          Pictograma Seleccionado:
+        </ion-label>
+        <ion-thumbnail slot="start">
+          <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + actualMenuType.pictogramId" alt="Pictogram image"></ion-img>
+        </ion-thumbnail>
+        <ion-button slot="end" (click)="actualMenuType.pictogramId = null">
+          <ion-icon slot="icon-only" name="close" color="danger"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let menuType of menuTypes; let i = index">
+        <ion-item>
+          <ion-thumbnail slot="start">
+            <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + menuType.pictogramId" alt="Pictogram image"></ion-img>
+          </ion-thumbnail>
+          <ion-label>
+            <h2>{{ menuType.name }}</h2>
+          </ion-label>
+          <ion-buttons slot="end">
+            <ion-button (click)="editMenuType(menuType)">
+              <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+            </ion-button>
+            <ion-button (click)="deleteMenuType(menuType)">
+              <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

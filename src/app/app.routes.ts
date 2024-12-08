@@ -70,6 +70,10 @@ export const routes: Routes = [
   {
     path: 'classes',
     loadComponent: () => import('./pages/classes/classes.page').then( m => m.ClassesPage)
+  },
+  {
+    path: 'menutypes',
+    loadComponent: () => import('./pages/menutypes/menutypes.page').then( m => m.MenuTypesPage)
   }
   
 ];
