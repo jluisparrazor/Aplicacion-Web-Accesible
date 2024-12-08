@@ -67,6 +67,14 @@ export const routes: Routes = [
     path: 'inicio',
     loadComponent: () => import('./pages/inicio/inicio.page').then( m => m.InicioPage)
   },
+  {
+    path: 'classes',
+    loadComponent: () => import('./pages/classes/classes.page').then( m => m.ClassesPage)
+  },
+  {
+    path: 'menutypes',
+    loadComponent: () => import('./pages/menutypes/menutypes.page').then( m => m.MenuTypesPage)
+  }
   
 ];
 @NgModule({

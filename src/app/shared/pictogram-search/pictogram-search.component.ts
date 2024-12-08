@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonInput, IonCard, IonButton, IonSpinner, IonButtons, IonIcon, IonThumbnail, IonImg, IonCardContent } from '@ionic/angular/standalone';
+import { IonList, IonItem, IonLabel, IonInput, IonCard, IonButton, IonThumbnail, IonImg } from '@ionic/angular/standalone';
 import { ArasaacService } from '../../common/services/arasaac.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { ArasaacService } from '../../common/services/arasaac.service';
   templateUrl: './pictogram-search.component.html',
   styleUrls: ['./pictogram-search.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonIcon, IonButtons, IonSpinner, IonButton, IonCard, IonInput, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, FormsModule, IonThumbnail, IonImg, IonCardContent], 
+  imports: [CommonModule, IonButton, IonCard, IonInput, IonList, IonItem, IonLabel, FormsModule, IonThumbnail, IonImg], 
 })
 
 export class PictogramSearchComponent {
