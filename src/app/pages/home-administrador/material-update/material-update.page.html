@@ -1,17 +1,44 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Formulario de Material</ion-title>
+    <ion-title class="title-header">Formulario de Material</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <!-- Mostrar Inventario -->
+  <div>
+    <!-- Título centrado para la sección de inventario -->
+    <h2 class="inventario-header">Inventario Actual</h2>
+  </div>
+
+  <div id="inventario-container">
+    <!-- Mensaje si no hay inventario -->
+    <span *ngIf="!inventory || inventory.length === 0">No hay inventario</span>
+    
+    <!-- Lista de Inventario con una sola línea por elemento -->
+    <ion-list *ngIf="inventory && inventory.length > 0">
+      <ion-item *ngFor="let item of inventory">
+        <ion-label class="inventario-item">
+          <span class="item-nombre">Nombre: {{ item.nombre }}</span>
+          <span class="item-cantidad">Cantidad: {{ item.cantidad }}</span>
+          <span class="item-color">Color: {{ item.atributos?.color || 'N/A' }}</span>
+          <span class="item-tamano">Tamaño: {{ item.atributos?.tamano || 'N/A' }}</span>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Formulario -->
   <form [formGroup]="materialForm" (ngSubmit)="submitMaterials()">
     <div formArrayName="materiales">
       <div *ngFor="let material of materiales.controls; let i = index" [formGroupName]="i" class="material-container">
-        <!-- Campo Nombre del Material -->
+        <!-- Campo Nombre con Dropdown para seleccionar nombre del inventario -->
         <ion-item>
-          <ion-label position="floating">Nombre del Material</ion-label>
-          <ion-input formControlName="nombre"></ion-input>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-select [formControlName]="'nombre'" placeholder="Selecciona un nombre">
+            <!-- Llenamos la lista con nombres dinámicos del inventario -->
+            <ion-select-option *ngFor="let nombre of inventoryNames" [value]="nombre">{{ nombre }}</ion-select-option>
+          </ion-select>
         </ion-item>
 
         <!-- Campo Cantidad -->
@@ -29,12 +56,12 @@
         <!-- Campo Tamaño -->
         <ion-item>
           <ion-label position="floating">Tamaño</ion-label>
-          <ion-input formControlName="tamaño"></ion-input>
+          <ion-input formControlName="tamano"></ion-input>
         </ion-item>
       </div>
     </div>
 
-    <!-- Botón para agregar más materiales -->
+    <!-- Botón para agregar material -->
     <ion-button expand="full" color="secondary" (click)="addMaterial()" type="button">
       Agregar Material
     </ion-button>
