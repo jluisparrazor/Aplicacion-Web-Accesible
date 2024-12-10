@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { MaterialService } from '../../../common/services/material-update.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { MaterialI } from '../../../common/models/material.models';
 
 @Component({
   selector: 'app-material-update',
@@ -13,9 +14,9 @@ import { IonicModule } from '@ionic/angular';
 })
 export class MaterialUpdatePage implements OnInit {
   materialForm: FormGroup;
-  inventory: any[] = []; // Almacena el inventario actual
+  inventory: any[] = [];
   inventoryNames: string[] = [];
-  isToggleOpen = false; // Para manejar la lógica del toggle
+  isToggleOpen = false;
 
   constructor(private fb: FormBuilder, private materialService: MaterialService) {}
 
@@ -54,10 +55,6 @@ export class MaterialUpdatePage implements OnInit {
     this.materiales.push(this.createMaterial());
   }
 
-  toggleDropdown(index: number) {
-    this.isToggleOpen = !this.isToggleOpen;
-  }
-
   async submitMaterials() {
     if (this.materialForm.invalid) {
       alert('Por favor, completa todos los campos correctamente.');
@@ -66,15 +63,24 @@ export class MaterialUpdatePage implements OnInit {
 
     try {
       const materiales = this.materialForm.value.materiales;
-      await this.materialService.saveMaterials(materiales);
+
+      const materialesProcesados: MaterialI[] = materiales.map((material: any) => {
+        const normalizedMaterial = {
+          ...material,
+          clave: this.materialService.generateKey(material),
+        };
+        return normalizedMaterial;
+      });
+
+      await this.materialService.saveMaterials(materialesProcesados);
       alert('Material(es) procesado(s) correctamente.');
 
-      // Limpia el formulario después de enviar
+      // Limpieza del formulario
       this.materialForm.reset();
       this.materiales.clear();
       this.materiales.push(this.createMaterial());
 
-      // Actualiza el inventario automáticamente
+      // Volver a cargar el inventario actualizado
       await this.loadInventory();
     } catch (error) {
       console.error('Error al procesar los materiales:', error);

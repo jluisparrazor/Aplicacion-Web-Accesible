@@ -10,7 +10,7 @@ export class MaterialService {
 
   // Función para normalizar cadenas de texto
   normalizeText(input: string): string {
-    if (!input || input.trim() === '') return 'NoEspecificado'; // Reemplaza cadenas vacías con algo identificable
+    if (!input || input.trim() === '') return 'NoEspecificado';
     return input.trim().toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
   }
   
@@ -34,7 +34,7 @@ async fetchInventoryNames(): Promise<string[]> {
     const nombre = this.normalizeText(material.nombre);
     const color = this.normalizeText(material.color || '');
     const tamano = this.normalizeText(material.tamano || '');
-    return `${nombre}-${color}-${tamano}`.trim();
+    return `${nombre}-${color}-${tamano}`;
   }
   //Ver materiales en Firestore
   async fetchInventory(): Promise<any[]> {

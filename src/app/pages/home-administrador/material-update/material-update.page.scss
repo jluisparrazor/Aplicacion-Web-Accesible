@@ -39,6 +39,12 @@ ion-title {
   max-width: 80%;
   margin: 10px auto;
 }
+.material-container {
+  border-bottom: 1px solid black; /* Línea negra para separar cada material */
+  padding-bottom: 10px; /* Espacio debajo del área del formulario para mejor apariencia */
+  margin-bottom: 10px; /* Espacio entre las filas de material */
+}
+
 
 /* Títulos */
 .inventario-header {

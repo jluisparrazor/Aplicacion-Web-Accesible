@@ -5,17 +5,12 @@
 </ion-header>
 
 <ion-content>
-  <!-- Mostrar Inventario -->
   <div>
-    <!-- Título centrado para la sección de inventario -->
     <h2 class="inventario-header">Inventario Actual</h2>
   </div>
 
   <div id="inventario-container">
-    <!-- Mensaje si no hay inventario -->
     <span *ngIf="!inventory || inventory.length === 0">No hay inventario</span>
-    
-    <!-- Lista de Inventario con una sola línea por elemento -->
     <ion-list *ngIf="inventory && inventory.length > 0">
       <ion-item *ngFor="let item of inventory">
         <ion-label class="inventario-item">
@@ -28,37 +23,30 @@
     </ion-list>
   </div>
 
-  <!-- Formulario -->
   <form [formGroup]="materialForm" (ngSubmit)="submitMaterials()">
     <div formArrayName="materiales">
       <div *ngFor="let material of materiales.controls; let i = index" [formGroupName]="i" class="material-container">
-        <!-- Campo Nombre con Dropdown para seleccionar nombre del inventario -->
         <ion-item>
           <ion-label position="floating">Nombre</ion-label>
-          <ion-select [formControlName]="'nombre'" placeholder="Selecciona un nombre">
-            <!-- Llenamos la lista con nombres dinámicos del inventario -->
-            <ion-select-option *ngFor="let nombre of inventoryNames" [value]="nombre">{{ nombre }}</ion-select-option>
-          </ion-select>
+          <ion-input [formControlName]="'nombre'" placeholder="Escribe el nombre del material"></ion-input>
         </ion-item>
-
-        <!-- Campo Cantidad -->
+      
         <ion-item>
           <ion-label position="floating">Cantidad</ion-label>
           <ion-input type="number" formControlName="cantidad"></ion-input>
         </ion-item>
-
-        <!-- Campo Color -->
+      
         <ion-item>
           <ion-label position="floating">Color</ion-label>
           <ion-input formControlName="color"></ion-input>
         </ion-item>
-
-        <!-- Campo Tamaño -->
+      
         <ion-item>
           <ion-label position="floating">Tamaño</ion-label>
           <ion-input formControlName="tamano"></ion-input>
         </ion-item>
       </div>
+      
     </div>
 
     <!-- Botón para agregar material -->
