@@ -51,8 +51,11 @@ export class PeticionesMaterialPage implements OnInit {
     return this.fb.group({
       nombre: ['', [Validators.required]],
       cantidad: [1, [Validators.required, Validators.min(1)]],
+      tamano: ['', [Validators.required]], // Nuevo campo
+      color: ['', [Validators.required]],  // Nuevo campo
     });
   }
+  
 
   addMaterial() {
     this.materiales.push(this.createMaterialGroup());
@@ -63,22 +66,35 @@ export class PeticionesMaterialPage implements OnInit {
       alert('Debe completar todos los campos correctamente antes de enviar.');
       return;
     }
-
-    // Normalizar los nombres de los materiales antes de enviar los datos
+  
+    // Normalizar los campos de cada material antes de enviar los datos
     this.materiales.controls.forEach((control) => {
       const nombreControl = control.get('nombre');
+      const tamanoControl = control.get('tamano'); // Obtener el control del tamaño
+      const colorControl = control.get('color');  // Obtener el control del color
+  
       if (nombreControl) {
-        const normalizedName = this.requestsService.normalizeText(nombreControl.value); // Normalizar el nombre
-        nombreControl.setValue(normalizedName); // Establecer el nombre normalizado
+        const normalizedName = this.requestsService.normalizeText(nombreControl.value);
+        nombreControl.setValue(normalizedName);
+      }
+  
+      if (tamanoControl) {
+        const normalizedTamano = this.requestsService.normalizeText(tamanoControl.value);
+        tamanoControl.setValue(normalizedTamano);
+      }
+  
+      if (colorControl) {
+        const normalizedColor = this.requestsService.normalizeText(colorControl.value);
+        colorControl.setValue(normalizedColor);
       }
     });
-
+  
     const formData = this.requestForm.value;
-
+  
     try {
       await this.requestsService.sendRequest(formData); // Enviar los datos ya normalizados
       alert('Solicitud enviada correctamente.');
-
+  
       this.requestForm.reset();
       this.materiales.clear();
       this.materiales.push(this.createMaterialGroup());
@@ -90,4 +106,5 @@ export class PeticionesMaterialPage implements OnInit {
       alert('Hubo un error al enviar la solicitud.');
     }
   }
+  
 }
