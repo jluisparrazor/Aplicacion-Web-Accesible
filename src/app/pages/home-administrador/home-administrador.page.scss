@@ -167,6 +167,29 @@
     margin-left: 150px;
     margin-right: 150px;
   }
+
+  .imagen-tarea-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .imagen-tarea-thumbnail {
+    width: 150px; /* Ajusta el tamaño según sea necesario */
+    height: 150px; /* Ajusta el tamaño según sea necesario */
+  }
+  
+  .imagen-tarea-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Asegura que la imagen se ajuste al área del contenedor sin ser recortada */
+  }
+  
+  .boton-eliminar-imagen {
+    margin-top: 10px; /* Espacio entre la imagen y el botón */
+    align-self: center; /* Asegura que el botón esté centrado */
+  }
   
   
   
