@@ -78,7 +78,7 @@ export class PeticionesMaterialPage implements OnInit {
       // Validar existencia en el inventario
       const exists = await this.requestsService.checkMaterialExists(material.nombre, material.tamano, material.color);
       if (!exists) {
-        alert(`El material "${material.nombre}" con tamaño "${material.tamano}" y color "${material.color}" no está disponible en el inventario.`);
+        alert(`El material no está disponible en el invetario.`);
         return;
       }
   
@@ -90,7 +90,7 @@ export class PeticionesMaterialPage implements OnInit {
         material.cantidad
       );
       if (!hasSufficientQuantity) {
-        alert(`No hay suficiente cantidad del material "${material.nombre}" con tamaño "${material.tamano}" y color "${material.color}" en el inventario.`);
+        alert(`No hay suficiente cantidad del material en el inventario.`);
         return;
       }
   
