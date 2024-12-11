@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, query, where, getDocs, addDoc } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, getDocs, addDoc,doc,updateDoc } from '@angular/fire/firestore';
 
 // Definición de la interfaz para los datos del inventario
 interface InventoryItem {
@@ -52,6 +52,39 @@ export class RequestsService {
     const doc = querySnapshot.docs[0];
     const inventoryData = doc.data() as InventoryItem;  // Asegúrate de que inventoryData sea de tipo InventoryItem
     return inventoryData.cantidad >= cantidadSolicitada; // Verifica si hay suficiente cantidad
+  }
+  async updateMaterialQuantity(nombre: string, tamano: string, color: string, cantidadSolicitada: number): Promise<void> {
+    const inventoryCollection = collection(this.firestore, 'Inventory');
+    const q = query(
+      inventoryCollection,
+      where('nombre', '==', nombre),
+      where('tamano', '==', tamano),
+      where('color', '==', color)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0]; // Obtén el primer documento
+      const inventoryRef = doc.ref; // Referencia al documento
+
+      const inventoryData = doc.data();
+      const nuevaCantidad = inventoryData['cantidad'] - cantidadSolicitada;
+
+
+      if (nuevaCantidad < 0) {
+        throw new Error('Cantidad insuficiente para actualizar.');
+      }
+
+      // Actualiza la cantidad en Firestore
+      await updateDoc(inventoryRef, {
+        cantidad: nuevaCantidad,
+      });
+
+      console.log(`Cantidad de ${nombre} ${tamano} ${color} actualizada a ${nuevaCantidad}`);
+    } else {
+      throw new Error(`El material "${nombre}" no se encuentra en el inventario.`);
+    }
   }
 
   // Función para enviar datos a Firestore

@@ -93,6 +93,20 @@ export class PeticionesMaterialPage implements OnInit {
         alert(`No hay suficiente cantidad del material "${material.nombre}" con tamaño "${material.tamano}" y color "${material.color}" en el inventario.`);
         return;
       }
+  
+      // Actualizar el inventario restando la cantidad solicitada
+      try {
+        await this.requestsService.updateMaterialQuantity(
+          material.nombre,
+          material.tamano,
+          material.color,
+          material.cantidad
+        );
+      } catch (error) {
+        console.error('Error al actualizar el inventario:', error);
+        alert('Hubo un error al actualizar el inventario.');
+        return; // Detenemos el proceso si algo sale mal
+      }
     }
   
     try {
@@ -116,5 +130,6 @@ export class PeticionesMaterialPage implements OnInit {
       alert('Hubo un error al enviar la solicitud.');
     }
   }
+  
   
 }
