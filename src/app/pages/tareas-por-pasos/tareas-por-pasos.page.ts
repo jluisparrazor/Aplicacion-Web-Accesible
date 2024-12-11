@@ -131,11 +131,11 @@ export class TareasPorPasosPage implements OnInit {
       }, 1600);  // 1700 ms = 1.7 segundos
   
       // Actualiza la tarea en el servicio de Firestore
-      /*this.tasksService.actualizarTarea(this.tarea, studentIndex).then(() => {
+      this.tasksService.actualizarTarea(this.tarea, studentIndex).then(() => {
         console.log('Tarea actualizada a completada:', this.tarea);
       }).catch(error => {
         console.error('Error actualizando tarea:', error);
-      });*/
+      });
   
       // Después de la animación, redirige al listado
       setTimeout(() => {
