@@ -186,7 +186,14 @@ export class TareasDiarioAlumnoPage implements OnInit {
 
       case 'StepTask':
         // Navegación pendiente de implementar
-        console.warn('La redirección para "por pasos" no está implementada.');
+        const stepTaskDescripcion = this.descripcionesMap[tarea.associatedDescriptionId];
+        this.router.navigate(['/tareasporpasos'], {
+          state: { 
+            taskID: tarea.taskID,  // Solo pasamos el ID de la tarea
+            associatedDescriptionId: tarea.associatedDescriptionId,
+            completed: tarea.completed
+          } 
+        });
         break;
 
       case 'NormalTask':

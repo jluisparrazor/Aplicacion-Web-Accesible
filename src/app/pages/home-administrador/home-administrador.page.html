@@ -62,7 +62,8 @@
                 type="text" 
                 [(ngModel)]="newTarea.title">
               </ion-input>
-            </ion-item>
+              </ion-item>
+            
 
             <!-- Descripcion de la tarea (text en Description) -->
             <ion-item>
@@ -110,7 +111,31 @@
               [(ngModel)]="newTaskDescription.link">
             </ion-input>
           </ion-item>
-      
+          
+         <!-- Añadir Imágenes (solo para StepTask) -->
+          <ion-item *ngIf="newTarea.type === 'StepTask'">
+            <ion-input 
+              label="Imagenes: " 
+              labelPlacement="floating"
+              type="url"
+              placeholder="Introduce el enlace de la imagen..." 
+              [(ngModel)]="newImageLink">
+            </ion-input>
+            <ion-button (click)="addImage()">Añadir imagen</ion-button>
+          </ion-item>
+
+          <!-- Vista previa de imágenes añadidas (solo para StepTask) -->
+          <ion-row *ngIf="newTarea.type === 'StepTask' && newTaskDescription.imagesId && newTaskDescription.imagesId.length > 0">
+            <ng-container *ngFor="let imageId of newTaskDescription.imagesId">
+              <ion-col size="auto" *ngIf="imageId.trim() !== ''" class="imagen-tarea-col">
+                <ion-thumbnail class="imagen-tarea-thumbnail">
+                  <ion-img [src]="imageId" alt="Imagen añadida" class="imagen-tarea-img"></ion-img>
+                </ion-thumbnail>
+                <ion-button (click)="removeImage(imageId)" color="danger" class="boton-eliminar-imagen">Eliminar</ion-button>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+
           <!-- Fechas con diseño tipo grid -->
           <ion-item>
             <ion-grid class="fechas-grid">

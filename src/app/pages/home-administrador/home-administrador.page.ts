@@ -654,4 +654,24 @@ export class HomeAdministradorPage{
   // ChangePassword() {
   //   this.navCtrl.navigateForward('/change-password');
   // }
+  newImageLink: string = '';
+
+  addImage() {
+    if (this.newImageLink.trim() !== '') {
+      if (!this.newTaskDescription.imagesId) {
+        this.newTaskDescription.imagesId = [];
+      }
+      this.newTaskDescription.imagesId.push(this.newImageLink.trim());
+      this.newImageLink = ''; // Limpiar el campo de entrada después de añadir la imagen
+    }
+  }
+  
+  removeImage(imageId: string) {
+    if (this.newTaskDescription.imagesId) {
+      const index = this.newTaskDescription.imagesId.indexOf(imageId);
+      if (index > -1) {
+        this.newTaskDescription.imagesId.splice(index, 1);
+      }
+    }
+  }
 }
