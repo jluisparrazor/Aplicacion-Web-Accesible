@@ -51,8 +51,8 @@ export class PeticionesMaterialPage implements OnInit {
     return this.fb.group({
       nombre: ['', [Validators.required]],
       cantidad: [1, [Validators.required, Validators.min(1)]],
-      tamano: ['', [Validators.required]], // Nuevo campo
-      color: ['', [Validators.required]],  // Nuevo campo
+      tamano: [''], // Nuevo campo
+      color: [''],  // Nuevo campo
     });
   }
   
@@ -67,40 +67,50 @@ export class PeticionesMaterialPage implements OnInit {
       return;
     }
   
-    // Normalizar los campos de cada material antes de enviar los datos
-    this.materiales.controls.forEach((control) => {
-      const nombreControl = control.get('nombre');
-      const tamanoControl = control.get('tamano'); // Obtener el control del tamaño
-      const colorControl = control.get('color');  // Obtener el control del color
-  
-      if (nombreControl) {
-        const normalizedName = this.requestsService.normalizeText(nombreControl.value);
-        nombreControl.setValue(normalizedName);
-      }
-  
-      if (tamanoControl) {
-        const normalizedTamano = this.requestsService.normalizeText(tamanoControl.value);
-        tamanoControl.setValue(normalizedTamano);
-      }
-  
-      if (colorControl) {
-        const normalizedColor = this.requestsService.normalizeText(colorControl.value);
-        colorControl.setValue(normalizedColor);
-      }
-    });
-  
     const formData = this.requestForm.value;
   
+    for (const material of formData.materiales) {
+      // Normalizar los campos
+      material.nombre = this.requestsService.normalizeText(material.nombre);
+      material.tamano = this.requestsService.normalizeText(material.tamano);
+      material.color = this.requestsService.normalizeText(material.color);
+  
+      // Validar existencia en el inventario
+      const exists = await this.requestsService.checkMaterialExists(material.nombre, material.tamano, material.color);
+      if (!exists) {
+        alert(`El material "${material.nombre}" con tamaño "${material.tamano}" y color "${material.color}" no está disponible en el inventario.`);
+        return;
+      }
+  
+      // Validar cantidad suficiente en el inventario
+      const hasSufficientQuantity = await this.requestsService.checkMaterialQuantity(
+        material.nombre,
+        material.tamano,
+        material.color,
+        material.cantidad
+      );
+      if (!hasSufficientQuantity) {
+        alert(`No hay suficiente cantidad del material "${material.nombre}" con tamaño "${material.tamano}" y color "${material.color}" en el inventario.`);
+        return;
+      }
+    }
+  
     try {
-      await this.requestsService.sendRequest(formData); // Enviar los datos ya normalizados
+      await this.requestsService.sendRequest(formData); // Enviar solicitud si todo es válido
       alert('Solicitud enviada correctamente.');
   
-      this.requestForm.reset();
-      this.materiales.clear();
+      // Reiniciar el formulario correctamente
+      this.requestForm.reset(); // Resetear el formulario
+      this.materiales.clear(); // Limpiar el FormArray
+  
+      // Asegurarse de que el primer grupo de material esté presente
       this.materiales.push(this.createMaterialGroup());
+  
+      // Volver a establecer el valor por defecto del campo profesor
       this.requestForm.patchValue({
         profesor: this.userActual.name,
       });
+  
     } catch (error) {
       console.error('Error al enviar la solicitud:', error);
       alert('Hubo un error al enviar la solicitud.');
