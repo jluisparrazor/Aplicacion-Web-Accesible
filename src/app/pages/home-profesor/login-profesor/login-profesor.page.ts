@@ -27,7 +27,10 @@ export class LoginPage{
     private readonly router: Router,
     private readonly firestoreService: FirestoreService,
     private sessionService: SessionService
-  ) { }
+  ) {
+    // Correción para que se vea correctamente el pictograma y el nombre de la profesora o admin
+    this.sessionService.clearSession();
+   }
 
 
   async login() {
@@ -59,12 +62,14 @@ export class LoginPage{
 
           // Redirigimos a la página de inicio según si es administrativo o profesor
           if(profData.administrative){
+            console.log('Es administrador ->', profData.name);
             this.sessionService.setCurrentUser(profData, 'admin');
             this.router.navigate(['/homeadministrador']);
           }
           else{
-            this.sessionService.setCurrentUser(profData, 'teacher');
-            this.router.navigate(['/homeprofesor']);
+              this.sessionService.setCurrentUser(profData, 'teacher');
+              console.log('Es teacher ->', profData.name);
+              this.router.navigate(['/homeprofesor']);
           }                                       
 
         } else {

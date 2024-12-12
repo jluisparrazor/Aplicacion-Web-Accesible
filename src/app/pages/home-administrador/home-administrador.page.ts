@@ -18,7 +18,7 @@ import { TasksService } from 'src/app/common/services/tasks.service';
 import { PictogramSearchComponent } from 'src/app/shared/pictogram-search/pictogram-search.component';
 import { AlertController } from '@ionic/angular';
 import { IonContent } from '@ionic/angular';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -83,6 +83,9 @@ export class HomeAdministradorPage{
   //Subject
   private unsubscribe$ = new Subject<void>();
 
+  sessionSubscription: Subscription;
+
+
   constructor(
     private readonly firestoreService: FirestoreService,
     private readonly sessionService: SessionService,
@@ -115,14 +118,16 @@ export class HomeAdministradorPage{
     //Miro que admin ha iniciado sesion
     const user = this.sessionService.getCurrentUser();
 
-    /*if (user as TeacherI && (user as TeacherI).administrative) {
+    this.sessionSubscription = this.sessionService.getSessionObservable().subscribe(user => {    //Miro que profesor ha iniciado sesión
+    if (user as TeacherI && (user as TeacherI).administrative) {
       this.userActual = user as unknown as TeacherI;
       console.log('Administrador loggeado:', this.userActual.name);
     } else {
       console.error('El usuario actual no es válido o no tiene permisos de administrador. ->' , user);
       this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
       return; // Detenemos la ejecución si el usuario no es válido
-    }*/
+    }
+    });
 
     // Inicializa los objetos de profesor, estudiante, tarea y descripcion de la tarea
     this.newTeacher = this.teacherService.initTeacher();
@@ -673,5 +678,10 @@ export class HomeAdministradorPage{
         this.newTaskDescription.imagesId.splice(index, 1);
       }
     }
+  }
+  
+  logout() { 
+    this.sessionService.clearSession(); 
+    this.router.navigate(['/loginprofesor']); 
   }
 }

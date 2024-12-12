@@ -10,7 +10,7 @@ import { IoniconsModule } from '../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
-import { StudentService } from 'src/app/common/services/student.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -21,43 +21,43 @@ import { StudentService } from 'src/app/common/services/student.service';
     IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule,RouterModule]})
 export class HomePage {
   students: StudentI[] = [];
- 
   userActual: TeacherI;
+  sessionSubscription: Subscription;
 
   constructor(
     private readonly firestoreService: FirestoreService,
     private readonly sessionService: SessionService,
     private readonly router: Router,
-    private readonly studentService: StudentService,
+    // private readonly studentService: StudentService,
   ) {
     this.load();
 
     //Students
     
-    this.firestoreService .getCollectionChanges<StudentI>('Students').subscribe((data) => {
+    this.firestoreService.getCollectionChanges<StudentI>('Students').subscribe((data) => {
       if (data) {
         this.students = data;
         console.log('Estudiantes -> ', this.students);
       }
-    });  }
+    });  
+  }
 
   load(){
-    //Miro que profesor ha iniciado sesion
-    const user = this.sessionService.getCurrentUser();
-
+    this.sessionSubscription = this.sessionService.getSessionObservable().subscribe(user => {    //Miro que profesor ha iniciado sesión
     if (user as TeacherI && !(user as TeacherI).administrative) {
       this.userActual = user as unknown as TeacherI;
       console.log('Profesor no admin loggeado:', this.userActual.name);
     } else {
-      console.error('El usuario actual no es válido o no tiene permisos de administrador. ->' , user);
+      
+      console.error('El usuario actual no es válido o no tiene permisos de profesor. ->' , user);
       this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
     }
+  });
+}
+  
+  logout() { 
+    this.sessionService.clearSession(); 
+    this.router.navigate(['/loginprofesor']); 
   }
- 
-  // loadStudents(){
-  // // Carga los estudiantes de la base de datos
-  // this.studentService.loadStudents().then((students) => {
-  //   this.students = students;
-  // });
-  // }
+
 }

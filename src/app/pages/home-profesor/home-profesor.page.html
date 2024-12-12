@@ -4,13 +4,20 @@
     <ion-title>
       <span *ngIf="userActual?.name">Profesor: {{ userActual.name }}</span>
     </ion-title>
-    <ion-avatar slot="end" *ngIf="userActual?.pictogramId">
+    <ion-avatar slot="start" *ngIf="userActual?.pictogramId">
       <ion-img 
         [src]="'https://api.arasaac.org/api/pictograms/' + userActual.pictogramId" 
         alt="Avatar del profesor"
         class="pictogram-img">
       </ion-img>
     </ion-avatar>
+    <ion-buttons slot="primary">
+    <!-- Botón de logout -->
+    <ion-button (click)="logout()" color="danger">
+      <ion-icon slot="start" name="log-out-outline"></ion-icon>
+      <ion-label>Cerrar sesión</ion-label>
+    </ion-button>
+  </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
