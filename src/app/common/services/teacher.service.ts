@@ -22,7 +22,6 @@ export class TeacherService{
             email: null,
             birthdate: null,
             phone: null,
-            personalData: null,
           };
     return newTeacher;
    }
