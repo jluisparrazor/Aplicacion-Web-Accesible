@@ -10,13 +10,14 @@ import { StudentI } from 'src/app/common/models/student.models';
 import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI } from 'src/app/common/models/task.models';
 import { Timestamp } from '@angular/fire/firestore';
+import { CelebracionComponent } from "../../shared/celebracion/celebracion.component";
 
 @Component({
   selector: 'app-tareas-por-pasos',
   templateUrl: './tareas-por-pasos.page.html',
   styleUrls: ['./tareas-por-pasos.page.scss'],
   standalone: true,
-  imports: [IonCard, IonCol, IonRow, IonGrid, IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule]
+  imports: [IonCard, IonCol, IonRow, IonGrid, IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
 })
 export class TareasPorPasosPage implements OnInit {
 

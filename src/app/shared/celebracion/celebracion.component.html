@@ -1,0 +1,24 @@
+<div class="overlay" [class.oscuro]="tareaCompletada">
+  <!-- Texto animado -->
+  <h2 
+    class="texto-enhorabuena" 
+    [class.animar-texto]="tareaCompletada">¡Enhorabuena!
+  </h2>
+  <!-- GIFs de aplausos -->
+  <img 
+    src="assets/imagenes/aplauso.gif"
+    alt="Aplausos"
+    class="gif-aplauso gif-aplauso-izquierda"
+    [class.animar-aplauso]="tareaCompletada">
+  <img 
+    src="assets/imagenes/aplauso.gif"
+    alt="Aplausos"
+    class="gif-aplauso gif-aplauso-derecha"
+    [class.animar-aplauso]="tareaCompletada">
+  <!-- GIF animado -->
+  <img 
+    src="assets/imagenes/confeti.gif" 
+    alt="Confeti" 
+    class="gif-confeti" 
+    [class.animar-confeti]="mostrarConfeti">
+</div>

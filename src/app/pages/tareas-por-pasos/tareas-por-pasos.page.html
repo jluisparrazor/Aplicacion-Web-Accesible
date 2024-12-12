@@ -52,30 +52,9 @@
     </div>
   </div>
 
-  <!-- Contenedor de la animación con overlay -->
-  <div class="overlay" [class.oscuro]="tareaCompletada">
-    <!-- Texto animado -->
-    <h2 
-      class="texto-enhorabuena" 
-      [class.animar-texto]="tareaCompletada">¡Enhorabuena!
-    </h2>
-    <!-- GIFs de aplausos -->
-    <img 
-      src="assets/imagenes/aplauso.gif"
-      alt="Aplausos"
-      class="gif-aplauso gif-aplauso-izquierda"
-      [class.animar-confeti]="mostrarConfeti">
-    <img 
-      src="assets/imagenes/aplauso.gif"
-      alt="Aplausos"
-      class="gif-aplauso gif-aplauso-derecha"
-      [class.animar-confeti]="mostrarConfeti">
-    <!-- GIF animado -->
-    <img 
-      src="assets/imagenes/confeti.gif" 
-      alt="Confeti" 
-      class="gif-confeti" 
-      [class.animar-confeti]="mostrarConfeti">
-  </div>
-  
+  <!-- Utilizar el componente CelebracionComponent -->
+  <app-celebracion 
+    [tareaCompletada]="tareaCompletada" 
+    [mostrarConfeti]="mostrarConfeti">
+  </app-celebracion>
 </ion-content>

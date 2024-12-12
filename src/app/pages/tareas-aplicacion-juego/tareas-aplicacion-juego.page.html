@@ -45,18 +45,9 @@
   </div>
 
   <!-- Contenedor de la animación con overlay -->
-  <div class="overlay" [class.oscuro]="tareaCompletada">
-    <!-- Texto animado -->
-    <h2 
-      class="texto-enhorabuena" 
-      [class.animar-texto]="tareaCompletada">¡Enhorabuena!
-    </h2>
-    <!-- GIF animado -->
-    <img 
-      src="assets/imagenes/confeti.gif" 
-      alt="Confeti" 
-      class="gif-confeti" 
-      [class.animar-confeti]="mostrarConfeti">
-  </div>
+  <app-celebracion 
+    [tareaCompletada]="tareaCompletada" 
+    [mostrarConfeti]="mostrarConfeti">
+  </app-celebracion>
   
 </ion-content>
