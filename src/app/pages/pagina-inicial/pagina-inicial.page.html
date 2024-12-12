@@ -30,12 +30,14 @@
   <ion-toolbar>
     <ion-buttons slot="primary" class="pagination-buttons">
       <ion-button (click)="prevPage()" [disabled]="currentPage === 0" expand="block" size="large">
-        <ion-icon name="arrow-back-outline"></ion-icon>
+        <!--<ion-icon name="arrow-back-outline"></ion-icon>-->
+        <ion-img [src]="'https://api.arasaac.org/api/pictograms/38250'" alt="Pictograma Botón Siguiente" class="pictogram-boton"></ion-img>
         Anterior
         </ion-button>
         <ion-button (click)="nextPage()" [disabled]="!hasMorePages()" expand="block" size="large">
         Siguiente
-        <ion-icon name="arrow-forward-outline"></ion-icon>
+        <ion-img [src]="'https://api.arasaac.org/api/pictograms/38252'" alt="Pictograma Botón Siguiente" class="pictogram-boton"></ion-img>
+        <!--<ion-icon name="arrow-forward-outline"></ion-icon>--> 
         </ion-button>
     </ion-buttons>
   </ion-toolbar>

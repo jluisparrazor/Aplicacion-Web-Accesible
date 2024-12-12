@@ -10,13 +10,14 @@ import { StudentI } from 'src/app/common/models/student.models';
 import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI } from 'src/app/common/models/task.models';
 import { Timestamp } from '@angular/fire/firestore';
+import { CelebracionComponent } from "../../shared/celebracion/celebracion.component";
 
 @Component({
   selector: 'app-tareas-aplicacion-juego',
   templateUrl: './tareas-aplicacion-juego.page.html',
   styleUrls: ['./tareas-aplicacion-juego.page.scss'],
   standalone: true,
-  imports: [IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule]
+  imports: [IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
 })
 export class TareasAplicacionJuegoPage implements OnInit {
   tareaCompletada: boolean = false;

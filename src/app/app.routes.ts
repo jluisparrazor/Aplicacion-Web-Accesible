@@ -56,8 +56,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home-profesor/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
   },
   {
-    path: 'choose-menus',
-    loadComponent: () => import('./pages/choose-menus/choose-menus.page').then( m => m.ChooseMenusPage)
+    path: 'task-menus',
+    loadComponent: () => import('./pages/task-menus/task-menus.page').then( m => m.TaskMenusPage)
   },
   {
     path: 'show-menus',
@@ -71,7 +71,15 @@ export const routes: Routes = [
     path: 'material-update',
     loadComponent: () => import('./pages/home-administrador/material-update/material-update.page').then( m => m.MaterialUpdatePage)
   },
-  
+  {
+    path: 'classes',
+    loadComponent: () => import('./pages/classes/classes.page').then( m => m.ClassesPage)
+  },
+  {
+    path: 'menutypes',
+    loadComponent: () => import('./pages/menutypes/menutypes.page').then( m => m.MenuTypesPage)
+  }
+
 ];
 @NgModule({
   imports: [
