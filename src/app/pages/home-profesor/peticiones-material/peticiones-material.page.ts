@@ -130,6 +130,9 @@ export class PeticionesMaterialPage implements OnInit {
       alert('Hubo un error al enviar la solicitud.');
     }
   }
+  goBack() {
+    window.history.back();
+  }
   
   
 }

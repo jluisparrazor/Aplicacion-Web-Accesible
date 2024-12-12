@@ -87,4 +87,7 @@ export class MaterialUpdatePage implements OnInit {
       alert('Ocurrió un error al procesar los materiales.');
     }
   }
+  goBack() {
+    window.history.back();
+  }
 }
