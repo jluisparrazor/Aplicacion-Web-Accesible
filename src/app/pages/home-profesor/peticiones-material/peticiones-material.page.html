@@ -19,10 +19,16 @@
     </ion-item>
 
     <!-- Campo Clase -->
+    <!-- Campo Clase -->
     <ion-item>
       <ion-label position="floating">Clase</ion-label>
-      <ion-input formControlName="clase"></ion-input>
+      <ion-select formControlName="clase" placeholder="Selecciona una clase">
+        <ion-select-option *ngFor="let clase of availableClasses" [value]="clase">
+          {{ clase }}
+        </ion-select-option>
+      </ion-select>
     </ion-item>
+    
 
     <!-- Campos para los materiales -->
     <div formArrayName="materiales">

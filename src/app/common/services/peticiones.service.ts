@@ -44,6 +44,23 @@ export class RequestsService {
 
     return materials;
   }
+  // En tu servicio RequestsService
+  async getAvailableClasses(): Promise<string[]> {
+    const classesCollection = collection(this.firestore, 'Classes'); // Asumiendo que las clases están en una colección llamada "Classes"
+    const querySnapshot = await getDocs(classesCollection);
+    const classes: string[] = [];
+
+    querySnapshot.forEach((doc) => {
+      const clase = doc.data()['name']; // Using bracket notation to access the property
+
+      if (clase && !classes.includes(clase)) {
+        classes.push(clase);
+      }
+    });
+
+    return classes;
+  }
+
   async getAvailableColors(nombre: string): Promise<string[]> {
     const inventoryCollection = collection(this.firestore, 'Inventory');
     const q = query(inventoryCollection, where('nombre', '==', nombre));
