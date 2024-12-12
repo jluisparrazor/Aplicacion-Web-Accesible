@@ -68,6 +68,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/inicio/inicio.page').then( m => m.InicioPage)
   },
   {
+    path: 'material-update',
+    loadComponent: () => import('./pages/home-administrador/material-update/material-update.page').then( m => m.MaterialUpdatePage)
+  },
+  {
     path: 'classes',
     loadComponent: () => import('./pages/classes/classes.page').then( m => m.ClassesPage)
   },
@@ -75,7 +79,6 @@ export const routes: Routes = [
     path: 'menutypes',
     loadComponent: () => import('./pages/menutypes/menutypes.page').then( m => m.MenuTypesPage)
   }
-  
 ];
 @NgModule({
   imports: [

@@ -39,6 +39,21 @@
               </ion-button>
             </ion-buttons>
         </ion-toolbar>
+        <!-- Botón para añadir material -->
+        <ion-row>
+          <ion-col>
+            <ion-toolbar>
+              <!-- Botón para añadir material, alineado a la derecha -->
+              <ion-buttons slot="end">
+                <ion-button class="poner-material" color="primary" [routerLink]="'/material-update'">
+                  <ion-icon slot="start" name="add-outline"></ion-icon>
+                  Añadir material
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-col>
+        </ion-row>
+        
         
         <!-- Formulario para añadir una tarea -->
         <ion-card *ngIf="showTaskForm" class="card-add-tarea">
