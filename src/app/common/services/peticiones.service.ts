@@ -64,6 +64,44 @@ async getAvailableTamanos(nombre: string): Promise<string[]> {
   return tamanos;
 }
 
+// Obtener los colores disponibles para un tamaño específico
+async getAvailableColorsForTamano(nombre: string, tamano: string): Promise<string[]> {
+  const inventoryCollection = collection(this.firestore, 'Inventory');
+  const q = query(inventoryCollection, where('nombre', '==', nombre), where('tamano', '==', tamano));
+
+  const querySnapshot = await getDocs(q);
+  const colors: string[] = [];
+
+  querySnapshot.forEach((doc) => {
+    const material = doc.data() as InventoryItem;
+    if (material.color && !colors.includes(material.color)) {
+      colors.push(material.color);
+    }
+  });
+
+  return colors;
+}
+
+// Obtener los tamaños disponibles para un color específico
+async getAvailableTamanosForColor(nombre: string, color: string): Promise<string[]> {
+  const inventoryCollection = collection(this.firestore, 'Inventory');
+  const q = query(inventoryCollection, where('nombre', '==', nombre), where('color', '==', color));
+
+  const querySnapshot = await getDocs(q);
+  const tamanos: string[] = [];
+
+  querySnapshot.forEach((doc) => {
+    const material = doc.data() as InventoryItem;
+    if (material.tamano && !tamanos.includes(material.tamano)) {
+      tamanos.push(material.tamano);
+    }
+  });
+
+  return tamanos;
+}
+
+
+
 
   // Verificar si el material tiene suficiente cantidad en el inventario
   async checkMaterialQuantity(

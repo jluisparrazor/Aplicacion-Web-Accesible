@@ -74,32 +74,91 @@ export class PeticionesMaterialPage implements OnInit {
   // Función para actualizar los colores disponibles cuando el nombre del material cambia
   async updateAvailableColors(materialIndex: number) {
     const materialName = this.materiales.at(materialIndex).get('nombre')?.value;
+    const tamanoSelected = this.materiales.at(materialIndex).get('tamano')?.value;
+    
     if (materialName) {
-      const colors = await this.requestsService.getAvailableColors(materialName);
+      let colors = await this.requestsService.getAvailableColors(materialName);
+  
+      if (tamanoSelected) {
+        // Filtrar colores disponibles por el tamaño seleccionado
+        colors = colors.filter(async (color) => {
+          const availableTamanos = await this.requestsService.getAvailableTamanosForColor(materialName, color);
+          return availableTamanos.includes(tamanoSelected);
+        });
+      }
+      
       this.availableColors[materialName] = colors;
   
-      // Establecer el color seleccionado en el formulario a 'NoEspecificado' si no está entre los disponibles
+      // Limpiar color seleccionado si no es válido
       const selectedColor = this.materiales.at(materialIndex).get('color')?.value;
       if (selectedColor && !colors.includes(selectedColor)) {
-        this.materiales.at(materialIndex).get('color')?.setValue(''); // Limpiar el color si no es válido
+        this.materiales.at(materialIndex).get('color')?.setValue('');
       }
     }
   }
+  
   // Función para actualizar los tamaños disponibles cuando el nombre del material cambia
   async updateAvailableTamanos(materialIndex: number) {
     const materialName = this.materiales.at(materialIndex).get('nombre')?.value;
+    const colorSelected = this.materiales.at(materialIndex).get('color')?.value;
+  
     if (materialName) {
-      const tamanos = await this.requestsService.getAvailableTamanos(materialName);
+      let tamanos = await this.requestsService.getAvailableTamanos(materialName);
+  
+      if (colorSelected) {
+        // Filtrar tamaños disponibles por el color seleccionado
+        tamanos = tamanos.filter(async (tamano) => {
+          const availableColors = await this.requestsService.getAvailableColorsForTamano(materialName, tamano);
+          return availableColors.includes(colorSelected);
+        });
+      }
+  
       this.availableTamanos[materialName] = tamanos;
   
-      // Verificar si el tamaño seleccionado ya está disponible
+      // Limpiar tamaño seleccionado si no es válido
       const selectedTamano = this.materiales.at(materialIndex).get('tamano')?.value;
       if (selectedTamano && !tamanos.includes(selectedTamano)) {
-        // Si el tamaño no es válido, lo limpiamos (pero no lo limpiamos si es válido)
         this.materiales.at(materialIndex).get('tamano')?.setValue('');
       }
     }
   }
+  // Método cuando se selecciona un tamaño
+async onTamanoChange(index: number) {
+  const materialName = this.materiales.at(index).get('nombre')?.value;
+  const tamanoSelected = this.materiales.at(index).get('tamano')?.value;
+  
+  // Filtrar colores disponibles por el tamaño seleccionado
+  if (materialName && tamanoSelected) {
+    const colors = await this.requestsService.getAvailableColorsForTamano(materialName, tamanoSelected);
+    this.availableColors[materialName] = colors;
+
+    // Limpiar color seleccionado si no está en la lista filtrada
+    const selectedColor = this.materiales.at(index).get('color')?.value;
+    if (selectedColor && !colors.includes(selectedColor)) {
+      this.materiales.at(index).get('color')?.setValue(''); // Limpiar color
+    }
+  }
+}
+
+// Método cuando se selecciona un color
+async onColorChange(index: number) {
+  const materialName = this.materiales.at(index).get('nombre')?.value;
+  const colorSelected = this.materiales.at(index).get('color')?.value;
+
+  // Filtrar tamaños disponibles por el color seleccionado
+  if (materialName && colorSelected) {
+    const tamanos = await this.requestsService.getAvailableTamanosForColor(materialName, colorSelected);
+    this.availableTamanos[materialName] = tamanos;
+
+    // Limpiar tamaño seleccionado si no está en la lista filtrada
+    const selectedTamano = this.materiales.at(index).get('tamano')?.value;
+    if (selectedTamano && !tamanos.includes(selectedTamano)) {
+      this.materiales.at(index).get('tamano')?.setValue(''); // Limpiar tamaño
+    }
+  }
+}
+
+  
   
   
 
