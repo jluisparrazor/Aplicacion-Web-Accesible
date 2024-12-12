@@ -29,7 +29,11 @@
       <div *ngFor="let material of materiales.controls; let i = index" [formGroupName]="i" class="material-row">
         <ion-item class="material-item">
           <ion-label position="floating">Material</ion-label>
-          <ion-input formControlName="nombre" placeholder="Nombre del material"></ion-input>
+          <ion-select formControlName="nombre" placeholder="Selecciona un material">
+            <ion-select-option *ngFor="let material of availableMaterials" [value]="material">
+              {{ material }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
       
         <ion-item class="cantidad-item">

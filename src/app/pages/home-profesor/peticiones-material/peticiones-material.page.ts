@@ -17,6 +17,7 @@ import { RequestsService } from '../../../common/services/peticiones.service';
 export class PeticionesMaterialPage implements OnInit {
   requestForm: FormGroup;
   userActual: any;
+  availableMaterials: string[] = []; // Almacenar los materiales disponibles
   availableColors: { [materialName: string]: string[] } = {}; // Almacenar los colores por material
   availableTamanos: { [materialName: string]: string[] } = {}; // Almacenar los tamaños por material
 
@@ -43,7 +44,7 @@ export class PeticionesMaterialPage implements OnInit {
       clase: ['', [Validators.required]],
       materiales: this.fb.array([this.createMaterialGroup()]),
     });
-
+    this.loadAvailableMaterials(); // Cargar materiales disponibles al iniciar
     // Escuchar cambios en los materiales
     this.materiales.valueChanges.subscribe(() => {
       // Llamamos a la función que verifica los colores disponibles
@@ -53,7 +54,11 @@ export class PeticionesMaterialPage implements OnInit {
       });
     });
   }
-
+  // Método para cargar materiales disponibles
+  async loadAvailableMaterials() {
+    this.availableMaterials = await this.requestsService.getAvailableMaterials();
+  } 
+  
   get materiales(): FormArray {
     return this.requestForm.get('materiales') as FormArray;
   }
