@@ -28,6 +28,42 @@ export class RequestsService {
     const querySnapshot = await getDocs(q);
     return !querySnapshot.empty; // Devuelve true si hay resultados
   }
+  // En tu servicio RequestsService
+
+async getAvailableColors(nombre: string): Promise<string[]> {
+  const inventoryCollection = collection(this.firestore, 'Inventory');
+  const q = query(inventoryCollection, where('nombre', '==', nombre));
+
+  const querySnapshot = await getDocs(q);
+  const colors: string[] = [];
+
+  querySnapshot.forEach((doc) => {
+    const material = doc.data() as InventoryItem;
+    if (material.color && !colors.includes(material.color)) {
+      colors.push(material.color);
+    }
+  });
+
+  return colors;
+}
+// Recupera los tamaños disponibles para un material
+async getAvailableTamanos(nombre: string): Promise<string[]> {
+  const inventoryCollection = collection(this.firestore, 'Inventory');
+  const q = query(inventoryCollection, where('nombre', '==', nombre));
+
+  const querySnapshot = await getDocs(q);
+  const tamanos: string[] = [];
+
+  querySnapshot.forEach((doc) => {
+    const material = doc.data() as InventoryItem;
+    if (material.tamano && !tamanos.includes(material.tamano)) {
+      tamanos.push(material.tamano);
+    }
+  });
+
+  return tamanos;
+}
+
 
   // Verificar si el material tiene suficiente cantidad en el inventario
   async checkMaterialQuantity(

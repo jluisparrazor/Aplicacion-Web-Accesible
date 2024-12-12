@@ -17,6 +17,8 @@ import { RequestsService } from '../../../common/services/peticiones.service';
 export class PeticionesMaterialPage implements OnInit {
   requestForm: FormGroup;
   userActual: any;
+  availableColors: { [materialName: string]: string[] } = {}; // Almacenar los colores por material
+  availableTamanos: { [materialName: string]: string[] } = {}; // Almacenar los tamaños por material
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +43,15 @@ export class PeticionesMaterialPage implements OnInit {
       clase: ['', [Validators.required]],
       materiales: this.fb.array([this.createMaterialGroup()]),
     });
+
+    // Escuchar cambios en los materiales
+    this.materiales.valueChanges.subscribe(() => {
+      // Llamamos a la función que verifica los colores disponibles
+      this.materiales.controls.forEach((material, index) => {
+        this.updateAvailableColors(index); // Llamamos para cada material
+        this.updateAvailableTamanos(index); // Actualizar tamaños
+      });
+    });
   }
 
   get materiales(): FormArray {
@@ -51,16 +62,48 @@ export class PeticionesMaterialPage implements OnInit {
     return this.fb.group({
       nombre: ['', [Validators.required]],
       cantidad: [1, [Validators.required, Validators.min(1)]],
-      tamano: [''], // Nuevo campo
-      color: [''],  // Nuevo campo
+      tamano: [''],
+      color: [''],
     });
   }
-  
 
   addMaterial() {
     this.materiales.push(this.createMaterialGroup());
   }
 
+  // Función para actualizar los colores disponibles cuando el nombre del material cambia
+  async updateAvailableColors(materialIndex: number) {
+    const materialName = this.materiales.at(materialIndex).get('nombre')?.value;
+    if (materialName) {
+      const colors = await this.requestsService.getAvailableColors(materialName);
+      this.availableColors[materialName] = colors;
+  
+      // Establecer el color seleccionado en el formulario a 'NoEspecificado' si no está entre los disponibles
+      const selectedColor = this.materiales.at(materialIndex).get('color')?.value;
+      if (selectedColor && !colors.includes(selectedColor)) {
+        this.materiales.at(materialIndex).get('color')?.setValue(''); // Limpiar el color si no es válido
+      }
+    }
+  }
+  // Función para actualizar los tamaños disponibles cuando el nombre del material cambia
+  async updateAvailableTamanos(materialIndex: number) {
+    const materialName = this.materiales.at(materialIndex).get('nombre')?.value;
+    if (materialName) {
+      const tamanos = await this.requestsService.getAvailableTamanos(materialName);
+      this.availableTamanos[materialName] = tamanos;
+  
+      // Verificar si el tamaño seleccionado ya está disponible
+      const selectedTamano = this.materiales.at(materialIndex).get('tamano')?.value;
+      if (selectedTamano && !tamanos.includes(selectedTamano)) {
+        // Si el tamaño no es válido, lo limpiamos (pero no lo limpiamos si es válido)
+        this.materiales.at(materialIndex).get('tamano')?.setValue('');
+      }
+    }
+  }
+  
+  
+
+  // Al enviar la solicitud, verificar todos los materiales como antes
   async finalizeRequests() {
     if (this.requestForm.invalid) {
       alert('Debe completar todos los campos correctamente antes de enviar.');
@@ -78,7 +121,7 @@ export class PeticionesMaterialPage implements OnInit {
       // Validar existencia en el inventario
       const exists = await this.requestsService.checkMaterialExists(material.nombre, material.tamano, material.color);
       if (!exists) {
-        alert(`El material no está disponible en el invetario.`);
+        alert(`El material ${material.nombre} no está disponible en el inventario.`);
         return;
       }
   
@@ -90,7 +133,7 @@ export class PeticionesMaterialPage implements OnInit {
         material.cantidad
       );
       if (!hasSufficientQuantity) {
-        alert(`No hay suficiente cantidad del material en el inventario.`);
+        alert(`No hay suficiente cantidad de ${material.nombre} en el inventario.`);
         return;
       }
   
@@ -110,7 +153,8 @@ export class PeticionesMaterialPage implements OnInit {
     }
   
     try {
-      await this.requestsService.sendRequest(formData); // Enviar solicitud si todo es válido
+      // Enviar solicitud si todo es válido
+      await this.requestsService.sendRequest(formData);
       alert('Solicitud enviada correctamente.');
   
       // Reiniciar el formulario correctamente
@@ -120,7 +164,7 @@ export class PeticionesMaterialPage implements OnInit {
       // Asegurarse de que el primer grupo de material esté presente
       this.materiales.push(this.createMaterialGroup());
   
-      // Volver a establecer el valor por defecto del campo profesor
+      // Volver a establecer el valor por defecto del campo 'profesor' para la nueva solicitud
       this.requestForm.patchValue({
         profesor: this.userActual.name,
       });
@@ -130,9 +174,10 @@ export class PeticionesMaterialPage implements OnInit {
       alert('Hubo un error al enviar la solicitud.');
     }
   }
+  
+  
+
   goBack() {
     window.history.back();
   }
-  
-  
 }

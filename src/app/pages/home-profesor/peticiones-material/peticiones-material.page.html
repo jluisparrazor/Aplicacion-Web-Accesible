@@ -40,14 +40,32 @@
         <!-- Nuevo campo: Tamaño -->
         <ion-item class="material-item">
           <ion-label position="floating">Tamaño</ion-label>
-          <ion-input formControlName="tamano" placeholder="Tamaño del material"></ion-input>
+          <ion-select formControlName="tamano" placeholder="Selecciona un tamaño">
+            <!-- Asegúrate de que estas opciones estén basadas en los tamaños disponibles -->
+            <ion-select-option *ngFor="let tamano of availableTamanos[material.get('nombre')?.value] || []" [value]="tamano">
+              {{ tamano }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
+        
+        
+        
       
         <!-- Nuevo campo: Color -->
         <ion-item class="material-item">
           <ion-label position="floating">Color</ion-label>
-          <ion-input formControlName="color" placeholder="Color del material"></ion-input>
+          <ion-select formControlName="color" placeholder="Selecciona un color">
+            <ion-select-option 
+              *ngFor="let color of availableColors[material.get('nombre')?.value] || []" 
+              [value]="color">
+              {{ color }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
+        
+        
+        
+        
       </div>
     </div>
 
