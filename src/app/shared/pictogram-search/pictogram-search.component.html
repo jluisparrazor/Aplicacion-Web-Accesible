@@ -1,8 +1,8 @@
-
 <ion-card>
   <ion-item>
     <ion-label>Seleccionar pictograma: </ion-label>
-    <ion-input type="text" [(ngModel)]="keyword" style="margin-left: 10px;"></ion-input>
+    <ion-input type="text" [(ngModel)]="keyword" style="margin-left: 10px;"
+      (keyup.enter)="searchPictograms()"></ion-input>
     <ion-button (click)="searchPictograms()" expand="block" shape="round" style="margin-left: 10px;">
       Buscar
     </ion-button>
@@ -19,4 +19,3 @@
     </ion-label>
   </ion-item>
 </ion-list>
-

@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonItem, IonLabel, IonDatetime, IonSegmentButton, IonSegment, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonRow, IonGrid, IonCol } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonLabel, IonDatetime, IonSegmentButton, IonSegment, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonRow, IonGrid, IonCol } from '@ionic/angular/standalone';
 import { MenuService } from 'src/app/common/services/menu.service';
 import { Menu } from 'src/app/common/models/menu.models';
-import { Timestamp } from 'firebase/firestore';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -12,7 +11,7 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './show-menus.page.html',
   styleUrls: ['./show-menus.page.scss'],
   standalone: true,
-  imports: [IonCol, IonGrid, IonRow, IonList, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonSegment, IonSegmentButton, IonLabel, IonItem, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonDatetime, CommonModule, FormsModule]
+  imports: [IonCol, IonGrid, IonRow, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonSegment, IonSegmentButton, IonLabel, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonDatetime, CommonModule, FormsModule]
 })
 export class ShowMenusPage implements OnInit {
 
