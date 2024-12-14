@@ -1,0 +1,170 @@
+<!-- Encabezado de la página-->
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Administrador</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<!-- Contenido de la página -->
+<ion-content [fullscreen]="true">
+  <ion-grid>      
+      
+    <ion-row>
+      <!-- PROFESORES -->
+      <ion-col>
+        <ion-toolbar>
+          <ion-title class="tituloSeccion">Profesores:</ion-title>
+          <ion-buttons slot="end" *ngIf="!showTeacherForm">
+            <ion-button (click)="toggleTeacherForm()">
+              <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+
+        <!-- Formulario de profesores -->
+        <ion-card *ngIf="showTeacherForm" class="card-add-tarea">
+          <ion-toolbar>
+            <ion-title>Crear profesor</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="addTeacher()" shape="round" color="primary">Añadir/Actualizar Profesor</ion-button>
+              <ion-button (click)="toggleTeacherForm()" shape="round" color="danger">Cancelar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          
+          <ion-list>
+            <!-- Nombre -->
+            <ion-item>
+              <ion-input 
+                label="Nombre" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.name" 
+                required>
+              </ion-input>
+            </ion-item>
+        
+            <!-- Apellidos -->
+            <ion-item>
+              <ion-input 
+                label="Apellidos" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.surname" 
+                required>
+              </ion-input>
+            </ion-item>
+        
+            <!-- Nombre -->
+            <ion-item>
+              <ion-input 
+                label="DNI" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTeacher.dni" 
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- ID de Pictograma -->
+            <app-pictogram-search (pictogramSelect)="newTeacher.pictogramId = $event"></app-pictogram-search>
+            <ion-item *ngIf="newTeacher.pictogramId">
+              <ion-label>
+                Pictograma Seleccionado
+              </ion-label>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newTeacher.pictogramId" alt="Pictogram image"></ion-img>
+              </ion-thumbnail>
+            </ion-item>
+        
+            <!-- Email -->
+            <ion-item>
+              <ion-input 
+                label="Correo electrónico" 
+                labelPlacement="floating" 
+                type="email" 
+                [(ngModel)]="newTeacher.email" 
+                required>
+              </ion-input>
+            </ion-item>
+        
+            <!-- Contraseña -->
+            <ion-item>
+              <ion-input 
+                label="Contraseña" 
+                labelPlacement="floating" 
+                type="password" 
+                [(ngModel)]="newTeacher.password" 
+                required>
+              </ion-input>
+            </ion-item>
+        
+            <!-- Es administrativo -->
+            <ion-item>
+              <ion-checkbox [(ngModel)]="newTeacher.administrative"></ion-checkbox>
+              <ion-label>Es administrativo</ion-label>
+            </ion-item>
+        
+            <!-- Fecha de nacimiento (opcional) -->
+            <ion-item>
+              <ion-label>Fecha de nacimiento:</ion-label>
+              <ion-datetime 
+                placeholder="Selecciona fecha"
+                [(ngModel)]="newTeacher.birthdate"
+                presentation="date">
+              </ion-datetime>
+            </ion-item>
+        
+            <!-- Teléfono (opcional) -->
+            <ion-item>
+              <ion-input 
+                label="Teléfono" 
+                labelPlacement="floating" 
+                type="number" 
+                [(ngModel)]="newTeacher.phone">
+              </ion-input>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+        
+        <!-- Lista de profesores y todos sus elementos -->
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" *ngFor="let teacher of teachers; let i = index">
+              <ion-item>
+                <!-- Imagen del pictograma -->
+                <ion-avatar slot="start">
+                  <ion-img 
+                    [src]="'https://api.arasaac.org/api/pictograms/' + teacher.pictogramId" 
+                    alt="Pictogram image" 
+                    class="pictogram-img">
+                  </ion-img>
+                </ion-avatar>
+        
+                <!-- Información del profesor -->
+                <ion-label>
+                  <h3>{{ teacher.name }} {{ teacher.surname }}</h3>
+                  <p *ngIf="teacher.phone">Teléfono móvil: {{ teacher.phone }}</p>
+                  <p>DNI: {{ teacher.dni }}</p>
+                  <p *ngIf="teacher.administrative">Es administrativo</p>
+                  <p *ngIf="teacher.email">Email: {{ teacher.email }}</p>
+                </ion-label>
+        
+                <!-- Botones de editar y eliminar -->
+                <ion-buttons slot="end">
+                  <ion-button (click)="editTeacher(teacher)">
+                    <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="deleteTeacher(teacher)">
+                    <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-buttons> 
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        
+            
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>
+
