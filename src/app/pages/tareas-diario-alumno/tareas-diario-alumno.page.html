@@ -1,5 +1,13 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="volverListado()">
+        <ion-avatar slot="start" class="but">
+          <ion-img [src]="'https://api.arasaac.org/api/pictograms/6606'" alt="Pictogram"></ion-img>
+        </ion-avatar> 
+        Salir
+      </ion-button>
+    </ion-buttons>
     <ion-title class="header-title" *ngIf="userActual">
       Tareas de {{ userActual.name }}
     </ion-title>
