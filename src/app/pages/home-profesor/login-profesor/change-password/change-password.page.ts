@@ -1,81 +1,75 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonItem, IonLabel, IonButton, IonText, IonGrid, IonCol, IonRow } from '@ionic/angular/standalone';
-// import { StudentI } from 'src/app/common/models/student.models';
+import { IonContent, IonItem, IonInput, IonButton, IonCol, IonGrid, IonRow, IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonLabel } from '@ionic/angular/standalone';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
-import { NavController } from '@ionic/angular';
 import { AlertService } from 'src/app/common/services/alert.service';
+import { Router } from '@angular/router';
+import { TeacherI } from 'src/app/common/models/teacher.models';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.page.html',
   styleUrls: ['./change-password.page.scss'],
   standalone: true,
-  imports: [IonRow, IonCol, IonGrid, IonButton, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonRow, IonCol, IonInput, IonGrid, IonButton, IonItem, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonLabel, CommonModule, FormsModule]
 })
 export class ChangePasswordPage {
 
   message: string = 'Se ha enviado un enlace de recuperación a tu correo electrónico.'; 
-  email: string = null; 
+  email_input: string = ''; 
   header: string = 'Recuperar contraseña';
-  // user:StudentI;
   buttonText: string = "OK";
-  failed_message : string = 'No se encontró ningún profesor con ese correo electrónico.';
+  failed_message: string = 'No se encontró ningún profesor con ese correo electrónico.';
+  teacher: TeacherI | null = null;
+  dni_input: string = '';
+  new_password: string = '';
+  confirm_password: string = '';
+
   constructor(
-    private firestoreService: FirestoreService,
-    // private alertCtrl: AlertController,
-    private navCtrl: NavController,
-    private alertService: AlertService
-  ) {
-  }
-
-  // async presentAlert(header: string, message: string){
-  //   const alert = await this.alertCtrl.create({
-  //     header,
-  //     message,
-  //     buttons: ['OK']
-  //   });
-  //   await alert.present();
-  // }
-
-  // async getUser(){
-
-  // }
+    private readonly firestoreService: FirestoreService,
+    private readonly router: Router,
+    private readonly alertService: AlertService
+  ) {}
 
   async recoverPassword() {
-    console.log('Email:', this.email);
+    console.log('Email:', this.email_input);
 
     try {
-
       // Intenta recuperar la contraseña desde Firestore
-      const teacher = await this.firestoreService.getTeacherByEmail(this.email);
-      console.log("Profesor encontrado ->" + teacher);
+      const teacher = await this.firestoreService.getTeacherByEmail(this.email_input);
+      console.log("Profesor encontrado ->", JSON.stringify(teacher));
       
       if (teacher) {
-        // Aquí enviarías un correo electrónico de recuperación
-        this.alertService.showAlert(this.header, this.message, this.buttonText); 
-        } else {
+        this.teacher = teacher;
+        // Activar formulario de recuperación de contraseña
+      } else {
         this.alertService.showAlert(this.header, this.failed_message, this.buttonText); 
       }
     } catch (error) {
-      console.log('Hubo un error al intentar recuperar la contraseña. Por favor, inténtalo de nuevo más tarde.');
+      console.log('Hubo un error al intentar recuperar la contraseña. Por favor, inténtalo de nuevo más tarde.', error);
     }
   }
 
-  // async changePassword(){
-  //   if(this.currentPassword === this.user){
-  //     if(this.newPassword === this.confirmPassword){
-  //       this.user.password = this.newPassword;
-  //      // await this.firestoreService.updateDocument(this.user, 'Usuarios', this.user.id);
-  //       this.navCtrl.navigateForward('homeprofesor');
-  //     }else{
-  //       this.presentAlert('Error', 'Las contraseñas no coinciden');
-  //     }
-  //   }else{
-  //     this.presentAlert('Error', 'La contraseña actual es incorrecta');
-  //   }
-  // }
-  
-
+  async verifyDniAndChangePassword() {
+    if (this.teacher && this.teacher.dni === this.dni_input) {
+      if (this.new_password === this.confirm_password) {
+        try {
+          const teacher_ref= this.firestoreService.getDocumentReference('Teachers', this.teacher.id);
+          await this.firestoreService.updateDocument(teacher_ref, { password: this.new_password });
+          this.alertService.showAlert(this.header, 'Contraseña cambiada con éxito', this.buttonText);
+          this.teacher = null;
+          this.dni_input = this.email_input = this.email_input = this.new_password = this.confirm_password = ''; //Limpiamos los campos
+          this.teacher = null;
+          this.router.navigate(['/loginprofesor']);
+        } catch (error) {
+          console.log('Hubo un error al cambiar la contraseña. Por favor, inténtalo de nuevo más tarde.', error);
+        }
+      } else {
+        this.alertService.showAlert(this.header, 'Las contraseñas no coinciden', this.buttonText);
+      }
+    } else {
+      this.alertService.showAlert(this.header, 'DNI incorrecto', this.buttonText);
+    }
+  }
 }

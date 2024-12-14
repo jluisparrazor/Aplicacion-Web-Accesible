@@ -6,7 +6,7 @@ import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, Q
 import { Observable } from 'rxjs';
 import { TeacherI } from '../models/teacher.models';
 import { v4 as uuidv4 } from 'uuid';
-import { BehaviorSubject } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -150,6 +150,22 @@ async getTeacherByEmail(email: string): Promise<TeacherI | null> {
   try {
     const teacherCollectionRef = collection(this.firestore, 'Teachers');
     const q = query(teacherCollectionRef, where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const teacherDoc = querySnapshot.docs[0];
+      return { id: teacherDoc.id, ...teacherDoc.data() } as TeacherI;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error al obtener el profesor:', error);
+    return null;
+  }
+}
+async getTeacherByDni(dni: string): Promise<TeacherI | null> {
+  try {
+    const teacherCollectionRef = collection(this.firestore, 'Teachers');
+    const q = query(teacherCollectionRef, where('dni', '==', dni));
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       const teacherDoc = querySnapshot.docs[0];
