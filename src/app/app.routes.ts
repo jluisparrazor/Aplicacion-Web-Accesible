@@ -52,6 +52,18 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
   },
   {
+    path: 'admin-tareas',
+    loadComponent: () => import('./pages/home-administrador/admin-tareas/admin-tareas.page').then( m => m.AdminTareasPage)
+  },
+  {
+  path: 'admin-profesores',
+  loadComponent: () => import('./pages/home-administrador/admin-profesores/admin-profesores.page').then( m => m.AdminProfesoresPage)
+  },
+  {
+    path: 'admin-alumnos',
+    loadComponent: () => import('./pages/home-administrador/admin-alumnos/admin-alumnos.page').then( m => m.AdminAlumnosPage)
+    },
+  {
     path: 'material-demand',
     loadComponent: () => import('./pages/home-profesor/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
   },
