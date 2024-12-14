@@ -2,6 +2,13 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Administrador</ion-title>
+    <ion-buttons slot="primary">
+      <!-- Botón de logout -->
+      <ion-button (click)="comeback()" color="primary">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        <ion-label>Volver al Home Administrador</ion-label>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

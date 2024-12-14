@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonItem, IonInput, IonButton, IonCol, IonGrid, IonRow, IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonLabel } from '@ionic/angular/standalone';
+import { IonContent, IonItem, IonInput, IonButton, IonCol, IonGrid, IonRow, IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonLabel, IonTitle, IonToolbar, IonHeader, IonButtons, IonIcon } from '@ionic/angular/standalone';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { AlertService } from 'src/app/common/services/alert.service';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { TeacherI } from 'src/app/common/models/teacher.models';
   templateUrl: './change-password.page.html',
   styleUrls: ['./change-password.page.scss'],
   standalone: true,
-  imports: [IonRow, IonCol, IonInput, IonGrid, IonButton, IonItem, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonLabel, CommonModule, FormsModule]
+  imports: [IonIcon, IonButtons, IonHeader, IonToolbar, IonTitle, IonRow, IonCol, IonInput, IonGrid, IonButton, IonItem, IonContent, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonLabel, CommonModule, FormsModule]
 })
 export class ChangePasswordPage {
 
@@ -71,5 +71,8 @@ export class ChangePasswordPage {
     } else {
       this.alertService.showAlert(this.header, 'DNI incorrecto', this.buttonText);
     }
+  }
+  comeback(){
+    this.router.navigate(['/loginprofesor']);
   }
 }

@@ -4,6 +4,7 @@ import { MaterialService } from '../../../common/services/material-update.servic
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { MaterialI } from '../../../common/models/material.models';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-material-update',
@@ -18,7 +19,8 @@ export class MaterialUpdatePage implements OnInit {
   inventoryNames: string[] = [];
   isToggleOpen = false;
 
-  constructor(private fb: FormBuilder, private materialService: MaterialService) {}
+  constructor(private fb: FormBuilder, private materialService: MaterialService,     private readonly router: Router,
+  ) {}
 
   ngOnInit() {
     this.materialForm = this.fb.group({
@@ -86,5 +88,9 @@ export class MaterialUpdatePage implements OnInit {
       console.error('Error al procesar los materiales:', error);
       alert('Ocurrió un error al procesar los materiales.');
     }
+  }
+
+  comeback(){
+    this.router.navigate(['/homeadministrador']);
   }
 }

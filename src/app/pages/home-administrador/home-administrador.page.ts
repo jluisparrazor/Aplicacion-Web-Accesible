@@ -29,7 +29,7 @@ export class HomeAdministradorPage {
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
   adminName: string; // Nueva propiedad para almacenar el nombre del administrador
-
+  userActual : TeacherI | null = null;
   sessionSubscription: Subscription;
 
 
@@ -39,13 +39,15 @@ export class HomeAdministradorPage {
   ) {
     this.init();
   }
-
+    
   init() {
-    const user = this.sessionService.getCurrentUser();
+    //     const user = this.sessionService.getCurrentUser();
     this.sessionSubscription = this.sessionService.getSessionObservable().subscribe(user => {    //Miro que profesor ha iniciado sesión
 
     if (user && (user as TeacherI).administrative) {
+      this.userActual = user as unknown as TeacherI;
       this.adminName = (user as TeacherI).name; // Asignar el nombre del administrador
+      this.sessionService.setCurrentUser(this.userActual, 'admin'); // Actualizar el usuario actual en el servicio de sesión
     } else {
       console.error('El usuario actual no es válido o no tiene permisos de administrador.');
       this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador

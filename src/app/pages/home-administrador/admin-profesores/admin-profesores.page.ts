@@ -103,21 +103,6 @@ export class AdminProfesoresPage{
     console.log('Profesor:', this.teacher);
   }
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~Profesor section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Método para añadir un nuevo profesor a la base de datos (profesor no existente en la BD)
-  // async addTeacher(){
-  //   this.newTeacher.id = this.firestoreService.createIDDoc();
-  //   await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
-  //   console.log("Nuevo profesor ->", this.newTeacher);
-  //   alert("Profesor añadido con éxito!");
-  //   this.showTeacherForm = false;  // Oculta el formulario después de guardar
-  // }
-  
-  // // Método para guardar nuevos datos de un profesor (ya existente) en la base de datos
-  // async saveTeacher(){
-  //   await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
-  // }
-
 
   // Método para añadir o actualizar un profesor según el DNI
   addTeacher() {
@@ -131,11 +116,6 @@ export class AdminProfesoresPage{
     // Limpiar el formulario y ocultar
     this.teacherService.cleanTeacherInterface(this.newTeacher);
   }
-  
-    // // Método para guardar nuevos datos de un profesor (ya existente) en la base de datos
-    // async saveTeacher() {
-    //   this.teacherService.editTeacher(this.newTeacher);
-    // }
     
  // Método para editar un profesor
    editTeacher(teacher: TeacherI){
@@ -155,6 +135,10 @@ export class AdminProfesoresPage{
 
   toggleTeacherForm() {
     this.showTeacherForm = !this.showTeacherForm;
+  }
+
+  comeback(){
+    this.router.navigate(['/homeadministrador']);
   }
 }
 

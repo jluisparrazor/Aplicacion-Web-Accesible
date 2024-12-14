@@ -557,4 +557,8 @@ export class AdminTareasPage{
       }
     }
   }
+
+  comeback(){
+    this.router.navigate(['/homeadministrador']);
+  }
 }

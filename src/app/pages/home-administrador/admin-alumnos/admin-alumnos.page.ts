@@ -150,4 +150,8 @@ export class AdminAlumnosPage{
     this.showStudentForm = !this.showStudentForm;
   }
 
+  comeback(){
+    this.router.navigate(['/homeadministrador']);
+  }
+
 }
