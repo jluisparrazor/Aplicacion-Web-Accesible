@@ -7,12 +7,6 @@ export interface StudentI{
     phone?: number
     personalData?: string,
     birthDate?: Date
-    disabilities: {
-        visual: boolean;
-        auditory: boolean;
-        motor: boolean;
-        cognitive: boolean;
-      };
     loginType: boolean,
     correctPassword?: Array<number>,
 }

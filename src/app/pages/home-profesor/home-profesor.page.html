@@ -47,12 +47,6 @@
                   <h3>{{ stud.name }} {{ stud.surname }}</h3>
                   <p *ngIf="stud.phone">Teléfono móvil: {{ stud.phone }}</p>
                   <p>DNI: {{ stud.dni }}</p>
-                  <p *ngIf="stud.disabilities">Discapacidades: 
-                    <span *ngIf="stud.disabilities.visual">Visual </span>
-                    <span *ngIf="stud.disabilities.auditory">Auditiva </span>
-                    <span *ngIf="stud.disabilities.motor">Motora </span>
-                    <span *ngIf="stud.disabilities.cognitive">Cognitiva </span>
-                  </p>
                   <p *ngIf="stud.loginType; else noSpecialLogin">Tiene login especial</p>
                   <ng-template #noSpecialLogin>
                     <p>No tiene login especial</p>
