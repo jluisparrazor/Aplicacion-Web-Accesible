@@ -11,7 +11,8 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login-profesor.page.html',
+  templateUrl: 
+  './login-profesor.page.html',
   styleUrls: ['./login-profesor.page.scss'],
   standalone: true,
   imports: [
@@ -86,5 +87,8 @@ export class LoginPage{
       console.error('Error al autenticar usuario', error);
       this.errorMessage = 'Ocurrió un error al iniciar sesión. Por favor, intente nuevamente.';
     }
+  }
+  async recoverPassword() {
+    this.router.navigate(['/change-password']);
   }
 }
