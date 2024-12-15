@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="volverListado()">
+        <ion-avatar slot="start" class="but">
+          <ion-img [src]="'https://api.arasaac.org/api/pictograms/6606'" alt="Pictogram"></ion-img>
+        </ion-avatar> 
+        Salir
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Tarea Aplicación/Juego</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tarea Aplicación/Juego</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="tarea-aplicacion">
+    <div *ngIf="tarea">
+      <div class="tarea-aplicacion-texto">
+        <ion-avatar>
+          <ion-img 
+            [src]="'https://api.arasaac.org/api/pictograms/' + descripcion.pictogramId" 
+            alt="Pictogram" 
+            class="pictograma-tarea">
+          </ion-img>
+        </ion-avatar>
+        <h2 class="nombre-tarea">{{ tarea.title }}</h2>
+        <p class="descripcion-tarea">{{ descripcion.text }}</p>
+        <p class="enlace-tarea">
+          Enlace a la tarea: 
+          <a href="{{ descripcion.link }}" target="_blank" (click)="marcarEnlaceVisitado()">
+            {{ descripcion.link }}
+          </a>
+        </p>
+      </div>
+      <button 
+        class="boton-completar" 
+        (click)="completarTarea()" 
+        [disabled]="!enlaceVisitado">
+        <p>He completado la tarea</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor de la animación con overlay -->
+  <app-celebracion 
+    [tareaCompletada]="tareaCompletada" 
+    [mostrarConfeti]="mostrarConfeti">
+  </app-celebracion>
+  
+</ion-content>

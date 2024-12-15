@@ -1,0 +1,78 @@
+.tituloSeccion {
+  font-weight: bold; /* Negrita */
+  font-size: 1.5rem;   /* Tamaño de fuente más grande */
+  color: #007bff;    /* Un color bonito, por ejemplo, azul */
+  text-align: left; /* Centrar el texto */
+  font-family: 'Arial', sans-serif; /* Elegir una fuente limpia y moderna */
+}
+
+.custom-button {
+  background-color: #4caf50;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  transition: transform 0.2s, background-color 0.3s;
+
+  &:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+  }
+}
+
+ion-list {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+
+  ion-item {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    ion-label {
+      h3 {
+        margin: 0;
+        font-weight: bold;
+      }
+      p {
+        margin: 0.25rem 0;
+        color: #666;
+      }
+    }
+  }
+}
+
+.ion-select-category {
+  color: gray;
+  font-style: italic;
+  pointer-events: none; /* Evita la interacción */
+}
+
+ion-select-option.ion-select-category::part(indicator) {
+  display: none; /* Oculta el círculo */
+}
+
+.imagen-tarea-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagen-tarea-thumbnail {
+  width: 150px; /* Ajusta el tamaño según sea necesario */
+  height: 150px; /* Ajusta el tamaño según sea necesario */
+}
+
+.imagen-tarea-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Asegura que la imagen se ajuste al área del contenedor sin ser recortada */
+}
+
+.boton-eliminar-imagen {
+  margin-top: 10px; /* Espacio entre la imagen y el botón */
+  align-self: center; /* Asegura que el botón esté centrado */
+}

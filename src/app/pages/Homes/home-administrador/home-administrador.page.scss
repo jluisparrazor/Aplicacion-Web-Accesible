@@ -1,0 +1,32 @@
+.contenedor-central {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Alinear los elementos al inicio del contenedor */
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  text-align: center;
+  padding-top: 20px; /* Espacio en la parte superior */
+  overflow: hidden; /* Evitar el desplazamiento */
+}
+
+.boton-central {
+  width: 50%; /* Ancho de los botones */
+  font-size: 1.2rem; /* Tamaño de fuente más grande */
+  padding: 1rem; /* Espacio interno del botón */
+  border-radius: 12px; /* Bordes redondeados */
+  margin: 10px 0; /* Espacio entre los botones */
+}
+
+/* Media query para pantallas pequeñas verticalmente */
+@media (max-height: 600px) {
+  .contenedor-central {
+    padding-top: 10px; /* Reducir el espacio en la parte superior */
+  }
+
+  .boton-central {
+    width: 80%; /* Ancho de los botones en pantallas pequeñas */
+    font-size: 1rem; /* Tamaño de fuente más pequeño */
+    padding: 0.8rem; /* Espacio interno del botón más pequeño */
+    margin: 8px 0; /* Espacio entre los botones más pequeño */
+  }
+}
