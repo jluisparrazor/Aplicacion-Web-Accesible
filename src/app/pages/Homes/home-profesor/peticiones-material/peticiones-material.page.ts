@@ -17,6 +17,10 @@ import { RequestsService } from '../../../../common/services/peticiones.service'
 export class PeticionesMaterialPage implements OnInit {
   requestForm: FormGroup;
   userActual: any;
+  availableClasses: string[] = [];   // Almacenar las clases disponibles
+  availableMaterials: string[] = []; // Almacenar los materiales disponibles
+  availableColors: { [materialName: string]: string[] } = {}; // Almacenar los colores por material
+  availableTamanos: { [materialName: string]: string[] } = {}; // Almacenar los tamaños por material
 
   constructor(
     private fb: FormBuilder,
@@ -41,7 +45,25 @@ export class PeticionesMaterialPage implements OnInit {
       clase: ['', [Validators.required]],
       materiales: this.fb.array([this.createMaterialGroup()]),
     });
+    this.loadAvailableMaterials(); // Cargar materiales disponibles al iniciar
+    this.loadAvailableClasses();   // Cargar clases disponibles al iniciar
+    // Escuchar cambios en los materiales
+    this.materiales.valueChanges.subscribe(() => {
+      // Llamamos a la función que verifica los colores disponibles
+      this.materiales.controls.forEach((material, index) => {
+        this.updateAvailableColors(index); // Llamamos para cada material
+        this.updateAvailableTamanos(index); // Actualizar tamaños
+      });
+    });
   }
+  // Cargar las clases disponibles
+  async loadAvailableClasses() {
+    this.availableClasses = await this.requestsService.getAvailableClasses();
+  }
+  // Método para cargar materiales disponibles
+  async loadAvailableMaterials() {
+    this.availableMaterials = await this.requestsService.getAvailableMaterials();
+  } 
 
   get materiales(): FormArray {
     return this.requestForm.get('materiales') as FormArray;
@@ -51,16 +73,107 @@ export class PeticionesMaterialPage implements OnInit {
     return this.fb.group({
       nombre: ['', [Validators.required]],
       cantidad: [1, [Validators.required, Validators.min(1)]],
-      tamano: [''], // Nuevo campo
-      color: [''],  // Nuevo campo
+      tamano: [''],
+      color: [''],
     });
   }
-  
 
   addMaterial() {
     this.materiales.push(this.createMaterialGroup());
   }
 
+  // Función para actualizar los colores disponibles cuando el nombre del material cambia
+  async updateAvailableColors(materialIndex: number) {
+    const materialName = this.materiales.at(materialIndex).get('nombre')?.value;
+    const tamanoSelected = this.materiales.at(materialIndex).get('tamano')?.value;
+    
+    if (materialName) {
+      let colors = await this.requestsService.getAvailableColors(materialName);
+  
+      if (tamanoSelected) {
+        // Filtrar colores disponibles por el tamaño seleccionado
+        colors = colors.filter(async (color) => {
+          const availableTamanos = await this.requestsService.getAvailableTamanosForColor(materialName, color);
+          return availableTamanos.includes(tamanoSelected);
+        });
+      }
+      
+      this.availableColors[materialName] = colors;
+  
+      // Limpiar color seleccionado si no es válido
+      const selectedColor = this.materiales.at(materialIndex).get('color')?.value;
+      if (selectedColor && !colors.includes(selectedColor)) {
+        this.materiales.at(materialIndex).get('color')?.setValue('');
+      }
+    }
+  }
+  
+  // Función para actualizar los tamaños disponibles cuando el nombre del material cambia
+  async updateAvailableTamanos(materialIndex: number) {
+    const materialName = this.materiales.at(materialIndex).get('nombre')?.value;
+    const colorSelected = this.materiales.at(materialIndex).get('color')?.value;
+  
+    if (materialName) {
+      let tamanos = await this.requestsService.getAvailableTamanos(materialName);
+  
+      if (colorSelected) {
+        // Filtrar tamaños disponibles por el color seleccionado
+        tamanos = tamanos.filter(async (tamano) => {
+          const availableColors = await this.requestsService.getAvailableColorsForTamano(materialName, tamano);
+          return availableColors.includes(colorSelected);
+        });
+      }
+  
+      this.availableTamanos[materialName] = tamanos;
+  
+      // Limpiar tamaño seleccionado si no es válido
+      const selectedTamano = this.materiales.at(materialIndex).get('tamano')?.value;
+      if (selectedTamano && !tamanos.includes(selectedTamano)) {
+        this.materiales.at(materialIndex).get('tamano')?.setValue('');
+      }
+    }
+  }
+  // Método cuando se selecciona un tamaño
+async onTamanoChange(index: number) {
+  const materialName = this.materiales.at(index).get('nombre')?.value;
+  const tamanoSelected = this.materiales.at(index).get('tamano')?.value;
+  
+  // Filtrar colores disponibles por el tamaño seleccionado
+  if (materialName && tamanoSelected) {
+    const colors = await this.requestsService.getAvailableColorsForTamano(materialName, tamanoSelected);
+    this.availableColors[materialName] = colors;
+
+    // Limpiar color seleccionado si no está en la lista filtrada
+    const selectedColor = this.materiales.at(index).get('color')?.value;
+    if (selectedColor && !colors.includes(selectedColor)) {
+      this.materiales.at(index).get('color')?.setValue(''); // Limpiar color
+    }
+  }
+}
+
+// Método cuando se selecciona un color
+async onColorChange(index: number) {
+  const materialName = this.materiales.at(index).get('nombre')?.value;
+  const colorSelected = this.materiales.at(index).get('color')?.value;
+
+  // Filtrar tamaños disponibles por el color seleccionado
+  if (materialName && colorSelected) {
+    const tamanos = await this.requestsService.getAvailableTamanosForColor(materialName, colorSelected);
+    this.availableTamanos[materialName] = tamanos;
+
+    // Limpiar tamaño seleccionado si no está en la lista filtrada
+    const selectedTamano = this.materiales.at(index).get('tamano')?.value;
+    if (selectedTamano && !tamanos.includes(selectedTamano)) {
+      this.materiales.at(index).get('tamano')?.setValue(''); // Limpiar tamaño
+    }
+  }
+}
+
+  
+  
+  
+
+  // Al enviar la solicitud, verificar todos los materiales como antes
   async finalizeRequests() {
     if (this.requestForm.invalid) {
       alert('Debe completar todos los campos correctamente antes de enviar.');
@@ -78,7 +191,7 @@ export class PeticionesMaterialPage implements OnInit {
       // Validar existencia en el inventario
       const exists = await this.requestsService.checkMaterialExists(material.nombre, material.tamano, material.color);
       if (!exists) {
-        alert(`El material no está disponible en el invetario.`);
+        alert(`El material ${material.nombre} no está disponible en el inventario.`);
         return;
       }
   
@@ -90,7 +203,7 @@ export class PeticionesMaterialPage implements OnInit {
         material.cantidad
       );
       if (!hasSufficientQuantity) {
-        alert(`No hay suficiente cantidad del material en el inventario.`);
+        alert(`No hay suficiente cantidad de ${material.nombre} en el inventario.`);
         return;
       }
   
@@ -110,7 +223,8 @@ export class PeticionesMaterialPage implements OnInit {
     }
   
     try {
-      await this.requestsService.sendRequest(formData); // Enviar solicitud si todo es válido
+      // Enviar solicitud si todo es válido
+      await this.requestsService.sendRequest(formData);
       alert('Solicitud enviada correctamente.');
   
       // Reiniciar el formulario correctamente
@@ -120,7 +234,7 @@ export class PeticionesMaterialPage implements OnInit {
       // Asegurarse de que el primer grupo de material esté presente
       this.materiales.push(this.createMaterialGroup());
   
-      // Volver a establecer el valor por defecto del campo profesor
+      // Volver a establecer el valor por defecto del campo 'profesor' para la nueva solicitud
       this.requestForm.patchValue({
         profesor: this.userActual.name,
       });
@@ -132,4 +246,8 @@ export class PeticionesMaterialPage implements OnInit {
   }
   
   
+
+  goBack() {
+    window.history.back();
+  }
 }
