@@ -14,7 +14,7 @@
     </ion-avatar>
     <ion-buttons slot="primary">
       <!-- Botón de mi perfil -->
-      <ion-button color="primary">
+      <ion-button color="primary" routerLink="/mi-perfil">
         <ion-icon slot="start" name="person-circle-outline" color="primary"></ion-icon>
         <ion-label>Mi perfil</ion-label>
       </ion-button>
@@ -30,7 +30,7 @@
 <!-- Contenido de la página -->
 <ion-content [fullscreen]="true">
   <div class="contenedor-central">
-    <h2>Bienvenido/a, {{ adminName }}</h2>
+    <h2>Bienvenido/a, {{ userActual.name }}</h2>
     <ion-button expand="block" size="large" routerLink="/admin-profesores" class="boton-central">
       Administrar Profesores
     </ion-button>

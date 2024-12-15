@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonRow, IonCol, IonImg, IonAvatar } from '@ionic/angular/standalone';
 import { TeacherI } from '../../../common/models/teacher.models';
 import { StudentI } from '../../../common/models/student.models';
@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [IonAvatar, IonImg, IonCol, IonRow, IonGrid, IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
     IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, CommonModule,RouterModule]})
-export class HomePage {
+export class HomePage implements OnDestroy {
   students: StudentI[] = [];
   userActual: TeacherI;
   sessionSubscription: Subscription;
@@ -28,7 +28,6 @@ export class HomePage {
     private readonly firestoreService: FirestoreService,
     private readonly sessionService: SessionService,
     private readonly router: Router,
-    // private readonly studentService: StudentService,
   ) {
     this.load();
 
@@ -43,21 +42,29 @@ export class HomePage {
   }
 
   load(){
-    this.sessionSubscription = this.sessionService.getSessionObservable().subscribe(user => {    //Miro que profesor ha iniciado sesión
-    if (user as TeacherI && !(user as TeacherI).administrative) {
-      this.userActual = user as unknown as TeacherI;
+    console.log(this.sessionService.getCurrentUser());
+    this.sessionSubscription = this.sessionService.getSessionObservable().subscribe(userActual => {    //Miro que profesor ha iniciado sesión
+      if (userActual as TeacherI && !(userActual as TeacherI).administrative) {
+      this.userActual = userActual as unknown as TeacherI;
       console.log('Profesor no admin loggeado:', this.userActual.name);
     } else {
       
-      console.error('El usuario actual no es válido o no tiene permisos de profesor. ->' , user);
+      console.error('El usuario actual no es válido o no tiene permisos de profesor. ->' , userActual);
       this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
     }
   });
 }
   
   logout() { 
-    this.sessionService.clearSession(); 
-    this.router.navigate(['/loginprofesor']); 
+    this.router.navigate(['/loginprofesor']);
+    if (this.sessionSubscription) {
+      this.sessionSubscription.unsubscribe();
+    }
+  }
+  ngOnDestroy() {
+    if (this.sessionSubscription) {
+      this.sessionSubscription.unsubscribe();
+    }
   }
 
 }

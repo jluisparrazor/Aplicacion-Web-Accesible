@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import { TeacherI } from "../models/teacher.models";
 import { FirestoreService } from "./firestore.service";
-
+import { AlertService } from "./alert.service";
 @Injectable({
     providedIn: 'root' // or a specific module
   })
 // Clase que se encarga de la lógica de los profesores
 export class TeacherService{
-    constructor(private readonly firestoreService: FirestoreService) {}
+    constructor(private readonly firestoreService: FirestoreService, private readonly alertService: AlertService) {}
 
     // Inicializa un profesor con los campos a null menos el id
     initTeacher(): TeacherI{
@@ -57,8 +57,10 @@ export class TeacherService{
         try {
           teacher.id = this.firestoreService.createIDDoc();
           await this.firestoreService.createDocumentID(teacher, 'Teachers', teacher.id);
-          console.log('Profesor añadido con éxito:', teacher);
+          this.alertService.showAlert('Éxito', 'Profesor ' + teacher.name + ' añadido correctamente', 'OK');
         } catch (error) {
+          this.alertService.showAlert('Error', 'Datos actualizados correctamente' + teacher, 'OK');
+
           console.error('Error añadiendo el profesor:', error);
         }
       }
@@ -66,9 +68,26 @@ export class TeacherService{
       //Edita un profesor existente en la base de datos
       async editTeacher(teacher: TeacherI): Promise<void> {
         try {
-        // POR IMPLEMENTAR
-        //   await this.firestoreService.createDocumentID(teacher, 'Teachers', teacher.id);
-          console.log('Sin implementar');
+          const teacherRef = await this.firestoreService.getDocumentReference('Teachers', teacher.id);
+          const updatedData: TeacherI = {
+            id: teacher.id,
+            name: teacher.name,
+            surname: teacher.surname,
+            dni: teacher.dni,
+            pictogramId: teacher.pictogramId,
+            email: teacher.email,
+            password: teacher.password,
+            administrative: teacher.administrative,
+            birthdate: teacher.birthdate,
+            phone: teacher.phone
+          };
+          try {
+            await this.firestoreService.updateDocument(teacherRef, updatedData);
+            this.alertService.showAlert('Éxito', 'Datos actualizados correctamente', 'OK');
+          } catch (error) {
+            console.error('Error al actualizar los datos del profesor:', error);
+            this.alertService.showAlert('Error', 'No se pudo actualizar los datos', 'OK');
+          }
         } catch (error) {
           console.error('Error editando el profesor:', error);
         }
@@ -78,8 +97,10 @@ export class TeacherService{
       async deleteTeacher(teacherId: string): Promise<void> {
         try {
           await this.firestoreService.deleteDocumentID('Teachers', teacherId);
+          this.alertService.showAlert('Éxito', 'Profesor eliminado con éxito', 'OK');
           console.log('Profesor eliminado:', teacherId);
         } catch (error) {
+          this.alertService.showAlert('Error', 'No se pudo eliminar al profesor', 'OK');
           console.error('Error eliminando el profesor:', error);
         }
       }

@@ -1,28 +1,17 @@
 <ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>
-              <h1>Login Profesor</h1>
-            </ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-item>
-              <ion-label position="floating">Correo</ion-label>
-              <ion-input type="email" [(ngModel)]="name"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-label position="floating">Contraseña</ion-label>
-              <ion-input type="password" [(ngModel)]="password"></ion-input>
-            </ion-item>
-            <ion-button expand="block" (click)="login()">Iniciar Sesión</ion-button>
-            <ion-button  (click)="recoverPassword()">He olvidado la contraseña</ion-button>
-
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="content-wrapper">
+    <div class="login-container">
+      <h1>Login Profesor</h1>
+      <ion-item>
+        <ion-label position="floating">Correo</ion-label>
+        <ion-input type="email" [(ngModel)]="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
+      <ion-button expand="block" (click)="login()">Iniciar Sesión</ion-button>
+      <ion-button expand="block" fill="outline" (click)="recoverPassword()">He olvidado la contraseña</ion-button>
+    </div>
+  </div>
 </ion-content>

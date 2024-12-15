@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonContent, IonItem, IonInput, IonButton, IonCol, IonGrid, IonRow, IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonLabel } from '@ionic/angular/standalone';
+import { IonContent, IonItem, IonInput, IonButton, IonLabel} from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   './login-profesor.page.html',
   styleUrls: ['./login-profesor.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonCardTitle, IonCardHeader, IonCardContent, IonRow, IonGrid, IonCol, IonCardContent, IonCard,    IonContent, IonItem, FormsModule, IonButton, IoniconsModule, CommonModule, IonInput
+  imports: [IonLabel, IonContent, IonItem, FormsModule, IonButton, IoniconsModule, CommonModule, IonInput
   ],
 })
 export class LoginPage{

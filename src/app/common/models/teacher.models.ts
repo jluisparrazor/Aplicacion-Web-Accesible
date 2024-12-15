@@ -9,5 +9,4 @@ export interface TeacherI{
     administrative: boolean;
     birthdate?: Date;
     phone?: number;
-    personalData?: string;
 }

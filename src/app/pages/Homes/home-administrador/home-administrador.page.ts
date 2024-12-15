@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TeacherI } from '../../../common/models/teacher.models';
 import { FormsModule } from '@angular/forms';
@@ -25,10 +25,10 @@ registerLocaleData(localeEs);
 })
 
 
-export class HomeAdministradorPage {
+export class HomeAdministradorPage implements OnDestroy{
   @ViewChild(IonContent, { static: false }) content: IonContent;
-
-  adminName: string; // Nueva propiedad para almacenar el nombre del administrador
+ 
+  administrative: boolean = false; // Nueva propiedad para almacenar el nombre del administrador
   userActual : TeacherI | null = null;
   sessionSubscription: Subscription;
 
@@ -46,10 +46,10 @@ export class HomeAdministradorPage {
 
     if (user && (user as TeacherI).administrative) {
       this.userActual = user as unknown as TeacherI;
-      this.adminName = (user as TeacherI).name; // Asignar el nombre del administrador
-      this.sessionService.setCurrentUser(this.userActual, 'admin'); // Actualizar el usuario actual en el servicio de sesión
+      this.administrative = (user as TeacherI).administrative; // Asignar el nombre del administrador
+      // this.sessionService.setCurrentUser(this.userActual, 'admin'); // Actualizar el usuario actual en el servicio de sesión
     } else {
-      console.error('El usuario actual no es válido o no tiene permisos de administrador.');
+      console.error('El usuario actual no es válido o no tiene permisos de administrador.'+ user.name);
       this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
     }
   });
@@ -57,7 +57,15 @@ export class HomeAdministradorPage {
 
   
   logout() { 
-    this.sessionService.clearSession(); 
-    this.router.navigate(['/loginprofesor']); 
+    this.router.navigate(['/loginprofesor']);
+    if (this.sessionSubscription) {
+      this.sessionSubscription.unsubscribe();
+    }
   }
+  ngOnDestroy() {
+    if (this.sessionSubscription) {
+      this.sessionSubscription.unsubscribe();
+    }
+  }
+  
 }

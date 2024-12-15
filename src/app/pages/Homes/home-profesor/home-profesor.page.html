@@ -12,6 +12,11 @@
       </ion-img>
     </ion-avatar>
     <ion-buttons slot="primary">
+    <!-- Botón de mi perfil -->
+    <ion-button color="primary" routerLink="/mi-perfil">
+      <ion-icon slot="start" name="person-circle-outline"  color="primary"></ion-icon>
+      <ion-label>Mi perfil</ion-label>
+    </ion-button>
     <!-- Botón de logout -->
     <ion-button (click)="logout()" color="danger">
       <ion-icon slot="start" name="log-out-outline"></ion-icon>
@@ -23,7 +28,7 @@
 
 
 
-<ion-content [fullscreen]="true">
+<ion-content>
         <ion-grid>
           <ion-row>
             <ion-toolbar>

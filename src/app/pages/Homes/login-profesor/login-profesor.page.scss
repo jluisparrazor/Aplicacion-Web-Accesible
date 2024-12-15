@@ -1,92 +1,73 @@
-// /* login-profesor.page.scss */
-
-// ion-content {
-//     --background: linear-gradient(135deg, #4facfe, #00f2fe);
-//     display: flex;
-//     position:relative;
-//     justify-content: center;
-//     align-items: center;
-//     height: 100vh; /* Asegura que el contenido ocupe toda la altura de la pantalla */
-//     padding: 1rem;
-//     box-sizing: border-box; /* Asegura que el padding se incluya en el tamaño total */
-// }
-
-// .login-container {
-//     background: #fff;
-//     padding: 2rem;
-//     border-radius: 12px;
-//     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-//     max-width: 380px;
-//     width: 100%;
-//     text-align: center;
-//     animation: fadeIn 0.5s ease-in-out;
-//     box-sizing: border-box; /* Asegura que el padding se incluya en el tamaño total */
-// }
-
-// .login-container h1 {
-//     font-size: 2rem;
-//     font-weight: bold;
-//     color: #333;
-//     margin-bottom: 1rem;
-// }
-
-// ion-item {
-//     --border-width: 0;
-//     --border-radius: 6px;
-//     --background: rgba(0, 0, 0, 0.05);
-//     margin-bottom: 1rem;
-// }
-
-// ion-input {
-//     font-size: 1rem;
-//     color: black;
-// }
-
-// .login-container ion-button {
-//     --background: #ff046f;
-//     --background-hover: #e00460;
-//     --background-focused: #ff337f;
-//     --border-radius: 6px;
-//     padding: 0.75rem;
-//     margin-top: 1rem;
-//     font-size: 1.1rem;    
-//     font-weight: bold;
-//     text-transform: uppercase;
-// }
-
-// .login-container .forgot-password {
-//     margin-top: 1rem;
-//     font-size: 0.9rem;
-//     color: #007bff;
-//     cursor: pointer;
-// }
-
-// .login-container .forgot-password:hover {
-//     text-decoration: underline;
-// }
-
-// .error-message {
-//     color: red;
-//     font-size: 14px;
-//     margin-top: 10px;
-//     text-align: center;
-//   }
-
-// @media (max-width: 768px) {
-//     .login-container {
-//         padding: 1.5rem;
-//         width: 90%;
-//     }
-// }
-
-// /* Animación para que la caja aparezca suavemente */
-// @keyframes fadeIn {
-//     from {
-//         opacity: 0;
-//         transform: translateY(-20px);
-//     }
-//     to {
-//         opacity: 1;
-//         transform: translateY(0);
-//     }
-// }
+ion-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .login-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  } 
+  
+  .login-container h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  ion-item {
+    --border-width: 0;
+    --border-radius: 6px;
+    --background: rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+  }
+  
+  ion-input {
+    font-size: 1rem;
+    color: black;
+  }
+  
+  .login-container ion-button {
+    --border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .login-container .forgot-password {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .login-container .forgot-password:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 768px) {
+    .login-container {
+      padding: 1.5rem;
+      width: 90%;
+    }
+  }
+  
