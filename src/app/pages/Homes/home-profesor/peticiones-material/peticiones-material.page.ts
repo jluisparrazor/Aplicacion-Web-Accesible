@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
-import { RequestsService } from '../../../common/services/peticiones.service';
+import { RequestsService } from '../../../../common/services/peticiones.service';
 
 @Component({
   selector: 'app-peticiones-material',

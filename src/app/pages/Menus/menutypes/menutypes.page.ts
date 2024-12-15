@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonButton, IonIcon, IonCard, IonCardTitle, IonButtons, IonItem, IonLabel, IonImg , IonThumbnail, IonInput, IonRow, IonGrid, IonCol, IonAlert } from '@ionic/angular/standalone';
 import { MenuType } from 'src/app/common/models/menu.models';
 import { MenuService } from 'src/app/common/services/menu.service';
-import { PictogramSearchComponent } from "../../shared/pictogram-search/pictogram-search.component";
+import { PictogramSearchComponent } from "../../../shared/pictogram-search/pictogram-search.component";
 import { ChangeDetectorRef } from '@angular/core';
 import { AlertService } from 'src/app/common/services/alert.service';
 

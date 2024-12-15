@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList , IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonRow, IonCol, IonImg, IonAvatar } from '@ionic/angular/standalone';
-import { TeacherI } from '../../common/models/teacher.models';
-import { StudentI } from '../../common/models/student.models';
-import { FirestoreService } from '../../common/services/firestore.service';
+import { TeacherI } from '../../../common/models/teacher.models';
+import { StudentI } from '../../../common/models/student.models';
+import { FirestoreService } from '../../../common/services/firestore.service';
 
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IoniconsModule } from '../../common/modules/ionicons.module';
+import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';

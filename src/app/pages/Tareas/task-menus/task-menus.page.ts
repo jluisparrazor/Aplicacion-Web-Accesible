@@ -2,11 +2,11 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonModal, IonButtons, IonIcon, IonGrid, IonRow, IonCol, IonFooter, IonImg } from '@ionic/angular/standalone';
-import { Class } from '../../common/models/class.models'; 
-import { MenuType, Menu } from '../../common/models/menu.models'; 
+import { Class } from '../../../common/models/class.models'; 
+import { MenuType, Menu } from '../../../common/models/menu.models'; 
 import { Timestamp } from 'firebase/firestore';
-import { ClassService } from '../../common/services/class.service';
-import { MenuService } from '../../common/services/menu.service';
+import { ClassService } from '../../../common/services/class.service';
+import { MenuService } from '../../../common/services/menu.service';
 import { ArasaacService } from 'src/app/common/services/arasaac.service';
 import { Router } from '@angular/router';
 

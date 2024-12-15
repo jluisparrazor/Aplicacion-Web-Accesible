@@ -13,9 +13,14 @@
       </ion-img>
     </ion-avatar>
     <ion-buttons slot="primary">
+      <!-- Botón de mi perfil -->
+      <ion-button color="primary">
+        <ion-icon slot="start" name="person-circle-outline" color="primary"></ion-icon>
+        <ion-label>Mi perfil</ion-label>
+      </ion-button>
       <!-- Botón de logout -->
       <ion-button (click)="logout()" color="danger">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        <ion-icon slot="end" name="log-out-outline"></ion-icon>
         <ion-label>Cerrar sesión</ion-label>
       </ion-button>
     </ion-buttons>
@@ -25,7 +30,7 @@
 <!-- Contenido de la página -->
 <ion-content [fullscreen]="true">
   <div class="contenedor-central">
-    <h2>Bienvenido, {{ adminName }}</h2>
+    <h2>Bienvenido/a, {{ adminName }}</h2>
     <ion-button expand="block" size="large" routerLink="/admin-profesores" class="boton-central">
       Administrar Profesores
     </ion-button>
@@ -37,9 +42,6 @@
     </ion-button>
     <ion-button expand="block" size="large" routerLink="/material-update" class="boton-central">
       Añadir Material
-    </ion-button>
-    <ion-button expand="block" size="large" class="boton-central">
-      Mi Perfil
     </ion-button>
   </div>
 </ion-content>

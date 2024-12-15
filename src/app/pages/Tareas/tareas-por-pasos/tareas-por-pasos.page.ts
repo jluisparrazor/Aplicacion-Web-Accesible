@@ -5,21 +5,22 @@ import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonAvatar, IonImg } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonAvatar, IonImg, IonGrid, IonRow, IonCol, IonCard } from '@ionic/angular/standalone';
 import { StudentI } from 'src/app/common/models/student.models';
 import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI } from 'src/app/common/models/task.models';
 import { Timestamp } from '@angular/fire/firestore';
-import { CelebracionComponent } from "../../shared/celebracion/celebracion.component";
+import { CelebracionComponent } from "../../../shared/celebracion/celebracion.component";
 
 @Component({
-  selector: 'app-tareas-aplicacion-juego',
-  templateUrl: './tareas-aplicacion-juego.page.html',
-  styleUrls: ['./tareas-aplicacion-juego.page.scss'],
+  selector: 'app-tareas-por-pasos',
+  templateUrl: './tareas-por-pasos.page.html',
+  styleUrls: ['./tareas-por-pasos.page.scss'],
   standalone: true,
-  imports: [IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
+  imports: [IonCard, IonCol, IonRow, IonGrid, IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
 })
-export class TareasAplicacionJuegoPage implements OnInit {
+export class TareasPorPasosPage implements OnInit {
+
   tareaCompletada: boolean = false;
   mostrarConfeti: boolean = false;
   userActual: StudentI;
@@ -149,4 +150,5 @@ export class TareasAplicacionJuegoPage implements OnInit {
   marcarEnlaceVisitado(){
     this.enlaceVisitado = true;
   }
+
 }

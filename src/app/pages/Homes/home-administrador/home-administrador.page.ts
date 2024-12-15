@@ -1,8 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { TeacherI } from '../../common/models/teacher.models';
+import { TeacherI } from '../../../common/models/teacher.models';
 import { FormsModule } from '@angular/forms';
-import { IoniconsModule } from '../../common/modules/ionicons.module';
+import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';

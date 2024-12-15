@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MaterialService } from '../../../common/services/material-update.service';
+import { MaterialService } from '../../../../common/services/material-update.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { MaterialI } from '../../../common/models/material.models';
+import { MaterialI } from '../../../../common/models/material.models';
 import { Router } from '@angular/router';
 
 @Component({
