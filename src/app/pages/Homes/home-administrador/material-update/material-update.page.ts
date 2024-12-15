@@ -89,7 +89,8 @@ export class MaterialUpdatePage implements OnInit {
       alert('Ocurrió un error al procesar los materiales.');
     }
   }
-  goBack() {
-    window.history.back();
-}
+
+  comeback(){
+    this.router.navigate(['/homeadministrador']);
+  }
 }
