@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class LoginPage{
-  name: string = '';
+  email: string = '';
   password: string = '';
   errorMessage: string = null; // Variable para almacenar el mensaje de error
 
@@ -41,14 +41,14 @@ export class LoginPage{
     //const trimmedPassword = this.password?.trim();
     
     // Validar que los campos no estén vacíos después de eliminar los espacios
-    if (!this.name || !this.password) {
+    if (!this.email || !this.password) {
       console.log('Por favor, ingrese un nombre y una contraseña válidos.'
-        + 'Los introducidos son ->', this.name + ' y ' + this.password);
+        + 'Los introducidos son ->', this.email + ' y ' + this.password);
       return;
     }
 
     // Verificamos si el profesor existe en la base de datos
-      const profId = await this.firestoreService.getDocumentIDByField('Teachers', 'name', this.name);
+      const profId = await this.firestoreService.getDocumentIDByField('Teachers', 'email', this.email);
     
     //Si existe el profesor, obtenemos sus datos
       if (profId) {
@@ -71,7 +71,7 @@ export class LoginPage{
               console.log('Es teacher ->', profData.name);
               this.router.navigate(['/homeprofesor']);
           } 
-          this.name = this.password = ''; // Limpiamos los campos de nombre y contraseña                                  
+          this.email = this.password = ''; // Limpiamos los campos de nombre y contraseña                                  
         } else {
           console.log('Contraseña incorrecta');
           this.errorMessage = 'Contraseña incorrecta.'; // Mensaje si la contraseña no coincide
@@ -90,6 +90,6 @@ export class LoginPage{
 }
   recoverPassword() {
     this.router.navigate(['/change-password']);
-    this.name = this.password = ''; // Limpiamos los campos de nombre y contraseña                                  
+    this.email = this.password = ''; // Limpiamos los campos de nombre y contraseña                                  
   }
 }
