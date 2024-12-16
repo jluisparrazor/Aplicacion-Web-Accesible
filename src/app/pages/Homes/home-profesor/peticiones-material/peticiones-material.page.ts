@@ -90,13 +90,13 @@ export class PeticionesMaterialPage implements OnInit {
     if (materialName) {
       let colors = await this.requestsService.getAvailableColors(materialName);
   
-      if (tamanoSelected) {
-        // Filtrar colores disponibles por el tamaño seleccionado
+      if (tamanoSelected && tamanoSelected !== 'no especificado') {
         colors = colors.filter(async (color) => {
           const availableTamanos = await this.requestsService.getAvailableTamanosForColor(materialName, color);
           return availableTamanos.includes(tamanoSelected);
         });
       }
+      
       
       this.availableColors[materialName] = colors;
   
@@ -116,13 +116,13 @@ export class PeticionesMaterialPage implements OnInit {
     if (materialName) {
       let tamanos = await this.requestsService.getAvailableTamanos(materialName);
   
-      if (colorSelected) {
-        // Filtrar tamaños disponibles por el color seleccionado
+      if (colorSelected && colorSelected !== 'no especificado') {
         tamanos = tamanos.filter(async (tamano) => {
           const availableColors = await this.requestsService.getAvailableColorsForTamano(materialName, tamano);
           return availableColors.includes(colorSelected);
         });
       }
+      
   
       this.availableTamanos[materialName] = tamanos;
   
@@ -227,9 +227,9 @@ async onColorChange(index: number) {
       await this.requestsService.sendRequest(formData);
       alert('Solicitud enviada correctamente.');
   
-      // Reiniciar el formulario correctamente
-      this.requestForm.reset(); // Resetear el formulario
-      this.materiales.clear(); // Limpiar el FormArray
+      // Resetear el formulario
+      this.requestForm.reset();
+      this.materiales.clear();
   
       // Asegurarse de que el primer grupo de material esté presente
       this.materiales.push(this.createMaterialGroup());
@@ -244,6 +244,7 @@ async onColorChange(index: number) {
       alert('Hubo un error al enviar la solicitud.');
     }
   }
+  
   
   
 
