@@ -1,7 +1,7 @@
 
 
 .button-increm-decrem {
-  font-size: 24px;
+  font-size: 75px;
   color: black;
   border: none;
 }
@@ -12,6 +12,14 @@
   display: flex;
   margin: 0 auto;
 }
+
+.pictogram-center-modal {
+  width: 180px;
+  height: 180px;  
+  display: flex;
+  margin: 0 auto;
+}
+
   
 .center-content {
   display: flex;
@@ -33,6 +41,13 @@
 
 .cards-size {
   height: 150px;
+}
+
+.modal-title {
+  font-size: 40px;
+  font-weight: normal;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 
