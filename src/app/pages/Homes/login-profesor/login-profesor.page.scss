@@ -1,0 +1,73 @@
+ion-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .login-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  } 
+  
+  .login-container h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  ion-item {
+    --border-width: 0;
+    --border-radius: 6px;
+    --background: rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+  }
+  
+  ion-input {
+    font-size: 1rem;
+    color: black;
+  }
+  
+  .login-container ion-button {
+    --border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .login-container .forgot-password {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .login-container .forgot-password:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 768px) {
+    .login-container {
+      padding: 1.5rem;
+      width: 90%;
+    }
+  }
+  

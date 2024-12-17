@@ -19,12 +19,6 @@ export class StudentService {
       phone: null,
       personalData: null,
       birthDate: null,
-      disabilities: {
-        visual: false,
-        auditory: false,
-        motor: false,
-        cognitive: false,
-      },
       loginType: false,
       correctPassword: null,
     };
@@ -97,12 +91,6 @@ export class StudentService {
       }
     }
     // Restaura los valores por defecto
-    student.disabilities = {
-      visual: false,
-      auditory: false,
-      motor: false,
-      cognitive: false,
-    };
     student.loginType = false;
   }
 }

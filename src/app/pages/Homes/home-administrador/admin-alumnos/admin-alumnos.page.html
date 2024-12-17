@@ -1,0 +1,159 @@
+<!-- Encabezado de la página-->
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Administrador</ion-title>
+    <ion-buttons slot="primary">
+      <!-- Botón de logout -->
+      <ion-button (click)="comeback()" color="primary">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        <ion-label>Volver al Home Administrador</ion-label>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<!-- Contenido de la página -->
+<ion-content [fullscreen]="true">
+  <ion-grid>      
+    
+
+    <ion-row>
+    <!-- ALUMNOS -->
+      <ion-col>
+        <ion-toolbar>
+          <ion-title class="tituloSeccion">Alumnos:</ion-title>
+          <ion-buttons slot="end" *ngIf="!showStudentForm">
+            <ion-button (click)="toggleStudentForm()">
+              <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+
+        <!-- Formulario de alumnos -->
+        <ion-card *ngIf="showStudentForm" class="card-add-tarea">
+          <ion-toolbar>
+            <ion-title>Crear alumno</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="addStud()" shape="round" color="primary">Añadir alumno</ion-button>
+              <ion-button (click)="toggleStudentForm()" shape="round" color="danger">Cancelar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          <ion-list>
+            <!-- Nombre -->
+            <ion-item>
+              <ion-input 
+                label="Nombre" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.name" 
+                required>
+              </ion-input>
+            </ion-item>
+            <!-- Apellido -->
+            <ion-item>
+              <ion-input 
+                label="Apellido" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.surname" 
+                required>
+              </ion-input>
+            </ion-item>
+            <!-- DNI -->
+            <ion-item>
+              <ion-input 
+                label="DNI" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.dni" 
+                required>
+              </ion-input>
+            </ion-item>
+            <!-- Pictograma -->
+            <app-pictogram-search (pictogramSelect)="newStud.pictogramId = $event"></app-pictogram-search>
+            <ion-item *ngIf="newStud.pictogramId">
+              <ion-label>
+                Pictograma Seleccionado
+              </ion-label>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newStud.pictogramId" alt="Pictogram image"></ion-img>
+              </ion-thumbnail>
+            </ion-item>
+            <!-- Teléfono -->
+            <ion-item>
+              <ion-input 
+                label="Teléfono" 
+                labelPlacement="floating" 
+                type="tel" 
+                [(ngModel)]="newStud.phone">
+              </ion-input>
+            </ion-item>
+            <!-- Fecha de nacimiento -->
+            <ion-item>
+              <ion-datetime 
+                label="Fecha de nacimiento" 
+                presentation="date" 
+                [(ngModel)]="newStud.birthDate">
+              </ion-datetime>
+            </ion-item>
+            <!-- Datos personales -->
+            <ion-item>
+              <ion-textarea 
+                label="Datos personales" 
+                labelPlacement="floating" 
+                [(ngModel)]="newStud.personalData">
+              </ion-textarea>
+            </ion-item>
+            
+            <!-- Tipo de inicio de sesión -->
+            <ion-item>
+              <ion-checkbox 
+                [(ngModel)]="newStud.loginType">
+              </ion-checkbox>
+              <ion-label>Inicio de sesión especial</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+
+        <!-- Lista de alumnos y todos sus elementos -->
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" *ngFor="let stud of students; let i = index">
+              <ion-item>
+                <!-- Imagen del pictograma -->
+                <ion-avatar slot="start">
+                  <ion-img 
+                    [src]="'https://api.arasaac.org/api/pictograms/' + stud.pictogramId" 
+                    alt="Pictogram image" 
+                    class="pictogram-img">
+                  </ion-img>
+                </ion-avatar>
+        
+                <!-- Información del estudiante -->
+                <ion-label>
+                  <h3>{{ stud.name }} {{ stud.surname }}</h3>
+                  <p *ngIf="stud.phone">Teléfono móvil: {{ stud.phone }}</p>
+                  <p>DNI: {{ stud.dni }}</p>
+                  <p *ngIf="stud.loginType; else noSpecialLogin">Tiene login especial</p>
+                  <ng-template #noSpecialLogin>
+                    <p>No tiene login especial</p>
+                  </ng-template>
+                </ion-label>
+        
+                <!-- Botones de editar y eliminar -->
+                <ion-buttons slot="end">
+                  <ion-button (click)="editStu(stud)">
+                    <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="deleteStu(stud)">
+                    <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>
+

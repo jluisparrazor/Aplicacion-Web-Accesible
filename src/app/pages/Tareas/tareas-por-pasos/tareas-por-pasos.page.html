@@ -1,0 +1,63 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="volverListado()">
+        <ion-avatar slot="start" class="but">
+          <ion-img [src]="'https://api.arasaac.org/api/pictograms/6606'" alt="Pictogram"></ion-img>
+        </ion-avatar> 
+        Salir
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Tarea por Pasos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tarea por Pasos</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="tarea-aplicacion">
+    <div *ngIf="tarea">
+      <div class="tarea-aplicacion-texto">
+        <ion-avatar>
+          <ion-img 
+            [src]="'https://api.arasaac.org/api/pictograms/' + descripcion.pictogramId" 
+            alt="Pictogram" 
+            class="pictograma-tarea">
+          </ion-img>
+        </ion-avatar>
+        <h2 class="nombre-tarea">{{ tarea.title }}</h2>
+        <p class="descripcion-tarea">{{ descripcion.text }}</p>
+        
+        <!-- Mostrar las imágenes asociadas a la tarea -->
+        <ion-grid>
+          <ion-row>
+            <ng-container *ngFor="let image of descripcion.imagesId">
+              <ion-col size="6" *ngIf="image.trim() !== ''">
+                <ion-card class="imagen-tarea-card">
+                  <ion-img [src]="image" alt="Imagen de tarea por pasos" class="imagen-tarea"></ion-img>
+                </ion-card>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <div class="boton-completar-container">
+        <ion-button 
+          class="boton-completar" 
+          (click)="completarTarea()">
+          He completado la tarea
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Utilizar el componente CelebracionComponent -->
+  <app-celebracion 
+    [tareaCompletada]="tareaCompletada" 
+    [mostrarConfeti]="mostrarConfeti">
+  </app-celebracion>
+</ion-content>
