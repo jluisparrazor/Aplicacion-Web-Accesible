@@ -28,7 +28,7 @@ export class TaskMenusPage implements OnInit  {
     date: Timestamp.fromDate(new Date(new Date().setHours(0, 0, 0, 0))),
     menus: {}
   };
-  menuTypesPerPage: number = 2;
+  menuTypesPerPage: number = 1;
   currentMTPage: number = 0;
   classesPerPage: number = 4;
   currentCPage: number = 0;
@@ -44,13 +44,13 @@ export class TaskMenusPage implements OnInit  {
   ngOnInit() {
     this.loadStructure();
     this.calculateNumClassesPerPage();
-    this.calculateNumMenuTypesPerPage();
+    // this.calculateNumMenuTypesPerPage();
   }
 
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.calculateNumClassesPerPage();
-    this.calculateNumMenuTypesPerPage();
+    //this.calculateNumMenuTypesPerPage();
   }
 
 
@@ -73,7 +73,7 @@ export class TaskMenusPage implements OnInit  {
   calculateNumClassesPerPage() {
     const headerHeight = 80;
     const footerHeight = 80;
-    const contentHeight = window.innerHeight - headerHeight - footerHeight;
+    const contentHeight = window.innerHeight - headerHeight - footerHeight - 20;
 
     console.log('window.innerHeight', window.innerHeight, ' headerHeight', headerHeight, ' footerHeight', footerHeight);
 
@@ -103,7 +103,7 @@ export class TaskMenusPage implements OnInit  {
         this.menu.menus[this.selectedClass.name][menuTypeName]++;
         this.updateClassState();
       } else {
-        alert('No hay tantos alumnos.');
+        // alert('No hay tantos alumnos.');
       }
     }
   }
@@ -129,7 +129,7 @@ export class TaskMenusPage implements OnInit  {
         this.infoClasses[this.selectedClass.name].n--;
         this.updateClassState();
       } else {
-        alert('No se puede decrementar, hay tantos menús como estudiantes.');
+        // alert('No se puede decrementar, hay tantos menús como estudiantes.');
       }
     }
   }
@@ -145,13 +145,13 @@ export class TaskMenusPage implements OnInit  {
     if (!this.infoClasses[cls.name].state){
       let pendingMenus = this.infoClasses[cls.name].n;
       if (pendingMenus == 0) {
-        alert("No hay alumnos en la clase.");
+        // alert("No hay alumnos en la clase.");
       }
       else {
           this.menuTypes.forEach(menuType => {
           pendingMenus -= this.menu.menus[cls.name][menuType.name];
         });
-        alert(`Quedan por asignar ${pendingMenus} menús a la clase ${cls.name}`);
+        // alert(`Quedan por asignar ${pendingMenus} menús a la clase ${cls.name}`);
       }
     }
   }
@@ -208,10 +208,10 @@ export class TaskMenusPage implements OnInit  {
   completeTask(){
     if (this.allClassesCompleted()){
       this.menuService.createMenu(this.menu).then(() => {
-        alert('Menús guardados correctamente.');
+        // alert('Menús guardados correctamente.');
       });
     } else {
-      alert('No se pueden guardar los menús, hay clases sin completar.');
+      // alert('No se pueden guardar los menús, hay clases sin completar.');
     }
   }
 
