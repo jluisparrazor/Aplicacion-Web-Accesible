@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { TaskI } from '../models/task.models';
+import { StepI, TaskI } from '../models/task.models';
 import { DescriptionI } from '../models/task.models';
 import { collectionData, docData, Firestore} from '@angular/fire/firestore';
 import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, Query, where, getDocs, DocumentData, updateDoc } from 'firebase/firestore';import { Observable } from 'rxjs';
@@ -47,6 +47,16 @@ export class TasksService{
       link: null
       };
     return newTaskDescription;
+  }
+
+  initStep(): StepI {
+    const newStep: StepI = {
+      text: null,
+      pictogramId: null,
+      imageUrl: null,
+      videoUrl: null
+    }
+    return newStep;
   }
 
   // Método para obtener una descripción por su descriptionId
