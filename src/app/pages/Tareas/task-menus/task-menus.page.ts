@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonModal, IonButtons, IonIcon, IonGrid, IonRow, IonCol, IonFooter, IonImg } from '@ionic/angular/standalone';
 import { Class } from '../../../common/models/class.models'; 
 import { MenuType, Menu } from '../../../common/models/menu.models'; 
+import { isStudent } from 'src/app/common/models/student.models';
 import { Timestamp } from 'firebase/firestore';
 import { ClassService } from '../../../common/services/class.service';
 import { MenuService } from '../../../common/services/menu.service';
 import { ArasaacService } from 'src/app/common/services/arasaac.service';
+import { SessionService } from 'src/app/common/services/session.service';
 import { Router } from '@angular/router';
 
 
@@ -39,9 +41,13 @@ export class TaskMenusPage implements OnInit  {
   constructor(private classService: ClassService,
               private menuService: MenuService, 
               private arasaacService: ArasaacService,
-              private router: Router,) {}
+              private router: Router,
+              private sessionService: SessionService) {}
 
   ngOnInit() {
+    if (!isStudent(this.sessionService.getCurrentUser())) {
+      this.router.navigate(['/paginaprincipal']);
+    }
     this.loadStructure();
     this.calculateNumClassesPerPage();
     // this.calculateNumMenuTypesPerPage();
