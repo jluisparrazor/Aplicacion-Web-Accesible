@@ -259,12 +259,18 @@ export class TareasDiarioAlumnoPage implements OnInit {
         break;
 
       case 'MenuTask':
-        this.router.navigate(['/task-menus']);
+        this.router.navigate(['/task-menus'],  {
+          state: { 
+            taskID: tarea.taskID,
+            taskTitle: tarea.title,
+            pictogramId: descripcion?.pictogramId,
+
+          }
+      });
         break;
 
       case 'RequestTask':
         // Navegación pendiente de implementar
-        console.warn('La redirección para "material" no está implementada.');
         break;
 
       default:
