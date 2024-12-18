@@ -1,0 +1,489 @@
+<!-- Encabezado de la página-->
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Administrador</ion-title>
+    <ion-buttons slot="primary">
+      <!-- Botón de logout -->
+      <ion-button (click)="comeback()" color="primary">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        <ion-label>Volver al Home Administrador</ion-label>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<!-- Contenido de la página -->
+<ion-content [fullscreen]="true">
+  <ion-grid>      
+    <!-- TAREAS -->
+    <ion-row>
+      <ion-col>
+        <ion-toolbar>
+          <ion-title class="tituloSeccion">Tareas:</ion-title>
+          <ion-buttons slot="end">
+
+            <!-- Botón de redirección al registro semanal -->
+            <ion-button 
+              [routerLink]="['/registrosemanaltareas']" 
+              class="custom-button">              
+              <ion-label>Tareas de los alumnos</ion-label>
+              <ion-icon slot="end" name="calendar-outline"></ion-icon>
+            </ion-button>  
+          </ion-buttons>
+
+          <!-- Botón para añadir tareas -->
+            <ion-buttons slot="end" *ngIf="!showTaskForm">
+              <ion-button class="custom-button" (click)="toggleTaskForm()">
+                <ion-label>Añadir tarea</ion-label>
+                <ion-icon slot="end" name="add-circle-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            
+            <!-- Botón para asignar tareas -->
+            <ion-buttons slot="end" *ngIf="!showAssignationsForm">
+              <ion-button class="custom-button" (click)="toggleAssignationForm()">
+                <ion-label>Asignar tareas</ion-label>
+                <ion-icon slot="end" name="person-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+        </ion-toolbar>
+        
+        <!-- Formulario para añadir una tarea -->
+        <ion-card *ngIf="showTaskForm" class="card-add-tarea">
+          <ion-toolbar>
+            <ion-title>{{ editedTask ? 'Editar tarea' : 'Crear tarea' }}</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="editedTask ? saveTarea() : addTarea()" shape="round" color="primary">
+                {{ editedTask ? 'Guardar cambios' : 'Añadir tarea' }}
+              </ion-button>
+                <ion-button (click)="toggleTaskForm(); resetFechaInicio();
+                resetFechaCumplimiento()" shape="round" color="danger">Cancelar</ion-button>
+              </ion-buttons>
+          </ion-toolbar>
+          
+          <ion-list lines="full">
+            <!-- Título de la tarea (title en Description) -->
+            <ion-item>
+              <ion-input 
+                label="Título" 
+                labelPlacement="floating" 
+                type="text" 
+                [(ngModel)]="newTarea.title">
+              </ion-input>
+              </ion-item>
+            
+
+            <!-- Descripcion de la tarea (text en Description) -->
+            <ion-item>
+              <ion-textarea 
+                label="Descripción" 
+                labelPlacement="stacked" 
+                placeholder="Introduce una descripción de la tarea..." 
+                [(ngModel)]="newTaskDescription.text">
+              </ion-textarea>
+            </ion-item>
+
+            <!-- Pictograma -->
+            <app-pictogram-search (pictogramSelect)="newTaskDescription.pictogramId = $event"></app-pictogram-search>
+            <ion-item *ngIf="newTaskDescription.pictogramId">
+              <ion-label>
+                Pictograma Seleccionado
+              </ion-label>
+                <ion-thumbnail slot="start">
+                  <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newTaskDescription.pictogramId" alt="Pictogram image"></ion-img>
+                </ion-thumbnail>
+            </ion-item>
+
+            <!-- Tipo de tarea -->
+            <ion-item>
+              <ion-select 
+                placeholder="Selecciona el tipo de tarea" 
+                label="Tipo de tarea" 
+                labelPlacement="floating" 
+                [(ngModel)]="newTarea.type">
+                <ion-select-option value="StepTask">Tarea por pasos</ion-select-option>
+                <ion-select-option value="MenuTask">Tarea de menú</ion-select-option>
+                <ion-select-option value="AppTask">Tarea de aplicación/juego</ion-select-option>
+                <ion-select-option value="RequestTask">Tarea de material</ion-select-option>
+                <ion-select-option value="NormalTask">Tarea normal</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <!-- Enlace (solo para AppTask) -->
+          <ion-item *ngIf="newTarea.type === 'AppTask'">
+            <ion-input 
+              label="Enlace" 
+              labelPlacement="floating" 
+              type="url" 
+              placeholder="Introduce el enlace de la aplicación/juego..." 
+              [(ngModel)]="newTaskDescription.link">
+            </ion-input>
+          </ion-item>
+          
+         <!-- Añadir Imágenes (solo para StepTask) -->
+          <ion-item *ngIf="newTarea.type === 'StepTask'">
+            <ion-input 
+              label="Imagenes: " 
+              labelPlacement="floating"
+              type="url"
+              placeholder="Introduce el enlace de la imagen..." 
+              [(ngModel)]="newImageLink">
+            </ion-input>
+            <ion-button (click)="addImage()">Añadir imagen</ion-button>
+          </ion-item>
+
+          <!-- Vista previa de imágenes añadidas (solo para StepTask) -->
+          <ion-row *ngIf="newTarea.type === 'StepTask' && newTaskDescription.imagesId && newTaskDescription.imagesId.length > 0">
+            <ng-container *ngFor="let imageId of newTaskDescription.imagesId">
+              <ion-col size="auto" *ngIf="imageId.trim() !== ''" class="imagen-tarea-col">
+                <ion-thumbnail class="imagen-tarea-thumbnail">
+                  <ion-img [src]="imageId" alt="Imagen añadida" class="imagen-tarea-img"></ion-img>
+                </ion-thumbnail>
+                <ion-button (click)="removeImage(imageId)" color="danger" class="boton-eliminar-imagen">Eliminar</ion-button>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+
+          <!-- Fechas con diseño tipo grid -->
+          <!--ESTO IRÁ EN LO DE ASSIGNED, AUNQUE UN POCO MÁS CAMBIADO-->
+          <!--
+          <ion-item>
+            <ion-grid class="fechas-grid">
+              <ion-row>
+                Fecha de inicio
+                <ion-col size="auto" class="fecha-item">
+                  <ion-label class="titulo-fecha">Fecha de inicio:</ion-label>
+                  <ion-datetime
+                    [(ngModel)]="tempFechaInicio"
+                    displayFormat="YYYY-MM-DD HH:mm"
+                    doneText="Aceptar"
+                    cancelText="Cancelar"
+                    [min]="minFechaInicio"
+                    (ionChange)="onFechaInicioChange($event)">
+                  </ion-datetime>
+                  <p *ngIf="tempFechaInicio; else noFechaInicio" class="seleccionada">
+                    {{ tempFechaInicio | date: 'fullDate' }} {{ tempFechaInicio | date: 'HH:mm' }}
+                  </p>
+                  <ng-template #noFechaInicio>
+                    <p>No hay fecha de inicio seleccionada</p>
+                  </ng-template>
+                  Botón para resetear fecha de inicio 
+                  <ion-button color="danger" size="small" (click)="resetFechaInicio()" class="reset-fecha-btn">
+                    Resetear fecha
+                  </ion-button>
+                </ion-col>
+          
+                Fecha de cumplimiento 
+                <ion-col size="auto" class="fecha-item">
+                  <ion-label class="titulo-fecha">Fecha de cumplimiento:</ion-label>
+                  <ion-datetime
+                    [(ngModel)]="tempFechaCumplimiento"
+                    displayFormat="YYYY-MM-DD HH:mm"
+                    doneText="Aceptar"
+                    cancelText="Cancelar"
+                    [min]="minFechaCumplimiento"
+                    (ionChange)="onFechaCumplimientoChange($event)">
+                  </ion-datetime>
+                  <p *ngIf="tempFechaCumplimiento; else noFechaCumplimiento" class="seleccionada">
+                    {{ tempFechaCumplimiento | date: 'fullDate' }} {{ tempFechaCumplimiento | date: 'HH:mm' }}
+                  </p>
+                  <ng-template #noFechaCumplimiento>
+                    <p>No hay fecha seleccionada</p>
+                  </ng-template>
+                  <ion-button color="danger" size="small" (click)="resetFechaCumplimiento()" class="reset-fecha-btn">
+                    Resetear fecha
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+          -->
+          </ion-list>
+        </ion-card>
+
+        <!-- Formulario para asignar tareas -->
+        <ion-card *ngIf="assignationStep === 1 && showAssignationsForm">
+          <!-- Card para elegir tarea y asignar alumnos -->
+          <ion-toolbar>
+            <ion-title>Asignar / Desasignar tareas</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="assignTarea()" shape="round" color="primary">Continuar</ion-button>
+              <ion-button (click)="toggleAssignationForm()" shape="round" color="danger">Cancelar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+          
+          <ion-list>
+            <ion-grid>
+              <ion-row>
+                <!-- Selección de tarea -->
+                <ion-col size="5">
+                  <ion-item>
+                    <ion-label>Tareas</ion-label>
+                    <ion-select placeholder="Selecciona tarea" [(ngModel)]="selectedTask" (ionChange)="onTaskSelect(selectedTask)">
+                      <!-- Título para tareas asignadas -->
+                      <ion-select-option class="ion-select-category" disabled>
+                        ── Tareas ya asignadas ──
+                      </ion-select-option>
+                      <!-- Lista de tareas asignadas -->
+                      <ion-select-option *ngFor="let tarea of tasksWithAssignment" [value]="tarea">
+                        {{ tarea.title }}
+                      </ion-select-option>
+            
+                      <!-- Título para tareas sin asignar -->
+                      <ion-select-option class="ion-select-category" disabled>
+                        ── Tareas sin asignar ──
+                      </ion-select-option>
+                      <!-- Lista de tareas sin asignar -->
+                      <ion-select-option *ngFor="let tarea of tasksWithoutAssignment" [value]="tarea">
+                        {{ tarea.title }}
+                      </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+
+                <!-- Muestra el tipo de tarea -->
+                <ion-col size="3">
+                  <ion-item *ngIf="selectedTask && selectedTask.type">
+                    <ion-label>Tipo</ion-label>
+                    <span *ngIf="selectedTask.type === 'StepTask'">Tarea por pasos</span>
+                    <span *ngIf="selectedTask.type === 'MenuTask'">Tarea de menú</span>
+                    <span *ngIf="selectedTask.type === 'AppTask'">Tarea de aplicación/juego</span>
+                    <span *ngIf="selectedTask.type === 'RequestTask'">Tarea de material</span>
+                    <span *ngIf="selectedTask.type === 'NormalTask'">Tarea normal</span>
+                  </ion-item>
+                </ion-col>
+
+                <!-- Selección de alumnos -->
+                <ion-col size="4">
+                  <!-- Selección de alumnos para la tarea seleccionada -->
+                  <ion-item *ngIf="selectedTask">
+                    <ion-label>Selecciona alumnos:</ion-label>
+                    <ion-select multiple="true" [(ngModel)]="selectedTask.assigned">
+                      <ion-select-option 
+                        *ngFor="let student of students" 
+                        [value]="getAssignedObject(student)">
+                        {{ student.name }} {{ student.surname }}
+                      </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-list>
+        </ion-card>
+
+          <!-- Card para seleccionar las fechas de inicio y fin -->
+          <ion-card *ngIf="assignationStep === 2 && selectedTask">
+            <ion-toolbar>
+              <ion-title>Asignar fechas de inicio y fin</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="goToPreviousStep()" shape="round" color="primary">Volver</ion-button>
+                <ion-button (click)="assignTarea()" shape="round" color="success">Guardar cambios</ion-button>
+                <ion-button (click)="toggleAssignationForm()" shape="round" color="danger">Cancelar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+
+            <!-- Mostrar mensaje si no hay alumnos seleccionados -->
+            <ion-card *ngIf="!selectedTask.assigned || selectedTask.assigned.length === 0">
+              <ion-item>
+                <ion-label color="medium">
+                  <h2>No se han seleccionado alumnos para asignarles esta tarea</h2>
+                </ion-label>
+              </ion-item>
+            </ion-card>
+
+            <!-- Mostrar el formulario solo si hay alumnos seleccionados -->
+            <ion-list *ngIf="selectedTask.assigned && selectedTask.assigned.length > 0">
+              <!-- Mostrar un ion-card por cada alumno, y solo mostrar el que corresponde al currentStudentIndex -->
+              <ng-container *ngFor="let assignedStudent of selectedTask.assigned; let i = index">
+                <ion-card *ngIf="i === currentStudentIndex">
+                  <ion-item>
+                    <ion-label>
+                      <h2>Asignar fechas:</h2>
+                      <h3>{{ assignedStudent.assignedName }}</h3>
+                    </ion-label>
+
+                    <!-- Campos de fechas -->
+                     <!--Fecha de inicio-->
+                     <ion-item>
+                      <ion-grid class="fechas-grid">
+                        <ion-row>
+                          <!-- Columna de Fecha de Inicio -->
+                          <ion-col class="fecha-item">
+                            <ion-label class="titulo-fecha">Fecha de inicio:</ion-label>
+                            <ion-datetime
+                              [(ngModel)]="assignedStudent.startTime"
+                              displayFormat="YYYY-MM-DD HH:mm"
+                              doneText="Aceptar"
+                              cancelText="Cancelar"
+                              [min]="minFecha"
+                              (ionChange)="actualizarMinEndFecha(assignedStudent.startTime)">
+                            </ion-datetime>
+                            <p *ngIf="assignedStudent.startTime; else noFechaInicio" class="seleccionada">
+                              {{ convertTimestampToDate(assignedStudent.startTime) | date: 'fullDate' }} 
+                              {{ convertTimestampToDate(assignedStudent.startTime) | date: 'HH:mm' }}
+                            </p>
+                            <ng-template #noFechaInicio>
+                              <p class="noSeleccionada">No hay fecha de inicio seleccionada</p>
+                            </ng-template>
+                            <ng-template #noFechaInicio>
+                              <p  class="noSeleccionada">No hay fecha de inicio seleccionada</p>
+                            </ng-template>
+                            <ion-button color="danger" size="small" (click)="resetFechaInicioAlumno()" class="reset-fecha-btn">
+                              Resetear fecha
+                            </ion-button>
+                          </ion-col>
+                    
+                          <!-- Columna de Fecha de Cumplimiento -->
+                          <ion-col class="fecha-item">
+                            <ion-label class="titulo-fecha">Fecha de cumplimiento:</ion-label>
+                            <ion-datetime
+                              [(ngModel)]="assignedStudent.endTime"
+                              displayFormat="YYYY-MM-DD HH:mm"
+                              doneText="Aceptar"
+                              cancelText="Cancelar"
+                              [min]="assignedStudent.startTime ? assignedStudent.startTime : minFecha">
+                            </ion-datetime>
+                            <p *ngIf="assignedStudent.endTime; else noFechaInicio" class="seleccionada">
+                              {{ convertTimestampToDate(assignedStudent.endTime) | date: 'fullDate' }} 
+                              {{ convertTimestampToDate(assignedStudent.endTime) | date: 'HH:mm' }}
+                            </p>
+                            <ng-template #noFechaCumplimiento class="seleccionada">
+                              <p class="noSeleccionada">No hay fecha de cumplimiento seleccionada</p>
+                            </ng-template>
+                            <ion-button color="danger" size="small" (click)="resetFechaCumplimientoAlumno()" class="reset-fecha-btn">
+                              Resetear fecha
+                            </ion-button>
+                          </ion-col>
+                        </ion-row>
+                      </ion-grid>
+                    </ion-item>
+                                       
+                    <!-- Contenedor para los botones -->
+                    <div class="button-container">
+                      <!-- Botón para pasar al siguiente alumno -->
+                      <ion-button *ngIf="currentStudentIndex < selectedTask.assigned.length - 1" 
+                                  (click)="resetFechaInicio(); resetFechaCumplimiento(); nextStudent();" 
+                                  expand="block">
+                        Siguiente alumno
+                      </ion-button>
+
+                      <!-- Botón para volver al alumno anterior -->
+                      <ion-button *ngIf="currentStudentIndex > 0" 
+                                  (click)="resetFechaInicio(); resetFechaCumplimiento(); previousStudent();" 
+                                  expand="block">
+                        Volver al alumno anterior
+                      </ion-button>
+                    </div>
+                  </ion-item>
+                </ion-card>
+              </ng-container>
+            </ion-list>
+          </ion-card>
+                      
+        <!-- Sección de Tareas asignadas y sin asignar-->
+        <ion-grid>
+          <ion-row>
+            <ion-toolbar>
+              <ion-title>Tareas ya asignadas</ion-title>
+            </ion-toolbar>
+            <ion-col size="6" *ngFor="let tarea of tasksWithAssignment; let i = index; trackBy: trackByTaskId">
+              <ion-item>
+                <!-- Imagen del pictograma -->
+                <ion-avatar slot="start">
+                  <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + tarea.descriptionData?.pictogramId" alt="Pictogram image" class="pictogram-img"></ion-img>
+                </ion-avatar>
+                <ion-label>
+                  <h3>{{ tarea.title }}</h3>
+                  <p>Tipo: 
+                    <ng-container [ngSwitch]="tarea.type">
+                      <span *ngSwitchCase="'StepTask'">Tarea por pasos</span>
+                      <span *ngSwitchCase="'MenuTask'">Tarea de menú</span>
+                      <span *ngSwitchCase="'AppTask'">Tarea de aplicación/juego</span>
+                      <span *ngSwitchCase="'RequestTask'">Tarea de material</span>
+                      <span *ngSwitchCase="'NormalTask'">Tarea normal</span>
+                    </ng-container>
+                  </p>
+                  <!-- Mostrar asignado a -->
+                  <p *ngIf="tarea.assigned?.length > 0">Asignado a: 
+                    <span *ngFor="let student of tarea.assigned">
+                      {{ student.assignedName }}<span *ngIf="student !== tarea.assigned[tarea.assigned.length - 1]">, </span>
+                    </span>
+                  </p>
+                </ion-label>
+                <!-- Botones de editar y eliminar tarea-->
+                <ion-buttons slot="end">
+                  <ion-button (click)="editTarea(tarea)">
+                    <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="deleteTarea(tarea)">
+                    <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-item>
+            </ion-col>
+            <!-- Mensaje cuando no hay tareas -->
+            <ng-container *ngIf="tasksWithAssignment.length === 0">
+              <ion-col size="12">
+                <ion-item>
+                  <ion-label>
+                    <h3>Sin tareas ya asignadas</h3>
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+        </ion-grid>
+
+        <ion-grid>
+          <ion-row>
+            <ion-toolbar>
+              <ion-title>Tareas por asignar</ion-title>
+            </ion-toolbar>
+            <ion-col size="6" *ngFor="let tarea of tasksWithoutAssignment; let i = index; trackBy: trackByTaskId">
+              <ion-item>
+                <!-- Imagen del pictograma -->
+                <ion-avatar slot="start">
+                  <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + tarea.descriptionData?.pictogramId" alt="Pictogram image" class="pictogram-img"></ion-img>
+                </ion-avatar>
+                <ion-label>
+                  <h3>{{ tarea.title }}</h3>
+                  <p>Tipo: 
+                    <ng-container [ngSwitch]="tarea.type">
+                      <span *ngSwitchCase="'StepTask'">Tarea por pasos</span>
+                      <span *ngSwitchCase="'MenuTask'">Tarea de menú</span>
+                      <span *ngSwitchCase="'AppTask'">Tarea de aplicación/juego</span>
+                      <span *ngSwitchCase="'RequestTask'">Tarea de material</span>
+                      <span *ngSwitchCase="'NormalTask'">Tarea normal</span>
+                    </ng-container>
+                  </p>
+                </ion-label>
+                <ion-buttons slot="end">
+                  <ion-button (click)="editTarea(tarea)">
+                    <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="deleteTarea(tarea)">
+                    <ion-icon slot="icon-only" name="trash" color="danger"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-item>
+            </ion-col>
+            <!-- Mensaje cuando no hay tareas -->
+            <ng-container *ngIf="tasksWithoutAssignment.length === 0">
+              <ion-col size="12">
+                <ion-item>
+                  <ion-label>
+                    <h3>Sin tareas por asignar</h3>
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>
+

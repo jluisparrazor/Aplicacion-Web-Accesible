@@ -1,0 +1,53 @@
+
+
+.button-increm-decrem {
+  font-size: 75px;
+  color: black;
+  border: none;
+}
+
+.pictogram-center {
+  width: 100px;
+  height: 100px;  
+  display: flex;
+  margin: 0 auto;
+}
+
+.pictogram-center-modal {
+  width: 180px;
+  height: 180px;  
+  display: flex;
+  margin: 0 auto;
+}
+
+  
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.small-card-title {
+  text-align: center;
+  text-justify: auto;
+  font-size: 24px; 
+  font-weight: normal; 
+}
+
+.fullscreen-modal {
+  --width: 100vw;
+  --height: 100vh;
+}
+
+.cards-size {
+  height: 150px;
+}
+
+.modal-title {
+  font-size: 40px;
+  font-weight: normal;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+

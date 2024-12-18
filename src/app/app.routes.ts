@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: 'homeprofesor',
-    loadComponent: () => import('./pages/home-profesor/home-profesor.page').then((m) => m.HomePage),
+    loadComponent: () => import('./pages/Homes/home-profesor/home-profesor.page').then((m) => m.HomePage),
   },
   {
     path: '',
@@ -12,12 +12,12 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'loginprofesor',
-    loadComponent: () => import('./pages/home-profesor/login-profesor/login-profesor.page').then( m => m.LoginPage)
+    path: 'loginprofesor', 
+    loadComponent: () => import('./pages/Homes/login-profesor/login-profesor.page').then( m => m.LoginPage)
   },
   {
     path: 'loginalumno',
-    loadComponent: () => import('./pages/home-alumno/login-alumno/login-alumno.page').then( m => m.LoginAlumnoPage)
+    loadComponent: () => import('./pages/Homes/home-alumno/login-alumno/login-alumno.page').then( m => m.LoginAlumnoPage)
   },
   {
     path: 'paginainicial',
@@ -25,55 +25,55 @@ export const routes: Routes = [
   },
   {
     path: 'tareasdiarioalumno',
-    loadComponent: () => import('./pages/tareas-diario-alumno/tareas-diario-alumno.page').then( m => m.TareasDiarioAlumnoPage)
+    loadComponent: () => import('./pages/Tareas/tareas-diario-alumno/tareas-diario-alumno.page').then( m => m.TareasDiarioAlumnoPage)
   },
   {
     path: 'registrosemanaltareas',
-    loadComponent: () => import('./pages/registro-semanal/registro-semanal.page').then( m => m.RegistroSemanalPage)
+    loadComponent: () => import('./pages/Tareas/registro-semanal/registro-semanal.page').then( m => m.RegistroSemanalPage)
   },
   {
     path: 'tareasporpasos',
-    loadComponent: () => import('./pages/tareas-por-pasos/tareas-por-pasos.page').then( m => m.TareasPorPasosPage)
+    loadComponent: () => import('./pages/Tareas/tareas-por-pasos/tareas-por-pasos.page').then( m => m.TareasPorPasosPage)
   },
   {
     path: 'tareasaplicacionjuego',
-    loadComponent: () => import('./pages/tareas-aplicacion-juego/tareas-aplicacion-juego.page').then( m => m.TareasAplicacionJuegoPage)
+    loadComponent: () => import('./pages/Tareas/tareas-aplicacion-juego/tareas-aplicacion-juego.page').then( m => m.TareasAplicacionJuegoPage)
   },
   {
     path: 'change-password',
-    loadComponent: () => import('./pages/home-profesor/login-profesor/change-password/change-password.page').then( m => m.ChangePasswordPage)
+    loadComponent: () => import('./pages/Homes/change-password/change-password.page').then( m => m.ChangePasswordPage)
   },
   {
     path: 'edit-profesor',
-    loadComponent: () => import('./pages/home-profesor/edit-profesor/edit-profesor.page').then( m => m.EditProfesorPage)
+    loadComponent: () => import('./pages/Homes/home-profesor/edit-profesor/edit-profesor.page').then( m => m.EditProfesorPage)
   },
   {
     path: 'homeadministrador',
-    loadComponent: () => import('./pages/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
+    loadComponent: () => import('./pages/Homes/home-administrador/home-administrador.page').then( m => m.HomeAdministradorPage)
   },
   {
     path: 'admin-tareas',
-    loadComponent: () => import('./pages/home-administrador/admin-tareas/admin-tareas.page').then( m => m.AdminTareasPage)
+    loadComponent: () => import('./pages/Homes/home-administrador/admin-tareas/admin-tareas.page').then( m => m.AdminTareasPage)
   },
   {
   path: 'admin-profesores',
-  loadComponent: () => import('./pages/home-administrador/admin-profesores/admin-profesores.page').then( m => m.AdminProfesoresPage)
+  loadComponent: () => import('./pages/Homes/home-administrador/admin-profesores/admin-profesores.page').then( m => m.AdminProfesoresPage)
   },
   {
     path: 'admin-alumnos',
-    loadComponent: () => import('./pages/home-administrador/admin-alumnos/admin-alumnos.page').then( m => m.AdminAlumnosPage)
+    loadComponent: () => import('./pages/Homes/home-administrador/admin-alumnos/admin-alumnos.page').then( m => m.AdminAlumnosPage)
     },
   {
     path: 'material-demand',
-    loadComponent: () => import('./pages/home-profesor/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
+    loadComponent: () => import('./pages/Homes/home-profesor/peticiones-material/peticiones-material.page').then( m => m.PeticionesMaterialPage)
   },
   {
     path: 'task-menus',
-    loadComponent: () => import('./pages/task-menus/task-menus.page').then( m => m.TaskMenusPage)
+    loadComponent: () => import('./pages/Tareas/task-menus/task-menus.page').then( m => m.TaskMenusPage)
   },
   {
     path: 'show-menus',
-    loadComponent: () => import('./pages/show-menus/show-menus.page').then( m => m.ShowMenusPage)
+    loadComponent: () => import('./pages/Menus/show-menus/show-menus.page').then( m => m.ShowMenusPage)
   },
   {
     path: 'inicio',
@@ -81,7 +81,7 @@ export const routes: Routes = [
   },
   {
     path: 'material-update',
-    loadComponent: () => import('./pages/home-administrador/material-update/material-update.page').then( m => m.MaterialUpdatePage)
+    loadComponent: () => import('./pages/Homes/home-administrador/material-update/material-update.page').then( m => m.MaterialUpdatePage)
   },
   {
     path: 'classes',
@@ -89,7 +89,11 @@ export const routes: Routes = [
   },
   {
     path: 'menutypes',
-    loadComponent: () => import('./pages/menutypes/menutypes.page').then( m => m.MenuTypesPage)
+    loadComponent: () => import('./pages/Menus/menutypes/menutypes.page').then( m => m.MenuTypesPage)
+  },
+  {
+    path: 'mi-perfil',
+    loadComponent: () => import('./pages/Homes/mi-perfil/mi-perfil.page').then( m => m.MiPerfilPage)
   }
 ];
 @NgModule({

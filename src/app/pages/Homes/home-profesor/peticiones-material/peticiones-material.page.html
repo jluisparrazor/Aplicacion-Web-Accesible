@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Formulario de Peticiones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <form [formGroup]="requestForm" (ngSubmit)="finalizeRequests()">
+    <!-- Campo Nombre del Profesor -->
+    <ion-item>
+      <ion-label position="floating">Nombre del Profesor</ion-label>
+      <ion-input formControlName="profesor"></ion-input>
+    </ion-item>
+
+    <!-- Campo Clase -->
+    <!-- Campo Clase -->
+    <ion-item>
+      <ion-label position="floating">Clase</ion-label>
+      <ion-select formControlName="clase" placeholder="Selecciona una clase">
+        <ion-select-option *ngFor="let clase of availableClasses" [value]="clase">
+          {{ clase }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+
+    <!-- Campos para los materiales -->
+    <div formArrayName="materiales">
+      <div *ngFor="let material of materiales.controls; let i = index" [formGroupName]="i" class="material-row">
+        <ion-item class="material-item">
+          <ion-label position="floating">Material</ion-label>
+          <ion-select formControlName="nombre" placeholder="Selecciona un material">
+            <ion-select-option *ngFor="let material of availableMaterials" [value]="material">
+              {{ material }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      
+        <ion-item class="cantidad-item">
+          <ion-label position="floating">Cantidad</ion-label>
+          <ion-input type="number" formControlName="cantidad" placeholder="Cantidad del material"></ion-input>
+        </ion-item>
+      
+        <ion-item class="material-item">
+          <ion-label position="floating">Tamaño</ion-label>
+          <ion-select formControlName="tamano" placeholder="Selecciona un tamaño" (ionChange)="onTamanoChange(i)">
+            <ion-select-option *ngFor="let tamano of availableTamanos[material.get('nombre')?.value] || []" [value]="tamano">
+              {{ tamano }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <ion-item class="material-item">
+          <ion-label position="floating">Color</ion-label>
+          <ion-select formControlName="color" placeholder="Selecciona un color" (ionChange)="onColorChange(i)">
+            <ion-select-option *ngFor="let color of availableColors[material.get('nombre')?.value] || []" [value]="color">
+              {{ color }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        
+        
+        
+        
+        
+      </div>
+    </div>
+
+    <!-- Botón para añadir un nuevo material -->
+    <ion-button expand="block" (click)="addMaterial()">Añadir Material</ion-button>
+
+    <!-- Botón para enviar -->
+    <ion-button expand="full" color="success" type="submit" [disabled]="requestForm.invalid">
+      Enviar Solicitudes
+    </ion-button>
+  </form>
+</ion-content>
