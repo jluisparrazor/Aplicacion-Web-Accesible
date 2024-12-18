@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonAvatar, IonImg, IonGrid, IonRow, IonCol, IonCard } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonAvatar, IonImg, IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonLabel, IonItem } from '@ionic/angular/standalone';
 import { StudentI } from 'src/app/common/models/student.models';
 import { TaskI } from 'src/app/common/models/task.models';
-import { DescriptionI } from 'src/app/common/models/task.models';
+import { DescriptionI, StepI } from 'src/app/common/models/task.models';
 import { Timestamp } from '@angular/fire/firestore';
 import { CelebracionComponent } from "../../../shared/celebracion/celebracion.component";
 
@@ -17,7 +17,7 @@ import { CelebracionComponent } from "../../../shared/celebracion/celebracion.co
   templateUrl: './tareas-por-pasos.page.html',
   styleUrls: ['./tareas-por-pasos.page.scss'],
   standalone: true,
-  imports: [IonCard, IonCol, IonRow, IonGrid, IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
+  imports: [IonLabel, IonItem, IonCard, IonCardContent, IonCol, IonRow, IonGrid, IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
 })
 export class TareasPorPasosPage implements OnInit {
 
@@ -34,6 +34,10 @@ export class TareasPorPasosPage implements OnInit {
   taskID: string;
   associatedDescriptionId: string;
   estadoTarea: boolean[] = []; // Ahora es un array de booleanos
+
+  // Paso actual a mostrar
+  currentStep: StepI
+  currentStepi: number
 
   constructor(
     private router: Router,
@@ -62,6 +66,9 @@ export class TareasPorPasosPage implements OnInit {
 
       // Cargar la tarea desde Firestore usando taskID
       this.loadTarea(this.taskID);
+
+      // Poner el paso actual a 0
+      this.currentStepi = 0
     }
 
     const user = this.sessionService.getCurrentUser();
@@ -106,10 +113,18 @@ export class TareasPorPasosPage implements OnInit {
       const descriptionDoc = await this.firestoreService.getDocument<DescriptionI>(`Description/${associatedDescriptionId}`);
       this.descripcion = descriptionDoc.data();
       console.log('Descripción cargada:', this.descripcion);
+      this.initStep()
     } catch (error) {
       console.error('Error al cargar la descripción:', error);
     }
-  }  
+  }
+
+  initStep() {
+    // Paso actual a mostrar
+    this.currentStep = null
+    if (this.descripcion.steps !== undefined && this.descripcion.steps !== null && this.descripcion.steps && this.descripcion.steps.length > 0)
+      this.currentStep = this.descripcion.steps[this.currentStepi]
+  }
   
   // Función para volver al listado de tareas
   volverListado() {
@@ -145,6 +160,14 @@ export class TareasPorPasosPage implements OnInit {
     } else {
       console.error('El estudiante no está asignado a esta tarea.');
     }
+  }
+
+  completeStep() {
+    // TODO: si es el último paso
+    setTimeout(() => {
+      this.currentStepi++
+      this.currentStep = this.descripcion.steps[this.currentStepi]
+    }, 3000)
   }
   
   marcarEnlaceVisitado(){

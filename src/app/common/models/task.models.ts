@@ -22,7 +22,7 @@ export interface DescriptionI {
     pictogramId: string;        //Array de IDs de pictogramas(por ahora opcional hasta añadirle comoponer pictogramas)
     text: string;               //Descripción de la tarea
     link?: string;              //Enlace, solo para tareas de tipo AppTask
-    steps?: StepI[];              //Pasos de tarea tipo StepTask
+    steps?: StepI[];            //Pasos de tarea tipo StepTask
 }
 
 //Modelo para un paso

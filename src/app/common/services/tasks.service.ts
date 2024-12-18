@@ -44,7 +44,8 @@ export class TasksService{
       imagesId: null,
       pictogramId: null,
       text: null,
-      link: null
+      link: null,
+      steps: null
       };
     return newTaskDescription;
   }

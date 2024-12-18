@@ -453,7 +453,7 @@ export class AdminTareasPage{
         // Actualizar la descripción si es necesario
         if (this.newTaskDescription.descriptionId) {
           // Crear un objeto con los campos relevantes de la descripción
-          const descripcion = {
+          let descripcion = {
             descriptionId: this.newTaskDescription.descriptionId,
             imagesId: this.newTaskDescription.imagesId,
             text: this.newTaskDescription.text,
@@ -461,6 +461,12 @@ export class AdminTareasPage{
             link: this.newTaskDescription.link,
             steps: this.newTaskDescription.steps
           };
+
+          if (this.newTaskDescription.steps == undefined) {
+            descripcion.steps = null
+          }
+
+          console.log(descripcion)
 
           const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.editedTask.associatedDescriptionId);
           await setDoc(descriptionRef, descripcion);  // Solo actualizamos los campos necesarios de la descripción

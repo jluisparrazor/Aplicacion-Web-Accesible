@@ -8,47 +8,78 @@
         Salir
       </ion-button>
     </ion-buttons>
-    <ion-title>Tarea por Pasos</ion-title>
+    <ion-title>Tarea por pasos</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tarea por Pasos</ion-title>
+      <ion-title size="large">Tarea por pasos</ion-title>
     </ion-toolbar>
   </ion-header>
 
   <div class="tarea-aplicacion">
     <div *ngIf="tarea">
       <div class="tarea-aplicacion-texto">
-        <ion-avatar>
-          <ion-img 
-            [src]="'https://api.arasaac.org/api/pictograms/' + descripcion.pictogramId" 
-            alt="Pictogram" 
-            class="pictograma-tarea">
+
+        <ion-item class="task-header">
+          <ion-avatar class="pictograma-tarea">
+            <ion-img 
+              [src]="'https://api.arasaac.org/api/pictograms/' + descripcion.pictogramId" 
+              alt="Pictogram">
+            </ion-img>
+          </ion-avatar>
+          <ion-label class="nombre-tarea">{{ tarea.title }}</ion-label>
+        </ion-item>
+
+        <h2 class="descripcion-tarea">{{ descripcion.text }}</h2>
+
+        <!-- Mostrar el paso actual -->
+        <ion-card class="step" *ngIf="this.descripcion.steps && this.descripcion.steps.length > 0">
+          <ion-img
+            class="step-image"
+            *ngIf="this.currentStep.pictogramId"
+            [src]="'https://api.arasaac.org/api/pictograms/' + this.currentStep.pictogramId"
+            alt="Pictograma del paso">
           </ion-img>
-        </ion-avatar>
-        <h2 class="nombre-tarea">{{ tarea.title }}</h2>
-        <p class="descripcion-tarea">{{ descripcion.text }}</p>
-        
-        <!-- Mostrar las imágenes asociadas a la tarea -->
-        <ion-grid>
-          <ion-row>
-            <ng-container *ngFor="let image of descripcion.imagesId">
-              <ion-col size="6" *ngIf="image.trim() !== ''">
-                <ion-card class="imagen-tarea-card">
-                  <ion-img [src]="image" alt="Imagen de tarea por pasos" class="imagen-tarea"></ion-img>
-                </ion-card>
-              </ion-col>
-            </ng-container>
-          </ion-row>
-        </ion-grid>
+
+          <ion-img
+            class="step-image"
+            *ngIf="!this.currentStep.pictogramId && this.currentStep.imageUrl && this.currentStep.imageUrl !== '' "
+            [src]="this.currentStep.imageUrl"
+            alt="Imagen del paso">
+          </ion-img>
+
+          <ion-card-content>
+            <h1 class="descripcion-tarea"> {{ this.currentStep.text }} </h1>
+
+            <div class="boton-completar-container">
+              <ion-button 
+                class = "boton-completar"
+                fill = "outline"
+                (click) = "completeStep()"
+                [disabled] = "this.currentStepi === this.descripcion.steps.length-1">
+                He completado el paso
+
+                <ion-img class="button-icon-complete"
+                  src="https://api.arasaac.org/api/pictograms/5584"
+                  alt="Pictograma: hecho">
+                </ion-img>
+
+              </ion-button>
+            </div>
+
+          </ion-card-content>
+        </ion-card>
+
       </div>
+
       <div class="boton-completar-container">
         <ion-button 
           class="boton-completar" 
-          (click)="completarTarea()">
+          (click)="completarTarea()"
+          [disabled] = "this.currentStepi !== this.descripcion.steps.length-1">
           He completado la tarea
         </ion-button>
       </div>
