@@ -144,61 +144,6 @@
               </ion-col>
             </ng-container>
           </ion-row>
-
-          <!-- Fechas con diseño tipo grid -->
-          <!--ESTO IRÁ EN LO DE ASSIGNED, AUNQUE UN POCO MÁS CAMBIADO-->
-          <!--
-          <ion-item>
-            <ion-grid class="fechas-grid">
-              <ion-row>
-                Fecha de inicio
-                <ion-col size="auto" class="fecha-item">
-                  <ion-label class="titulo-fecha">Fecha de inicio:</ion-label>
-                  <ion-datetime
-                    [(ngModel)]="tempFechaInicio"
-                    displayFormat="YYYY-MM-DD HH:mm"
-                    doneText="Aceptar"
-                    cancelText="Cancelar"
-                    [min]="minFechaInicio"
-                    (ionChange)="onFechaInicioChange($event)">
-                  </ion-datetime>
-                  <p *ngIf="tempFechaInicio; else noFechaInicio" class="seleccionada">
-                    {{ tempFechaInicio | date: 'fullDate' }} {{ tempFechaInicio | date: 'HH:mm' }}
-                  </p>
-                  <ng-template #noFechaInicio>
-                    <p>No hay fecha de inicio seleccionada</p>
-                  </ng-template>
-                  Botón para resetear fecha de inicio 
-                  <ion-button color="danger" size="small" (click)="resetFechaInicio()" class="reset-fecha-btn">
-                    Resetear fecha
-                  </ion-button>
-                </ion-col>
-          
-                Fecha de cumplimiento 
-                <ion-col size="auto" class="fecha-item">
-                  <ion-label class="titulo-fecha">Fecha de cumplimiento:</ion-label>
-                  <ion-datetime
-                    [(ngModel)]="tempFechaCumplimiento"
-                    displayFormat="YYYY-MM-DD HH:mm"
-                    doneText="Aceptar"
-                    cancelText="Cancelar"
-                    [min]="minFechaCumplimiento"
-                    (ionChange)="onFechaCumplimientoChange($event)">
-                  </ion-datetime>
-                  <p *ngIf="tempFechaCumplimiento; else noFechaCumplimiento" class="seleccionada">
-                    {{ tempFechaCumplimiento | date: 'fullDate' }} {{ tempFechaCumplimiento | date: 'HH:mm' }}
-                  </p>
-                  <ng-template #noFechaCumplimiento>
-                    <p>No hay fecha seleccionada</p>
-                  </ng-template>
-                  <ion-button color="danger" size="small" (click)="resetFechaCumplimiento()" class="reset-fecha-btn">
-                    Resetear fecha
-                  </ion-button>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-item>
-          -->
           </ion-list>
         </ion-card>
 
@@ -258,8 +203,17 @@
                 <ion-col size="4">
                   <!-- Selección de alumnos para la tarea seleccionada -->
                   <ion-item *ngIf="selectedTask">
-                    <ion-label>Selecciona alumnos:</ion-label>
-                    <ion-select multiple="true" [(ngModel)]="selectedTask.assigned">
+                    <ion-label class="seleccionAlumnos">
+                      {{ selectedTask?.type === 'RequestTask' ? 'Selecciona un solo alumno:' : 'Selecciona alumnos:' }}
+                    </ion-label>
+                    <ion-select 
+                      [multiple]="selectedTask?.type !== 'RequestTask'" 
+                      [(ngModel)]="selectedTask.assigned"
+                      (ionChange)="onTaskAssignmentChange($event)">
+                      <!-- Opción para "No seleccionar alumnos" -->
+                      <ion-select-option *ngIf="selectedTask?.type === 'RequestTask'" [value]="null">
+                        No seleccionar alumnos
+                      </ion-select-option>
                       <ion-select-option 
                         *ngFor="let student of students" 
                         [value]="getAssignedObject(student)">
@@ -267,7 +221,7 @@
                       </ion-select-option>
                     </ion-select>
                   </ion-item>
-                </ion-col>
+                </ion-col>                
               </ion-row>
             </ion-grid>
           </ion-list>
@@ -304,21 +258,32 @@
                       <h3>{{ assignedStudent.assignedName }}</h3>
                     </ion-label>
 
+                    <ion-toast
+                      [isOpen]="toastConfig.isOpen"
+                      [message]="toastConfig.message"
+                      [color]="toastConfig.color"
+                      [duration]="toastConfig.duration"
+                      position="middle"
+                      (didDismiss)="closeToast()">
+                    </ion-toast>
+
+
                     <!-- Campos de fechas -->
-                     <!--Fecha de inicio-->
-                     <ion-item>
+                    <!--Fecha de inicio-->
+                    <ion-item>
                       <ion-grid class="fechas-grid">
                         <ion-row>
                           <!-- Columna de Fecha de Inicio -->
                           <ion-col class="fecha-item">
                             <ion-label class="titulo-fecha">Fecha de inicio:</ion-label>
+                            <!-- Fecha de inicio -->
                             <ion-datetime
-                              [(ngModel)]="assignedStudent.startTime"
-                              displayFormat="YYYY-MM-DD HH:mm"
-                              doneText="Aceptar"
-                              cancelText="Cancelar"
-                              [min]="minFecha"
-                              (ionChange)="actualizarMinEndFecha(assignedStudent.startTime)">
+                            [(ngModel)]="assignedStudent.startTime"
+                            displayFormat="YYYY-MM-DD HH:mm"
+                            doneText="Aceptar"
+                            cancelText="Cancelar"
+                            [min]="minFecha"
+                            (ionChange)="validateDatesForMenuTask(assignedStudent)">
                             </ion-datetime>
                             <p *ngIf="assignedStudent.startTime; else noFechaInicio" class="seleccionada">
                               {{ convertTimestampToDate(assignedStudent.startTime) | date: 'fullDate' }} 
@@ -338,12 +303,14 @@
                           <!-- Columna de Fecha de Cumplimiento -->
                           <ion-col class="fecha-item">
                             <ion-label class="titulo-fecha">Fecha de cumplimiento:</ion-label>
+                            <!-- Fecha de cumplimiento -->
                             <ion-datetime
-                              [(ngModel)]="assignedStudent.endTime"
-                              displayFormat="YYYY-MM-DD HH:mm"
-                              doneText="Aceptar"
-                              cancelText="Cancelar"
-                              [min]="assignedStudent.startTime ? assignedStudent.startTime : minFecha">
+                            [(ngModel)]="assignedStudent.endTime"
+                            displayFormat="YYYY-MM-DD HH:mm"
+                            doneText="Aceptar"
+                            cancelText="Cancelar"
+                            [min]="assignedStudent.startTime ? assignedStudent.startTime : minFecha"
+                            (ionChange)="validateDatesForMenuTask(assignedStudent)">
                             </ion-datetime>
                             <p *ngIf="assignedStudent.endTime; else noFechaInicio" class="seleccionada">
                               {{ convertTimestampToDate(assignedStudent.endTime) | date: 'fullDate' }} 
@@ -359,7 +326,7 @@
                         </ion-row>
                       </ion-grid>
                     </ion-item>
-                                       
+
                     <!-- Contenedor para los botones -->
                     <div class="button-container">
                       <!-- Botón para pasar al siguiente alumno -->
