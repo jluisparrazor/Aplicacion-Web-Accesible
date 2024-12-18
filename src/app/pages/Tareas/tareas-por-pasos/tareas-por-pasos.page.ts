@@ -11,6 +11,8 @@ import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI, StepI } from 'src/app/common/models/task.models';
 import { Timestamp } from '@angular/fire/firestore';
 import { CelebracionComponent } from "../../../shared/celebracion/celebracion.component";
+import { doc, setDoc } from 'firebase/firestore';
+import { max } from 'rxjs';
 
 @Component({
   selector: 'app-tareas-por-pasos',
@@ -122,8 +124,14 @@ export class TareasPorPasosPage implements OnInit {
   initStep() {
     // Paso actual a mostrar
     this.currentStep = null
-    if (this.descripcion.steps !== undefined && this.descripcion.steps !== null && this.descripcion.steps && this.descripcion.steps.length > 0)
-      this.currentStep = this.descripcion.steps[this.currentStepi]
+    if (this.descripcion.steps !== undefined && this.descripcion.steps !== null && this.descripcion.steps && this.descripcion.steps.length > 0) {
+      // Calculamos currentStepi
+      // (Primer paso incompleto)
+      while (this.currentStepi < this.descripcion.steps.length && this.descripcion.steps[this.currentStepi].done !== undefined && this.descripcion.steps[this.currentStepi].done)
+        this.currentStepi++
+    }
+    
+    this.currentStep = this.descripcion.steps[ this.currentStepi < this.descripcion.steps.length? this.currentStepi : this.descripcion.steps.length-1 ]
   }
   
   // Función para volver al listado de tareas
@@ -163,11 +171,37 @@ export class TareasPorPasosPage implements OnInit {
   }
 
   completeStep() {
-    // TODO: si es el último paso
-    setTimeout(() => {
-      this.currentStepi++
-      this.currentStep = this.descripcion.steps[this.currentStepi]
-    }, 3000)
+    // Marcar paso como completado
+    this.descripcion.steps[this.currentStepi].done = true
+
+    // Escribir en la base de datos
+    try {
+      let newDescription = {
+        descriptionId: this.descripcion.descriptionId,
+        imagesId: this.descripcion.imagesId,
+        text: this.descripcion.text,
+        pictogramId: this.descripcion.pictogramId,
+        link: this.descripcion.link,
+        steps: this.descripcion.steps
+      };
+
+      if (this.descripcion.steps == undefined) {
+        newDescription.steps = null
+      }
+
+      const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.descripcion.descriptionId);
+      setDoc(descriptionRef, newDescription);
+    } catch (error) {
+      console.error('Error al actualizar la tarea:', error);
+    }
+
+    this.currentStepi++
+
+    if (this.currentStepi !== this.descripcion.steps.length) {
+      setTimeout(() => {
+        this.currentStep = this.descripcion.steps[this.currentStepi]
+      }, 3000)
+    }
   }
   
   marcarEnlaceVisitado(){

@@ -55,7 +55,8 @@ export class TasksService{
       text: null,
       pictogramId: null,
       imageUrl: null,
-      videoUrl: null
+      videoUrl: null,
+      done: false
     }
     return newStep;
   }

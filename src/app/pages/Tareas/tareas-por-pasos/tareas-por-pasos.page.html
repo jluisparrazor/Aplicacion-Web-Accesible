@@ -59,7 +59,7 @@
                 class = "boton-completar"
                 fill = "outline"
                 (click) = "completeStep()"
-                [disabled] = "this.currentStepi === this.descripcion.steps.length-1">
+                [disabled] = "this.currentStepi === this.descripcion.steps.length">
                 He completado el paso
 
                 <ion-img class="button-icon-complete"
@@ -79,7 +79,7 @@
         <ion-button 
           class="boton-completar" 
           (click)="completarTarea()"
-          [disabled] = "this.currentStepi !== this.descripcion.steps.length-1">
+          [disabled] = "this.currentStepi !== this.descripcion.steps.length">
           He completado la tarea
         </ion-button>
       </div>

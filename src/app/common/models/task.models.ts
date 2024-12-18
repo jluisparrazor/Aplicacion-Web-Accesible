@@ -31,4 +31,5 @@ export interface StepI {
     pictogramId?: string;       // Pictograma asociado al paso
     imageUrl? : string;         // Imagen asociada al paso (url)
     videoUrl?: string;          // Vídeo asociado al paso (url)
+    done: boolean               // Si el paso está hecho
 }
