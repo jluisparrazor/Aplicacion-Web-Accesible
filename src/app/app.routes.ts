@@ -94,6 +94,10 @@ export const routes: Routes = [
   {
     path: 'mi-perfil',
     loadComponent: () => import('./pages/Homes/mi-perfil/mi-perfil.page').then( m => m.MiPerfilPage)
+  },
+  {
+    path: 'task-material-request',
+    loadComponent: () => import('./pages/Tareas/task-material-request/task-material-request.page').then( m => m.TaskMaterialRequestPage)
   }
 ];
 @NgModule({
