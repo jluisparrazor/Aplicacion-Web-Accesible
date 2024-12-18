@@ -59,9 +59,8 @@
                 <div class="tarea-columna tarea-contenido">
                   <h3 class="tarea-nombre">{{ tarea.title || 'Sin título disponible' }}</h3>
                   <p class="tarea-fecha" *ngIf="!userActual?.loginType">
-                    Fecha límite: 
-                    {{ tarea.endTime ? (tarea.endTime.toDate() | date: 'dd/MM/yyyy') : 'Sin fecha límite' }}
-                  </p>
+                    Fecha límite: {{ tarea.endTime ? (tarea.endTime | date: 'dd/MM/yyyy HH:mm:ss') : 'Sin fecha límite' }}
+                  </p>                              
                 </div>
           
                 <!-- Imagen del estado a la derecha -->
@@ -131,7 +130,7 @@
                     Finalizado: {{ doneTime }}
                   </p>
                 </div>
-              </div>          
+              </div>
               <!-- Imagen del estado a la derecha -->
               <div class="tarea-columna tarea-pictograma-der">
                 <ion-avatar>
