@@ -85,6 +85,15 @@ export class AdminTareasPage{
   showTeacherForm: boolean = false; 
   assignationStep: number = 1;   //Comprueba si estoy en el paso 1, de añadir tarea, siendo el paso 2 asignar tarea
 
+  //Pop up de las fechas de MenuTask
+  // Configuración del toast
+  toastConfig = {
+    isOpen: false,
+    message: '',
+    color: 'danger', // Rojo para errores
+    duration: 3000, // Duración en milisegundos
+  };
+
   //Subject
   private unsubscribe$ = new Subject<void>();
 
@@ -287,7 +296,71 @@ export class AdminTareasPage{
       console.log('Tarea seleccionada:', this.selectedTask);
     }
   }
+
+  onTaskAssignmentChange(event: any): void {
+    if (this.selectedTask?.type === 'RequestTask') {
+      const selectedStudent = event?.detail?.value;
+  
+      // Si no se ha seleccionado nada, desmarcar cualquier selección
+      if (!selectedStudent || selectedStudent === null) {
+        this.selectedTask.assigned = []; // Desmarcar
+      } else if (this.selectedTask.assigned && this.selectedTask.assigned[0]?.assignedId === selectedStudent?.assignedId) {
+        // Si el alumno ya está asignado, desmarcarlo
+        this.selectedTask.assigned = []; // Desmarcar
+      } else {
+        // Si el alumno no estaba asignado, asignarlo
+        this.selectedTask.assigned = [selectedStudent]; // Asignar el alumno seleccionado
+      }
+      console.log('ALUMNO: ', this.selectedTask.assigned);
+    }
+  }
     
+  validateDatesForMenuTask(assignedStudent: any): void {
+    if (this.selectedTask?.type === 'MenuTask' || this.selectedTask?.type === 'RequestTask') {
+      // Verificar que startTime y endTime sean del mismo día
+      if (assignedStudent.startTime && assignedStudent.endTime) {
+        const startDate = new Date(assignedStudent.startTime);
+        const endDate = new Date(assignedStudent.endTime);
+  
+        if (startDate.toDateString() !== endDate.toDateString()) {
+          // Resetear endTime si no es del mismo día
+          assignedStudent.endTime = null;
+          this.showToast('La fecha de cumplimiento debe ser el mismo día que la de inicio.');
+          return;
+        }
+      }
+  
+      // Verificar que no se repita el día entre alumnos
+      const selectedDate = new Date(assignedStudent.startTime).toDateString();
+      const isDateRepeated = this.selectedTask.assigned.some(
+        (student: any) =>
+          student !== assignedStudent &&
+          new Date(student.startTime).toDateString() === selectedDate
+      );
+  
+      if (isDateRepeated) {
+        assignedStudent.startTime = null;
+        assignedStudent.endTime = null;
+        this.showToast('Este día ya está asignado a otro alumno. Por favor, selecciona otro.');
+      }
+    }
+  }    
+
+  // Mostrar el toast con un mensaje
+  showToast(message: string, color: string = 'danger'): void {
+    this.toastConfig = {
+      isOpen: true,
+      message,
+      color,
+      duration: 3000,
+    };
+  }
+
+  // Cerrar el toast manualmente si es necesario
+  closeToast(): void {
+    this.toastConfig.isOpen = false;
+  }
+
   // Función para pasar al siguiente alumno
   nextStudent() {
     if (this.currentStudentIndex < this.selectedTask.assigned.length - 1) {
@@ -308,16 +381,18 @@ export class AdminTareasPage{
     this.resetFechaCumplimiento();
   }
 
-  // La función para obtener el objeto de asignación del alumno
   getAssignedObject(student: any): TaskI["assigned"][0] {
+    // Asegurarse de que assigned sea un array
+    const assigned = Array.isArray(this.selectedTask?.assigned) ? this.selectedTask.assigned : [];
+  
     // Verificamos si el alumno ya está asignado
-    const existingAssignment = this.selectedTask?.assigned.find(a => a.assignedId === student.id);
+    const existingAssignment = assigned.find(a => a.assignedId === student.id);
     
     // Si ya está asignado, lo devolvemos
     if (existingAssignment) {
       return existingAssignment;
     }
-
+  
     // Si no está asignado, devolvemos un objeto con los valores por defecto
     return {
       assignedId: student.id,
@@ -327,7 +402,7 @@ export class AdminTareasPage{
       startTime: null, // Tipo Timestamp | null
       endTime: null,   // Tipo Timestamp | null
     };
-  }
+  }  
 
   async updateTaskInDatabase() {
     try {
