@@ -41,6 +41,9 @@ export class TareasPorPasosPage implements OnInit {
   currentStep: StepI
   currentStepi: number
 
+  //Visualización
+  visualization: string;
+
   constructor(
     private router: Router,
     private sessionService: SessionService,
@@ -78,6 +81,10 @@ export class TareasPorPasosPage implements OnInit {
     if (user && 'correctPassword' in user) {
       this.userActual = user as unknown as StudentI;
       console.log('Usuario loggeado:', this.userActual.name);
+      
+      if (this.userActual.stepVisualization !== undefined && this.userActual.stepVisualization !== null)
+        this.visualization = this.userActual.stepVisualization
+
     } else {
       console.error('El usuario actual no es válido o no es un StudentI.');
       this.router.navigate(['/loginalumno']);

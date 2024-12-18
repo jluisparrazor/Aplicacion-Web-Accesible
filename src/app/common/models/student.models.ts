@@ -9,4 +9,5 @@ export interface StudentI{
     birthDate?: Date
     loginType: boolean,
     correctPassword?: Array<number>,
+    stepVisualization: string
 }

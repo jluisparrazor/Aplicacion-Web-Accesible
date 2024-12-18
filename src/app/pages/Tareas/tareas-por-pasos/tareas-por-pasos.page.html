@@ -52,7 +52,7 @@
           </ion-img>
 
           <ion-card-content>
-            <h1 class="descripcion-tarea"> {{ this.currentStep.text }} </h1>
+            <h1 *ngIf="this.visualization !== 'Imagen'" class="descripcion-tarea"> {{ this.currentStep.text }} </h1>
 
             <div class="boton-completar-container">
               <ion-button 
