@@ -77,7 +77,7 @@
                 Pictograma Seleccionado
               </ion-label>
               <ion-thumbnail slot="start">
-                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newTeacher.pictogramId" alt="Pictogram image"></ion-img>
+                <ion-img [src]="arasaacService.getPictogramImageUrl(newTeacher.pictogramId)" alt="Pictogram image"></ion-img>
               </ion-thumbnail>
             </ion-item>
         
@@ -139,7 +139,7 @@
                 <!-- Imagen del pictograma -->
                 <ion-avatar slot="start">
                   <ion-img 
-                    [src]="'https://api.arasaac.org/api/pictograms/' + teacher.pictogramId" 
+                    [src]="arasaacService.getPictogramImageUrl(teacher.pictogramId)" 
                     alt="Pictogram image" 
                     class="pictogram-img">
                   </ion-img>

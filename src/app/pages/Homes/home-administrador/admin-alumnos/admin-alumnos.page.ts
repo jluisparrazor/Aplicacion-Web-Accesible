@@ -18,6 +18,8 @@ import { takeUntil } from 'rxjs';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { LOCALE_ID } from '@angular/core';
+import { ArasaacService } from 'src/app/common/services/arasaac.service';
+
 
 registerLocaleData(localeEs);
 
@@ -39,6 +41,8 @@ export class AdminAlumnosPage{
   students: StudentI[] = [];
   newStud: StudentI;
   stud: StudentI;
+  arasaacService: any;
+
 
   selectedStudent: StudentI; // Estudiante al que se asignará la tarea
   
@@ -55,9 +59,10 @@ export class AdminAlumnosPage{
     private readonly teacherService: TeacherService,
     private readonly studentService: StudentService,
     private readonly taskService: TasksService,
-    private alertController: AlertController
-  ) {
-    
+    private alertController: AlertController,
+    private arasaacServie: ArasaacService) {
+      this.arasaacService = arasaacServie;
+      
     this.load();
     this.init();
 

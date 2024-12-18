@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI } from 'src/app/common/models/task.models';
 import { Timestamp } from '@angular/fire/firestore';
 import { CelebracionComponent } from "../../../shared/celebracion/celebracion.component";
+import { AnimationService } from 'src/app/common/services/animation.service';
 
 @Component({
   selector: 'app-tareas-aplicacion-juego',
@@ -20,6 +21,8 @@ import { CelebracionComponent } from "../../../shared/celebracion/celebracion.co
   imports: [IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
 })
 export class TareasAplicacionJuegoPage implements OnInit {
+  @ViewChild(CelebracionComponent) celebracionComponent!: CelebracionComponent;
+
   tareaCompletada: boolean = false;
   mostrarConfeti: boolean = false;
   userActual: StudentI;
@@ -39,7 +42,8 @@ export class TareasAplicacionJuegoPage implements OnInit {
     private router: Router,
     private sessionService: SessionService,
     private firestoreService: FirestoreService,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private animationService: AnimationService
   ) { }
 
   ngOnInit() {
@@ -128,10 +132,6 @@ export class TareasAplicacionJuegoPage implements OnInit {
       this.tarea.assigned[studentIndex].doneTime = Timestamp.now();  // Marca la fecha de finalización
       this.tareaCompletada = true;
   
-      // Mostrar confeti 1.7s después de que empiece la animación del texto
-      setTimeout(() => {
-        this.mostrarConfeti = true;
-      }, 1600);  // 1700 ms = 1.7 segundos
   
       // Actualiza la tarea en el servicio de Firestore pasando el ID del alumno
       this.tasksService.actualizarTarea(this.tarea, assignedId).then(() => {
@@ -139,11 +139,9 @@ export class TareasAplicacionJuegoPage implements OnInit {
       }).catch(error => {
         console.error('Error actualizando tarea:', error);
       });
-  
-      // Después de la animación, redirige al listado
-      setTimeout(() => {
-        this.volverListado(); // Redirige al listado de tareas
-      }, 6000); // Espera para volver al listado de tareas
+
+      this.animationService.activarAnimacion('/tareasdiarioalumno', true);
+
     } else {
       console.error('El estudiante no está asignado a esta tarea.');
     }

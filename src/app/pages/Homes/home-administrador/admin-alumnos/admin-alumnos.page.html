@@ -74,7 +74,7 @@
                 Pictograma Seleccionado
               </ion-label>
               <ion-thumbnail slot="start">
-                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newStud.pictogramId" alt="Pictogram image"></ion-img>
+                <ion-img [src]="arasaacService.getPictogramImageUrl(newStud.pictogramId)" alt="Pictogram image"></ion-img>
               </ion-thumbnail>
             </ion-item>
             <!-- Teléfono -->
@@ -121,7 +121,7 @@
                 <!-- Imagen del pictograma -->
                 <ion-avatar slot="start">
                   <ion-img 
-                    [src]="'https://api.arasaac.org/api/pictograms/' + stud.pictogramId" 
+                    [src]="arasaacService.getPictogramImageUrl(stud.pictogramId)" 
                     alt="Pictogram image" 
                     class="pictogram-img">
                   </ion-img>
