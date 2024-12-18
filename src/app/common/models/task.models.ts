@@ -1,18 +1,19 @@
 import { DocumentReference, Timestamp } from "firebase/firestore";
 
-//Modelo para las tareas
 export interface TaskI {
-    taskID: string;                 //ID único de la tarea
-    title: string;                  //Título de la tarea
-    startTime?: Timestamp;          //Tiempo de inicio de la tarea
-    endTime?: Timestamp;            //Tiempo de finalización planificado
-    type: string;                   //Tipo de tarea, por ejemplo, "AppTask", "ManualTask", etc.
-    associatedDescriptionId: string;//Id de la descripción asociada
-    descriptionData: DescriptionI | null;  //Referencia a la descripción de la tarea
-    // Nuevas propiedades para gestionar asignaciones
-    assigned: string[];  // Nombres o IDs de los alumnos asignados
-    completed: boolean[];           // Estado de finalización por alumno
-    doneTime?: Timestamp[];         // Tiempos de finalización por alumno
+    taskID: string;                 // ID único de la tarea
+    title: string;                  // Título de la tarea
+    type: string;                   // Tipo de tarea
+    associatedDescriptionId: string;// Id de la descripción asociada
+    descriptionData: DescriptionI | null; // Referencia a la descripción de la tarea
+    assigned: {                     // Lista de asignaciones a alumnos
+        assignedName: string | null;       // Nombre del alumno
+        assignedId: string | null;         // ID del alumno
+        completed: boolean;         // Estado de completado
+        doneTime?: Timestamp | null;  // Fecha específica de finalización        
+        startTime?: Timestamp | null; // Fecha específica de inicio para este alumno
+        endTime?: Timestamp | null;   // Fecha específica de fin para este alumno       
+    }[];                            
 }
 
 //Modelo para la descripción de las tareas

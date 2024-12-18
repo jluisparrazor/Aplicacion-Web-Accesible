@@ -127,19 +127,34 @@ export class FirestoreService {
     const usuarioNombre = usuarioDoc.data()?.['name'];
     console.log('Nombre del usuario:', usuarioNombre);
   
-    // Consultar tareas donde el campo assigned contiene el nombre del usuario
-    const q = query(tareasRef, where('assigned', 'array-contains', usuarioNombre));
+    // Consultar tareas donde el campo 'assigned' contiene un objeto con 'assignedName' igual al nombre del usuario
+    const q = query(tareasRef);
     const snapshot = await getDocs(q);
+
+    const tareasUsuario = snapshot.docs
+      .map((doc) => {
+        const tareaData = doc.data();
+        return {
+          taskID: doc.id,
+          ...tareaData,
+          assigned: (tareaData['assigned'] || []).map((assigned: any) => ({
+            assignedName: assigned.assignedName || null,
+            assignedId: assigned.assignedId || null,
+            completed: assigned.completed || false,
+            doneTime: assigned.doneTime || null,
+            startTime: assigned.startTime || null,
+            endTime: assigned.endTime || null,
+          })),
+        } as TaskI;
+      })
+      .filter((tarea) =>
+        tarea.assigned.some((assigned) => assigned.assignedId === usuarioId)
+      );
   
-    if (snapshot.empty) {
-      console.log('No se encontraron tareas asignadas al usuario:', usuarioNombre);
-    }
-  
-    // Mapear resultados
-    return snapshot.docs.map((doc) => ({
-      taskID: doc.id,
-      ...doc.data(),
-    })) as TaskI[];
+      if (tareasUsuario.length === 0) {
+        console.log('No se encontraron tareas asignadas al usuario:', usuarioNombre);
+      } 
+      return tareasUsuario;
   }
 }
 

@@ -3,7 +3,6 @@ import { TaskI } from '../models/task.models';
 import { DescriptionI } from '../models/task.models';
 import { collectionData, docData, Firestore} from '@angular/fire/firestore';
 import { collection, deleteDoc, doc, DocumentReference, getDoc, setDoc, query, Query, where, getDocs, DocumentData, updateDoc } from 'firebase/firestore';import { Observable } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import { BehaviorSubject } from 'rxjs';
 import { FirestoreService } from './firestore.service';
 import { Timestamp } from 'firebase/firestore';
@@ -18,23 +17,19 @@ export class TasksService{
   constructor(private firestoreService: FirestoreService){}
 
     // Creamos un BehaviorSubject para las tareas actualizadas
-    private updatedTaskSubject = new BehaviorSubject<any>(null);
+  private updatedTaskSubject = new BehaviorSubject<any>(null);
   updatedTask$ = this.updatedTaskSubject.asObservable();
-
+  
   // Inicializa un profesor con los campos a null menos el id
-  initTask(): TaskI{
+  initTask(): TaskI {
     const newTask: TaskI = {
-      taskID: this.firestoreService.createIDDoc(),
-      title: null,
-      startTime: null,
-      endTime: null,
-      doneTime: null,
-      type: null,
-      completed: null,
-      assigned: null,
-      associatedDescriptionId: null,
-      descriptionData: null
-      };
+        taskID: this.firestoreService.createIDDoc(),
+        title: null,
+        type: null,
+        associatedDescriptionId: null,
+        descriptionData: null,
+        assigned: [] // Inicializamos como un array vacío
+    };
     return newTask;
   }
 
@@ -57,39 +52,42 @@ export class TasksService{
     return results.length > 0 ? results[0] : null; // Devuelve el primer resultado o null si no hay coincidencias
   }
 
-  async actualizarTarea(tarea: TaskI, studentIndex: number) {
+  async actualizarTarea(tarea: TaskI, assignedId: string) {
     try {
       const tareaRef = doc(this.firestore, 'Tasks', tarea.taskID); // Referencia al documento
   
-      // Crear copias de los arrays para evitar mutación directa
-      const updatedCompleted = [...tarea.completed];
-      const updatedDoneTime = [...(tarea.doneTime || [])]; // Asegurarnos de que doneTime no sea undefined
-    
-      // Actualizamos el estado de la tarea completada y el timestamp para el estudiante
-      updatedCompleted[studentIndex] = true;
-      updatedDoneTime[studentIndex] = Timestamp.now(); // Marca de tiempo actual (o usar Timestamp.now() si prefieres Firestore)
+      // Crear una copia del array 'assigned' para evitar mutación directa
+      const updatedAssigned = tarea.assigned.map(assignment => ({
+        ...assignment
+      }));
   
-      console.log('Updated Completed:', updatedCompleted);
-      console.log('Updated DoneTime:', updatedDoneTime);
+      // Buscar el índice del estudiante logueado en el array 'assigned' utilizando 'assignedId'
+      const studentIndex = updatedAssigned.findIndex(assignment => assignment.assignedId === assignedId);
   
-      // Actualizamos el documento en Firestore con ambos campos
-      await updateDoc(tareaRef, {
-        completed: updatedCompleted,
-        doneTime: updatedDoneTime
-      });
+      if (studentIndex !== -1) {
+        // Actualizamos el estado de 'completed' y 'doneTime' para el estudiante correspondiente
+        updatedAssigned[studentIndex].completed = true;
+        updatedAssigned[studentIndex].doneTime = Timestamp.now(); // Marca de tiempo actual
   
-      console.log('Tarea actualizada exitosamente en Firestore');
+        console.log('Updated Assigned:', updatedAssigned);
   
-      // Emitir la tarea actualizada a los suscriptores
-      this.updatedTaskSubject.next({
-        ...tarea,
-        completed: updatedCompleted,
-        doneTime: updatedDoneTime
-      });
+        // Actualizamos el documento en Firestore con el nuevo array 'assigned'
+        await updateDoc(tareaRef, {
+          assigned: updatedAssigned
+        });
+  
+        console.log('Tarea actualizada exitosamente en Firestore');
+  
+        // Emitir la tarea actualizada a los suscriptores
+        this.updatedTaskSubject.next({
+          ...tarea,
+          assigned: updatedAssigned
+        });
+      } else {
+        console.error('El estudiante no está asignado a esta tarea.');
+      }
     } catch (error) {
       console.error('Error actualizando tarea:', error);
     }
-  }
-  
-  
+  }    
 }

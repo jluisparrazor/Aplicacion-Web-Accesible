@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class LoginPage{
-  name: string = '';
+  name: string = '';    //email: string = '';
   password: string = '';
   errorMessage: string = ''; // Variable para almacenar el mensaje de error
 
@@ -47,7 +47,7 @@ export class LoginPage{
     // Verificamos si el profesor existe en la base de datos
       const profId = await this.firestoreService.getDocumentIDByField('Teachers', 'name', this.name);
     
-    //Si existe el profesor, obtenemos sus datos
+    // Si existe el profesor, obtenemos sus datos
       if (profId) {
         const profDoc = await this.firestoreService.getDocument<TeacherI>(`Teachers/${profId}`);
         console.log('Profesor admin:', profDoc);
