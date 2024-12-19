@@ -127,8 +127,6 @@ export class TaskMenusPage implements OnInit {
     this.menuTypesPerPage = Math.floor(contentHeight / this.cardsHeight);
   }
 
-
-
   selectClass(cls: Class) {
     this.selectedClass = cls;
   }
@@ -243,7 +241,6 @@ export class TaskMenusPage implements OnInit {
   }
 
   completeTask() {
-
     if (this.allClassesCompleted()) {
       this.menuService.createMenu(this.menu).then(() => {
         this.taskService.completeTaskById(this.taskId, this.userActual.id).then(() => {
