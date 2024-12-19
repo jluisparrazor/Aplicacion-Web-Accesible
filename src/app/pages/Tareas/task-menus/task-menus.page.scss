@@ -1,4 +1,9 @@
-
+.title-toolbar {
+  vertical-align: middle;
+  font-size: 1.8rem; 
+  text-align: center;
+  font-weight: bold;
+}
 
 .button-increm-decrem {
   font-size: 75px;
@@ -8,19 +13,19 @@
 
 .pictogram-center {
   width: 100px;
-  height: 100px;  
+  height: 100px;
   display: flex;
   margin: 0 auto;
 }
 
 .pictogram-center-modal {
   width: 180px;
-  height: 180px;  
+  height: 180px;
   display: flex;
   margin: 0 auto;
 }
 
-  
+
 .center-content {
   display: flex;
   justify-content: center;
@@ -30,8 +35,8 @@
 .small-card-title {
   text-align: center;
   text-justify: auto;
-  font-size: 24px; 
-  font-weight: normal; 
+  font-size: 24px;
+  font-weight: normal;
 }
 
 .fullscreen-modal {
@@ -49,5 +54,3 @@
   text-align: center;
   margin-bottom: 10px;
 }
-
-

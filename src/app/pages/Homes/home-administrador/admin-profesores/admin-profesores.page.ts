@@ -18,6 +18,7 @@ import { takeUntil } from 'rxjs';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { LOCALE_ID } from '@angular/core';
+import { ArasaacService } from 'src/app/common/services/arasaac.service';
 
 registerLocaleData(localeEs);
 
@@ -31,7 +32,7 @@ registerLocaleData(localeEs);
 })
 
 
-export class AdminProfesoresPage{
+export class AdminProfesoresPage {
   //Esto lo uso para cuando edito tarea, que scrollee hasta arriba del todo
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
@@ -47,6 +48,8 @@ export class AdminProfesoresPage{
   //Subject
   private unsubscribe$ = new Subject<void>();
 
+  arasaacService: any;
+
   constructor(
     private readonly firestoreService: FirestoreService,
     private readonly sessionService: SessionService,
@@ -54,12 +57,13 @@ export class AdminProfesoresPage{
     private readonly teacherService: TeacherService,
     private readonly studentService: StudentService,
     private readonly taskService: TasksService,
-    private alertController: AlertController
-  ) {
-    
+    private alertController: AlertController,
+    private arasaac: ArasaacService) {
+    this.arasaacService = arasaac;
+
     this.load();
     this.init();
-   
+
     //Profs
     this.getTeacher();
   }
@@ -68,8 +72,8 @@ export class AdminProfesoresPage{
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
- 
-  init(){
+
+  init() {
 
     //Miro que admin ha iniciado sesion
     const user = this.sessionService.getCurrentUser();
@@ -80,7 +84,7 @@ export class AdminProfesoresPage{
   }
 
   // Método para cargar los datos de la base de datos
-  load(){
+  load() {
     // Profesores
     this.firestoreService.getCollectionChanges<TeacherI>('Teachers')
       .pipe(takeUntil(this.unsubscribe$))
@@ -94,7 +98,7 @@ export class AdminProfesoresPage{
 
   // GETTERS
   // Método para obtener un profesor de la base de datos
-  getTeacher(){
+  getTeacher() {
     // const res = await this.firestoreService.getDocument<TeacherI>('Teachers/'+ this.newTeacher.id);
     // this.teacher = res.data();
     this.teacherService.getTeacher(this.newTeacher.id).then((teacher) => {
@@ -111,25 +115,25 @@ export class AdminProfesoresPage{
 
     // await this.firestoreService.createDocumentID(this.newTeacher, 'Teachers', this.newTeacher.id);
     this.teacherService.addTeacher(this.newTeacher);
-    
+
     this.showTeacherForm = false;
     // Limpiar el formulario y ocultar
     this.teacherService.cleanTeacherInterface(this.newTeacher);
   }
-    
- // Método para editar un profesor
-   editTeacher(teacher: TeacherI){
+
+  // Método para editar un profesor
+  editTeacher(teacher: TeacherI) {
     // console.log('edit -> ', teacher);
     this.teacherService.editTeacher(teacher);
     this.newTeacher = teacher;
   }
 
   // Método para eliminar un profesor de la base de datos
-  deleteTeacher(teacher: TeacherI){
-  //   console.log('delete -> ',teacher.id);
-  //   await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
+  deleteTeacher(teacher: TeacherI) {
+    //   console.log('delete -> ',teacher.id);
+    //   await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
     this.teacherService.deleteTeacher(teacher.id);
-    console.log('delete teacher -> ',teacher.name, teacher.surname);
+    console.log('delete teacher -> ', teacher.name, teacher.surname);
 
   }
 
@@ -137,10 +141,9 @@ export class AdminProfesoresPage{
     this.showTeacherForm = !this.showTeacherForm;
   }
 
-  comeback(){
+  comeback() {
     this.router.navigate(['/homeadministrador']);
   }
 }
 
 
-  

@@ -16,6 +16,7 @@ import { StudentService } from 'src/app/common/services/student.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
 import { PictogramSearchComponent } from 'src/app/shared/pictogram-search/pictogram-search.component';
 import { AlertController } from '@ionic/angular';
+import { ChangeDetectorRef } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs';
@@ -51,7 +52,7 @@ export class AdminTareasPage{
   newStud: StudentI;
   stud: StudentI;
 
-  selectedStudent: StudentI; // Estudiante al que se asignará la tarea
+  selectedStudents: any[] = []; // Estudiante al que se asignará la tarea
 
   //Tareas
   tasks: TaskI[] = [];
@@ -59,15 +60,17 @@ export class AdminTareasPage{
   tareaVacia: TaskI;
   tarea: TaskI;
   selectedTask: TaskI | null = null; // Tarea seleccionada en el formulario
+  currentStudentIndex: number = 0;     // Índice del alumno actual en la lista
   editedTask: TaskI | null = null;   // Tarea seleccionada para editar
-  originalAssigned: string[] = [];
+  originalAssigned: { assignedId: string, assignedName: string }[] = [];
 
   tasksWithAssignment: any[] = [];
   tasksWithoutAssignment: any[] = [];
 
   tempFechaInicio: any = null;
   tempFechaCumplimiento: any = null;
-
+  minFecha: string;
+  minEndFecha: string;
   newImageLink: string = '';
 
   //Descripciones
@@ -80,6 +83,16 @@ export class AdminTareasPage{
   showAssignationsForm: boolean = false;
   showStudentForm: boolean = false;
   showTeacherForm: boolean = false; 
+  assignationStep: number = 1;   //Comprueba si estoy en el paso 1, de añadir tarea, siendo el paso 2 asignar tarea
+
+  //Pop up de las fechas de MenuTask
+  // Configuración del toast
+  toastConfig = {
+    isOpen: false,
+    message: '',
+    color: 'danger', // Rojo para errores
+    duration: 3000, // Duración en milisegundos
+  };
 
   //Subject
   private unsubscribe$ = new Subject<void>();
@@ -91,7 +104,8 @@ export class AdminTareasPage{
     private readonly teacherService: TeacherService,
     private readonly studentService: StudentService,
     private readonly taskService: TasksService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private cdr: ChangeDetectorRef
   ) {
     
     this.load();
@@ -125,6 +139,7 @@ export class AdminTareasPage{
     this.newTarea = this.taskService.initTask();  
 
     this.tareaVacia = this.taskService.initTask();
+
   }
 
   // Método para cargar los datos de la base de datos
@@ -220,8 +235,9 @@ export class AdminTareasPage{
     this.description = res.data();
   }
 
+  //EN PRINCIPIO ESTA FUNCION NO SE USA EN NINGUN LADO
   // Método para obtener un estudiante de una tarea
-  async getStudentsFromTarea(tarea: TaskI) {
+  /*async getStudentsFromTarea(tarea: TaskI) {
     if (tarea.assigned && tarea.assigned.length > 0) {
       for (const studentName of tarea.assigned) {
         // Aquí 'studentName' es el nombre completo (ej. "Laura Pérez")
@@ -239,25 +255,14 @@ export class AdminTareasPage{
     } else {
       console.log('No hay estudiantes asignados a esta tarea.');
     }
-  }
+  }*/
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~Tarea section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir una nueva tarea a la base de datos (tarea no existente en la BD)
   async addTarea(){
     this.newTarea.taskID = this.firestoreService.createIDDoc();
     this.newTarea.assigned = [];
-    this.newTarea.completed = [];
-    this.newTarea.doneTime = [];
     this.newTaskDescription.descriptionId = this.firestoreService.createIDDoc();
-
-    // Asignar las fechas seleccionadas antes de crear la tarea
-    if (this.tempFechaInicio) {
-      this.newTarea.startTime = Timestamp.fromDate(new Date(this.tempFechaInicio));  // Asigna la fecha de inicio
-    }
-
-    if (this.tempFechaCumplimiento) {
-      this.newTarea.endTime = Timestamp.fromDate(new Date(this.tempFechaCumplimiento));  // Asigna la fecha de cumplimiento
-    }
 
     //Creo la descripcion en la bd
     await this.firestoreService.createDocumentID(this.newTaskDescription, 'Description', this.newTaskDescription.descriptionId);
@@ -268,87 +273,212 @@ export class AdminTareasPage{
     //Creo la tarea en la bd
     await this.firestoreService.createDocumentID(this.newTarea, 'Tasks', this.newTarea.taskID);
 
-    // Reseteo las variables temporales para las siguientes tareas
-    this.tempFechaInicio = null;
-    this.tempFechaCumplimiento = null;
-
     this.showTaskForm = false;
     this.cleanInterfaceTarea();
   }
 
   // Función que se llama cuando se selecciona una tarea
-  onTaskSelect(task: any) {
+  onTaskSelect(task: TaskI) {
     if (task) {
-      // Guardar la tarea seleccionada
-      this.selectedTask = task; // Asignar la tarea seleccionada a selectedTask
-      console.log('Tarea seleccionada', this.selectedTask);
+      this.selectedTask = task;
+      this.currentStudentIndex = 0; // Volver al primer alumno cada vez que se selecciona una tarea
   
-      // Guardar la lista de alumnos asignados inicialmente para comparaciones futuras
-      this.originalAssigned = [...task.assigned]; // Copia profunda de la lista de asignados
-      console.log('Alumnos asignados inicialmente:', this.originalAssigned);
+      // Asegurar que todos los objetos en `assigned` tienen la estructura correcta
+      this.selectedTask.assigned = this.selectedTask.assigned.map(a => ({
+        assignedId: a.assignedId,
+        assignedName: a.assignedName,
+        completed: a.completed || false,
+        doneTime: a.doneTime || null,
+        startTime: a.startTime || null,
+        endTime: a.endTime || null,
+      }));
+  
+      console.log('Tarea seleccionada:', this.selectedTask);
     }
   }
 
-  async assignTarea() {
-    if (this.selectedTask) {
-      // 1. Primero determinamos los cambios (antes de modificar los arrays)
-    const removedStudents = this.originalAssigned.filter(student => !this.selectedTask.assigned.includes(student));
-    const addedStudents = this.selectedTask.assigned.filter(student => !this.originalAssigned.includes(student));
-
-    console.log('Estudiantes desasignados:', removedStudents);
-    console.log('Estudiantes nuevos asignados:', addedStudents);
-
-     // 2. Obtener los índices de los estudiantes desasignados en el array original
-     const removedStudentsIndices = removedStudents.map(student => {
-      return this.originalAssigned.indexOf(student);
-    });
-
-    console.log('Índices de los estudiantes desasignados:', removedStudentsIndices);
-
-    // 3. Actualizar `completed` y `doneTime` usando los índices
-    for (let i = this.originalAssigned.length - 1; i >= 0; i--) {
-      if (removedStudentsIndices.includes(i)) {
-        console.log(`Eliminando datos en la posición ${i} de completed y doneTime`);
-        this.selectedTask.completed.splice(i, 1); // Eliminar estado de completado
-        this.selectedTask.doneTime.splice(i, 1);  // Eliminar tiempo de finalización
+  onTaskAssignmentChange(event: any): void {
+    if (this.selectedTask?.type === 'RequestTask') {
+      const selectedStudent = event?.detail?.value;
+  
+      // Si no se ha seleccionado nada, desmarcar cualquier selección
+      if (!selectedStudent || selectedStudent === null) {
+        this.selectedTask.assigned = []; // Desmarcar
+      } else if (this.selectedTask.assigned && this.selectedTask.assigned[0]?.assignedId === selectedStudent?.assignedId) {
+        // Si el alumno ya está asignado, desmarcarlo
+        this.selectedTask.assigned = []; // Desmarcar
+      } else {
+        // Si el alumno no estaba asignado, asignarlo
+        this.selectedTask.assigned = [selectedStudent]; // Asignar el alumno seleccionado
+      }
+      console.log('ALUMNO: ', this.selectedTask.assigned);
+    }
+  }
+    
+  validateDatesForMenuTask(assignedStudent: any): void {
+    if (this.selectedTask?.type === 'MenuTask' || this.selectedTask?.type === 'RequestTask') {
+      // Verificar que startTime y endTime sean del mismo día
+      if (assignedStudent.startTime && assignedStudent.endTime) {
+        const startDate = new Date(assignedStudent.startTime);
+        const endDate = new Date(assignedStudent.endTime);
+  
+        if (startDate.toDateString() !== endDate.toDateString()) {
+          // Resetear endTime si no es del mismo día
+          assignedStudent.endTime = null;
+          this.showToast('La fecha de cumplimiento debe ser el mismo día que la de inicio.');
+          return;
+        }
+      }
+  
+      // Verificar que no se repita el día entre alumnos
+      const selectedDate = new Date(assignedStudent.startTime).toDateString();
+      const isDateRepeated = this.selectedTask.assigned.some(
+        (student: any) =>
+          student !== assignedStudent &&
+          new Date(student.startTime).toDateString() === selectedDate
+      );
+  
+      if (isDateRepeated) {
+        assignedStudent.startTime = null;
+        assignedStudent.endTime = null;
+        this.showToast('Este día ya está asignado a otro alumno. Por favor, selecciona otro.');
       }
     }
+  }    
+
+  // Mostrar el toast con un mensaje
+  showToast(message: string, color: string = 'danger'): void {
+    this.toastConfig = {
+      isOpen: true,
+      message,
+      color,
+      duration: 3000,
+    };
+  }
+
+  // Cerrar el toast manualmente si es necesario
+  closeToast(): void {
+    this.toastConfig.isOpen = false;
+  }
+
+  // Función para pasar al siguiente alumno
+  nextStudent() {
+    if (this.currentStudentIndex < this.selectedTask.assigned.length - 1) {
+      this.currentStudentIndex++;
+    }
+    // Reseteamos las fechas cuando avanzamos al siguiente alumno
+    this.resetFechaInicio();
+    this.resetFechaCumplimiento();
+  }  
+
+  // Función para volver al alumno anterior
+  previousStudent() {
+    if (this.currentStudentIndex > 0) {
+      this.currentStudentIndex--;
+    }
+    // Reseteamos las fechas cuando retrocedemos al alumno anterior
+    this.resetFechaInicio();
+    this.resetFechaCumplimiento();
+  }
+
+  getAssignedObject(student: any): TaskI["assigned"][0] {
+    // Asegurarse de que assigned sea un array
+    const assigned = Array.isArray(this.selectedTask?.assigned) ? this.selectedTask.assigned : [];
   
-    addedStudents.forEach(student => {
-      console.log('Procesando estudiante:', student); // Asegurarse de que se entra en el ciclo
+    // Verificamos si el alumno ya está asignado
+    const existingAssignment = assigned.find(a => a.assignedId === student.id);
     
-      if (!Array.isArray(this.selectedTask.completed)) {
-        this.selectedTask.completed = [];
-        console.log('Inicializando task.completed como array vacío');
-      }
-      if (!Array.isArray(this.selectedTask.doneTime)) {
-        this.selectedTask.doneTime = [];
-        console.log('Inicializando task.doneTime como array vacío');
-      }
-    
-      console.log(`Asignando estudiante: ${student}`);
-      this.selectedTask.completed.push(false);  // Añadimos estado de completado
-      this.selectedTask.doneTime.push(null);    // Añadimos tiempo de finalización
-    });
-    
+    // Si ya está asignado, lo devolvemos
+    if (existingAssignment) {
+      return existingAssignment;
+    }
+  
+    // Si no está asignado, devolvemos un objeto con los valores por defecto
+    return {
+      assignedId: student.id,
+      assignedName: `${student.name} ${student.surname}`,
+      completed: false,
+      doneTime: null, // Tipo Timestamp | null
+      startTime: null, // Tipo Timestamp | null
+      endTime: null,   // Tipo Timestamp | null
+    };
+  }  
+
+  async updateTaskInDatabase() {
     try {
-      // Guardar los cambios en la base de datos
       const taskRef = this.firestoreService.getDocumentReference('Tasks', this.selectedTask.taskID);
+      console.log('Actualizando tarea con asignados:', this.selectedTask.assigned);
       await this.firestoreService.updateDocument(taskRef, {
-        assigned: this.selectedTask.assigned,
-        completed: this.selectedTask.completed,
-        doneTime: this.selectedTask.doneTime,
+        assigned: this.selectedTask.assigned,  // Actualizamos la lista de alumnos asignados
       });
       console.log('Tarea actualizada exitosamente:', this.selectedTask);
     } catch (error) {
       console.error('Error al actualizar la tarea:', error);
     }
-  
-    // Limpieza del formulario
-    this.selectedTask = null;
-    this.toggleAssignationForm();
   }
-}
+
+  goToPreviousStep() {
+    if (this.assignationStep > 1) {
+      this.assignationStep--; // Retroceder al paso anterior
+    }
+
+    // Reiniciar el índice del alumno al primero si volvemos al paso 1
+    if (this.assignationStep === 1) {
+      this.currentStudentIndex = 0;
+    }
+  }  
+
+  async assignTarea() {
+    if (this.selectedTask) {
+      if (this.assignationStep === 1) {
+        this.actualizarMinFecha();
+        // Paso 1: Actualizar los alumnos seleccionados
+        const removedStudents = this.originalAssigned.filter(student =>
+          !this.selectedTask.assigned.some(current => current.assignedId === student.assignedId)
+        );
+  
+        const addedStudents = this.selectedTask.assigned.filter(student =>
+          !this.originalAssigned.some(original => original.assignedId === student.assignedId)
+        );
+  
+        // Eliminar alumnos desmarcados
+        removedStudents.forEach(student => {
+          const index = this.selectedTask.assigned.findIndex(a => a.assignedId === student.assignedId);
+          if (index >= 0) {
+            this.selectedTask.assigned.splice(index, 1);
+          }
+        });
+  
+        // Agregar alumnos nuevos a la lista
+        addedStudents.forEach(student => {
+          // Verificar si el alumno ya está en la lista de asignados para evitar duplicados
+          const existingStudent = this.selectedTask.assigned.find(a => a.assignedId === student.assignedId);
+          if (!existingStudent) {
+            // Completar el objeto del alumno con las propiedades necesarias
+            this.selectedTask.assigned.push();
+          }
+        });
+  
+        console.log('Alumnos actualizados:', this.selectedTask.assigned);
+  
+        // Asegurarse de que los cambios se guarden correctamente en la base de datos
+        //await this.updateTaskInDatabase();
+  
+        // Cambiar a paso 2 para mostrar las fechas de inicio y fin
+        this.assignationStep = 2;
+        return;
+      }
+  
+      if (this.assignationStep === 2) {
+        // Aquí se guardan las fechas de inicio y fin de cada alumno
+        await this.updateTaskInDatabase();
+        this.selectedTask = null;
+        this.assignationStep = 1;
+        this.toggleAssignationForm();
+        this.cdr.detectChanges();
+      }
+    }
+  }  
   
   trackByTaskId(index: number, task: TaskI): string {
     return task.taskID;
@@ -357,11 +487,17 @@ export class AdminTareasPage{
   // Método para limpiar la interfaz de nueva tarea
   cleanInterfaceTarea(){ 
     this.newTarea.title = null;
-    this.newTarea.startTime = null;
-    this.newTarea.endTime = null;
     this.newTarea.type = null;
-    this.newTarea.completed = null;
-    this.newTarea.assigned = null;
+    this.newTarea.assigned = this.newTarea.assigned.map(student => ({
+      ...student,
+      assignedName: null as string | null,
+      assignedId: null as string | null,
+      completed: false,
+      startTime: null as Timestamp | null,
+      endTime: null as Timestamp | null,
+      doneTime: null as Timestamp | null
+    }));
+  
     this.newTaskDescription.text = null;
     this.newTaskDescription.link = null;
     this.newTaskDescription.pictogramId = null;
@@ -408,7 +544,6 @@ export class AdminTareasPage{
   await alert.present();
 }
 
-
   // Función para cargar la tarea seleccionada en el formulario de edición
   editTarea(tarea: TaskI) {
     console.log('edit -> ', tarea);
@@ -416,10 +551,6 @@ export class AdminTareasPage{
   
     // Copia superficial de los valores
     this.newTarea = { ...tarea };
-  
-    // Convertir las fechas a formato ISO (necesario para ion-datetime)
-    this.tempFechaInicio = tarea.startTime ? new Date(tarea.startTime.seconds * 1000).toISOString() : null;
-    this.tempFechaCumplimiento = tarea.endTime ? new Date(tarea.endTime.seconds * 1000).toISOString() : null;
   
     // Cargar la descripción asociada
     if (tarea.associatedDescriptionId) {
@@ -456,30 +587,30 @@ export class AdminTareasPage{
           console.log('Descripción actualizada correctamente');
         }
 
+        // Preparar los datos de los alumnos asignados
+        const updatedAssigned = this.newTarea.assigned.map((assigned) => {
+          return {
+            assignedName: assigned.assignedName,
+            assignedId: assigned.assignedId,
+            completed: assigned.completed || false,
+            startTime: assigned.startTime || null, // Si ya es Timestamp, se usa directamente
+            endTime: assigned.endTime || null,     
+            doneTime: assigned.doneTime || null,
+          };
+        });
+        
+
         // Validar y actualizar fechas si existen
         const updatedTask: Partial<TaskI> = {
-          assigned: this.newTarea.assigned,
+          assigned: updatedAssigned,
           associatedDescriptionId: this.editedTask.associatedDescriptionId,
-          completed: this.newTarea.completed,
           descriptionData: this.tareaVacia.descriptionData,
-          doneTime: this.newTarea.doneTime,
           taskID: this.newTarea.taskID,
           title: this.newTarea.title,
-          type: this.newTarea.type
+          type: this.newTarea.type,
         };
 
-        if (this.tempFechaInicio) {
-          updatedTask.startTime = Timestamp.fromDate(new Date(this.tempFechaInicio));  // Asigna la fecha de inicio
-        }
-    
-        if (this.tempFechaCumplimiento) {
-          updatedTask.endTime = Timestamp.fromDate(new Date(this.tempFechaCumplimiento));  // Asigna la fecha de cumplimiento
-        }
-
-        console.log('STARTTIME', this.tempFechaInicio);
-        console.log('ENDTIME', this.tempFechaCumplimiento);
-
-        // Actualizar la tarea
+        // Actualizar la tarea en Firestore
         const taskRef = doc(this.firestoreService.firestore, 'Tasks', this.editedTask.taskID);
         await setDoc(taskRef, updatedTask); // Actualizamos la tarea principal
 
@@ -499,25 +630,89 @@ export class AdminTareasPage{
     }
   }
 
-  // Este método se ejecuta cuando cambia la fecha de inicio
-  onFechaInicioChange(event: any) {
-    this.tempFechaInicio = event.detail.value;
+  actualizarMinFecha() {
+    const fechaActual = new Date();
+    
+    // Ajustamos para asegurar que la hora y fecha sean correctas en la zona horaria local
+    const offsetMs = fechaActual.getTimezoneOffset() * 60000; // Desfase horario en milisegundos
+    const fechaLocal = new Date(fechaActual.getTime() - offsetMs); // Convertimos a hora local
+  
+    // Establecemos la hora de la fecha local como la hora mínima (sin segundos ni milisegundos)
+    fechaLocal.setSeconds(0, 0); // Aseguramos que los segundos y milisegundos no interfieran
+  
+    this.minFecha = fechaLocal.toISOString(); // Formateamos como ISO
   }
 
-  // Este método se ejecuta cuando cambia la fecha de cumplimiento
-  onFechaCumplimientoChange(event: any) {
-    this.tempFechaCumplimiento = event.detail.value;
+  actualizarMinEndFecha(startFecha: string | Timestamp | null) {
+    if (startFecha) {
+      let fechaInicio: Date;
+  
+      // Verificamos si startFecha es un Timestamp (Firebase)
+      if (startFecha instanceof Date) {
+        fechaInicio = startFecha;
+      } else if (typeof startFecha === 'object' && 'seconds' in startFecha && 'nanoseconds' in startFecha) {
+        // Es un Timestamp de Firebase
+        fechaInicio = new Date(startFecha.seconds * 1000); // Convertimos segundos a milisegundos
+      } else if (typeof startFecha === 'string') {
+        // Es un string ya en formato ISO
+        fechaInicio = new Date(startFecha);
+      } else {
+        console.error('Formato no reconocido para startFecha:', startFecha);
+        return;
+      }
+  
+      // Ajustamos a la zona horaria local
+      const offsetMs = fechaInicio.getTimezoneOffset() * 60000; // Desfase horario en milisegundos
+      const fechaLocal = new Date(fechaInicio.getTime() - offsetMs);
+  
+      // Aseguramos que los segundos y milisegundos no interfieran
+      fechaLocal.setSeconds(0, 0);
+  
+      // Actualizamos la variable global `minEndFecha` en formato ISO
+      this.minEndFecha = fechaLocal.toISOString();
+    } else {
+      // Si no hay una fecha de inicio válida, reiniciamos `minEndFecha` a un valor nulo o predeterminado
+      this.minEndFecha = this.minFecha; // Por defecto, la fecha actual mínima
+    }
   }
-
+  
+  convertTimestampToDate(timestamp: any): Date | null {
+    // Verifica si es una cadena de texto y conviértelo a un objeto Date
+    if (timestamp && typeof timestamp === 'string') {
+      return new Date(timestamp);  // Convierte el string de fecha a un objeto Date
+    }
+    return null;
+  }
+  
   //Resets
   resetFechaInicio() {
     this.tempFechaInicio = null;
-    console.log('Fecha de inicio reseteada');
   }
   
   resetFechaCumplimiento() {
     this.tempFechaCumplimiento = null;
-    console.log('Fecha de cumplimiento reseteada');
+  }
+
+  resetFechaInicioAlumno() {
+    const assignedStudent = this.selectedTask.assigned[this.currentStudentIndex];
+    this.tempFechaInicio = null;
+    if (assignedStudent) {
+      assignedStudent.startTime = null;
+      console.log('Fecha de inicio reiniciada:', assignedStudent);
+    }
+  }
+  
+  resetFechaCumplimientoAlumno() {
+    const assignedStudent = this.selectedTask.assigned[this.currentStudentIndex];
+    this.tempFechaCumplimiento = null;
+    if (assignedStudent) {
+      assignedStudent.endTime = null;
+      console.log('Fecha límite reiniciada:', assignedStudent);
+    }
+  }
+
+  resetSelectedStudents() {
+    this.selectedStudents = []; // Limpia la lista de alumnos seleccionados
   }
   
   // Métodos para mostrar y ocultar el formulario de tarea, alumnos y profesores
@@ -537,6 +732,9 @@ export class AdminTareasPage{
   toggleAssignationForm() {
     console.log('toggleAssignationForm activated');
     this.showAssignationsForm = !this.showAssignationsForm;
+    this.selectedTask = null; 
+    if(this.assignationStep == 2)
+      this.assignationStep = 1;
   }
   
   addImage() {

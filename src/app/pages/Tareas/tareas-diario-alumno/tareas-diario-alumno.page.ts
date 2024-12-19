@@ -10,6 +10,8 @@ import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
 import { TaskI } from 'src/app/common/models/task.models';
 import { DescriptionI } from 'src/app/common/models/task.models';
+import { Timestamp } from '@angular/fire/firestore';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-tareas-diario-alumno',
@@ -32,7 +34,8 @@ export class TareasDiarioAlumnoPage implements OnInit {
     private router: Router,
     private sessionService: SessionService,
     private firestoreService: FirestoreService,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -43,11 +46,12 @@ export class TareasDiarioAlumnoPage implements OnInit {
       this.userActual = user as unknown as StudentI;
       console.log('Usuario loggeado:', this.userActual.name);
       this.loadTareas(); // Cargar las tareas después de validar al usuario
+      
       // Nos suscribimos a los cambios de tareas actualizadas
       this.tasksService.updatedTask$.subscribe((tarea: TaskI | null) => {
         if (tarea) {
-          // Actualizamos las listas de tareas cuando la tarea es actualizada
-          this.actualizarListaTareas(tarea);
+          console.log('Tarea actualizada:', tarea);  // Verifica que se está emitiendo la tarea actualizada
+          this.actualizarListaTareas(tarea);  // Actualiza la lista de tareas
         }
       });
     } else {
@@ -55,88 +59,113 @@ export class TareasDiarioAlumnoPage implements OnInit {
       this.router.navigate(['/paginainicial']);
     }
   }
-
+  
   // Método para cargar las tareas desde Firestore
   async loadTareas() {
-    const nombreUsuario = this.userActual.name; // Nombre del usuario actual
+    const userId = this.userActual.id; // ID del usuario actual
     try {
-      // Cargar todas las tareas que contienen al usuario en el array 'assigned'
-      const todasLasTareas = await this.firestoreService.getCollection('Tasks', [
-        { field: 'assigned', operator: 'array-contains', value: nombreUsuario },
-      ]);
-
-      console.log('Tareas encontradas:', todasLasTareas); // Depuración
-
-      // Obtener los IDs únicos de las descripciones asociadas
+      // Cargar todas las tareas (sin el filtro array-contains)
+      const todasLasTareas = await this.firestoreService.getCollection('Tasks');
+  
+      if (!todasLasTareas || todasLasTareas.length === 0) {
+        console.log('No se encontraron tareas en Firestore.');
+        return;
+      }
+  
+      // Obtener los IDs únicos de las descripciones asociadas a estas tareas
       const descripcionIds = [...new Set(todasLasTareas.map(tarea => tarea.associatedDescriptionId))];
-    
-      // Cargar todas las descripciones asociadas
+  
+      // Cargar las descripciones asociadas
       const descripciones = await Promise.all(
         descripcionIds.map(id => this.firestoreService.getDocument<DescriptionI>(`Description/${id}`))
       );
-    
+  
       // Crear un mapa de descripciones para un acceso rápido
       this.descripcionesMap = descripciones.reduce((map, descSnap, index) => {
-        map[descripcionIds[index]] = descSnap.data() as DescriptionI;
+        if (descSnap) {
+          map[descripcionIds[index]] = descSnap.data() as DescriptionI;
+        }
         return map;
       }, {} as { [key: string]: DescriptionI });
-    
-      // Filtrar las tareas incompletas y completadas basándonos en el array 'assigned' y 'completed'
+  
+      // Inicializar listas de tareas
       this.tareasIncompletas = [];
       this.tareasCompletadas = [];
-
+  
+      // Filtrar las tareas según su estado para el usuario actual
       todasLasTareas.forEach(tarea => {
-        const usuarioIndex = tarea.assigned.indexOf(nombreUsuario); // Obtener el índice del usuario en el array 'assigned'
-        
-        if (usuarioIndex !== -1) {
-          // Verificar si la tarea está completada para el usuario actual
-          if (tarea.completed[usuarioIndex]) {
-            this.tareasCompletadas.push(tarea);
+        // Verificar si el usuario está asignado a la tarea
+        const usuarioAsignado = tarea.assigned.find((assigned: { 
+          assignedId: string; 
+          completed: boolean; 
+          startTime?: Timestamp | null; 
+          endTime?: string | null; 
+          doneTime?: Timestamp | null; 
+        }) => assigned.assignedId === userId);
+  
+        if (usuarioAsignado) {
+          // Verificar y convertir las fechas si son tipo Timestamp
+          if (usuarioAsignado.endTime && typeof usuarioAsignado.endTime === 'string') {
+            tarea.endTime = new Date(usuarioAsignado.endTime); // Convertir el string en Date
           } else {
-            this.tareasIncompletas.push(tarea);
+            tarea.endTime = null;
+          }
+  
+          if (usuarioAsignado.doneTime && usuarioAsignado.doneTime instanceof Timestamp) {
+            tarea.doneTime = usuarioAsignado.doneTime.toDate(); // Convertir a Date si es un Timestamp
+          } else {
+            tarea.doneTime = null; // Si no es un Timestamp, asignar null
+          }
+  
+          // Clasificar la tarea según si está completada o no
+          if (usuarioAsignado.completed) {
+            this.tareasCompletadas.push({ ...tarea, assignedUser: usuarioAsignado });
+          } else {
+            this.tareasIncompletas.push({ ...tarea, assignedUser: usuarioAsignado });
           }
         }
       });
-
+  
+      // Depuración
       console.log('Tareas incompletas:', this.tareasIncompletas);
       console.log('Tareas completadas:', this.tareasCompletadas);
       console.log('Descripciones:', this.descripcionesMap);
     } catch (error) {
       console.error('Error al cargar las tareas:', error);
     }
-  }
-
+  }  
   
   // Método para actualizar las listas de tareas cuando se recibe una tarea actualizada
-  actualizarListaTareas(tarea: any) {
-    const nombreUsuario = this.userActual.name; // Nombre del usuario actual
-
-    // Obtener el índice del usuario en el array 'assigned'
-    const usuarioIndex = tarea.assigned.indexOf(nombreUsuario);
-
-    if (usuarioIndex !== -1) {
-      // Si la tarea ha sido completada para el usuario actual
-      if (tarea.completed[usuarioIndex]) {
-        // Eliminar la tarea de las incompletas y agregarla a las completadas
+  actualizarListaTareas(tarea: TaskI) {
+    const userId = this.userActual.id;  // ID del usuario actual
+  
+    // Buscar al usuario asignado dentro del array `assigned`
+    const usuarioAsignado = tarea.assigned.find(assigned => assigned.assignedId === userId);
+  
+    if (usuarioAsignado) {
+      // Verificar si la tarea está completada para el usuario actual
+      if (usuarioAsignado.completed) {
+        // Mover la tarea de incompletas a completadas
         this.tareasIncompletas = this.tareasIncompletas.filter(t => t.taskID !== tarea.taskID);
-        this.tareasCompletadas.push(tarea);
+        this.tareasCompletadas.push({ ...tarea, assignedUser: usuarioAsignado });
       } else {
-        // Si la tarea no está completada para el usuario actual
+        // Mover la tarea de completadas a incompletas
         this.tareasCompletadas = this.tareasCompletadas.filter(t => t.taskID !== tarea.taskID);
-        this.tareasIncompletas.push(tarea);
+        this.tareasIncompletas.push({ ...tarea, assignedUser: usuarioAsignado });
       }
-
+      this.cdRef.detectChanges();  // Forzar detección de cambios
       console.log('Tareas incompletas actualizadas:', this.tareasIncompletas);
       console.log('Tareas completadas actualizadas:', this.tareasCompletadas);
+
+      
     } else {
       console.log('El usuario no tiene asignada esta tarea');
     }
   }
-
+  
   volverListado() {
     this.router.navigate(['/paginainicial']); // Aquí va la ruta a la página del listado
   }
-
 
   mostrarPendientes() {
     this.mostrarCompletadasFlag = false; // Oculta completadas
@@ -148,56 +177,80 @@ export class TareasDiarioAlumnoPage implements OnInit {
     this.mostrarCompletadasFlag = true; // Muestra completadas después de la animación
   }
 
-  getDoneTime(tarea: TaskI, alumnoId: string): string[] {  
-    if (!tarea?.assigned || !tarea?.doneTime) {
-      console.log('No hay datos suficientes en tarea.');
+  getDoneTime(tarea: TaskI, alumnoId: string): string[] {
+    if (!tarea?.assigned || !Array.isArray(tarea.assigned)) {
+      console.log('No hay datos válidos en tarea.assigned.');
       return [];
     }
-  
-    const alumnoIndex = tarea.assigned.findIndex(name => name === this.userActual.name);
+
+    // Buscar al alumno asignado por su ID
+    const alumnoAsignado = tarea.assigned.find((assigned: { 
+      assignedId: string; 
+      doneTime?: Timestamp | null; 
+    }) => assigned.assignedId === alumnoId);
     
-    if (alumnoIndex !== -1 && tarea.doneTime[alumnoIndex]) {
-      const timestamp = tarea.doneTime[alumnoIndex];
-      return [
-        timestamp.toDate().toLocaleString('es-ES', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        })
-      ]; // Cambia el formato según tus necesidades
+    // Validar si se encontró al alumno y si tiene `doneTime`
+    if (alumnoAsignado?.doneTime && typeof alumnoAsignado.doneTime.toDate === 'function') {
+      try {
+        const timestamp = alumnoAsignado.doneTime.toDate(); // Convertir a objeto Date
+        return [
+          timestamp.toLocaleString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          })
+        ];
+      } catch (error) {
+        console.error('Error al convertir doneTime a fecha:', error);
+        return [];
+      }
     }
-  
-    console.log(`No se encontró fecha de finalización para ${alumnoId}.`);
-    return [];
+    // Si no se encuentra `doneTime`
+  console.log(`No se encontró fecha de finalización para el alumno con ID ${alumnoId}.`);
+  return [];
   }
   
   // Navegar dependiendo del tipo de tarea
   navegarTarea(tarea: TaskI) {
+    const descripcion = this.descripcionesMap[tarea.associatedDescriptionId];
+  
+  // Buscar el estado de la tarea solo para el usuario logueado
+  const tareaCompletada = tarea.assigned?.some(assigned => assigned.assignedId === this.userActual.id && assigned.completed) || false;
+  
+    // Verificar el tipo de tarea y navegar a la página correspondiente
     switch (tarea.type) {
       case 'AppTask':
-        const descripcion = this.descripcionesMap[tarea.associatedDescriptionId];
-        this.router.navigate(['/tareasaplicacionjuego'], {
-          state: { 
-            taskID: tarea.taskID,  // Solo pasamos el ID de la tarea
-            associatedDescriptionId: tarea.associatedDescriptionId,
-            completed: tarea.completed
-          } 
-        });
+        if (descripcion) {
+          // Si la descripción existe, navegar a la página correspondiente con los datos
+          this.router.navigate(['/tareasaplicacionjuego'], {
+            state: { 
+              taskID: tarea.taskID,
+              taskTitle: tarea.title,
+              associatedDescriptionId: tarea.associatedDescriptionId,
+              completed: tareaCompletada
+            }
+          });
+        } else {
+          console.warn('Descripción no encontrada para AppTask:', tarea.associatedDescriptionId);
+        }
         break;
-
+  
       case 'StepTask':
-        // Navegación pendiente de implementar
-        const stepTaskDescripcion = this.descripcionesMap[tarea.associatedDescriptionId];
-        this.router.navigate(['/tareasporpasos'], {
-          state: { 
-            taskID: tarea.taskID,  // Solo pasamos el ID de la tarea
-            associatedDescriptionId: tarea.associatedDescriptionId,
-            completed: tarea.completed
-          } 
-        });
+        if (descripcion) {
+          // Si la descripción existe, navegar a la página correspondiente con los datos
+          this.router.navigate(['/tareasporpasos'], {
+            state: { 
+              taskID: tarea.taskID,
+              associatedDescriptionId: tarea.associatedDescriptionId,
+              completed: tareaCompletada
+            }
+          });
+        } else {
+          console.warn('Descripción no encontrada para StepTask:', tarea.associatedDescriptionId);
+        }
         break;
 
       case 'NormalTask':
@@ -206,12 +259,18 @@ export class TareasDiarioAlumnoPage implements OnInit {
         break;
 
       case 'MenuTask':
-        this.router.navigate(['/task-menus']);
+        this.router.navigate(['/task-menus'],  {
+          state: { 
+            taskID: tarea.taskID,
+            taskTitle: tarea.title,
+            pictogramId: descripcion?.pictogramId,
+
+          }
+      });
         break;
 
       case 'RequestTask':
         // Navegación pendiente de implementar
-        console.warn('La redirección para "material" no está implementada.');
         break;
 
       default:

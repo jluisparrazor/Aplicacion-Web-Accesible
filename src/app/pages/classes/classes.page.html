@@ -39,7 +39,7 @@
           Pictograma Seleccionado:
         </ion-label>
         <ion-thumbnail slot="start">
-          <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + actualClass.pictogramId" alt="Pictogram image"></ion-img>
+          <ion-img [src]="arasaacService.getPictogramImageUrl(actualClass.pictogramId)" alt="Pictogram image"></ion-img>
         </ion-thumbnail>
         <ion-button slot="end" (click)="actualClass.pictogramId = null">
           <ion-icon slot="icon-only" name="close" color="danger"></ion-icon>
@@ -53,7 +53,7 @@
       <ion-col size="6" *ngFor="let class of classes; let i = index">
         <ion-item>
           <ion-thumbnail slot="start">
-            <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + class.pictogramId" alt="Pictogram image"></ion-img>
+            <ion-img [src]="arasaacService.getPictogramImageUrl(class.pictogramId)" alt="Pictogram image"></ion-img>
           </ion-thumbnail>
           <ion-label>
             <h2>{{ class.name }}</h2>

@@ -7,7 +7,7 @@
     </ion-title>
     <ion-avatar slot="start" *ngIf="userActual?.pictogramId">
       <ion-img 
-        [src]="'https://api.arasaac.org/api/pictograms/' + userActual.pictogramId" 
+        [src]="arasaacService.getPictogramImageUrl(userActual.pictogramId)" 
         alt="Avatar del profesor"
         class="pictogram-img">
       </ion-img>

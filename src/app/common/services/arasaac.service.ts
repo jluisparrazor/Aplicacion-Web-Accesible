@@ -54,7 +54,7 @@ export class ArasaacService {
     }
   }
 
-  getPictogramImageUrl(pictogram: any): string {
-    return `https://api.arasaac.org/api/pictograms/${pictogram._id}`;
+  getPictogramImageUrl(pictogram: string): string {
+    return `https://api.arasaac.org/api/pictograms/${pictogram}`;
   }
 }
