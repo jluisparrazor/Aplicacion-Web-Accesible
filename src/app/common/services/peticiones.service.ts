@@ -37,9 +37,6 @@ export class RequestsService {
     return !querySnapshot.empty;
   }
   
-  
-  
-  
   // Obtener los materiales disponibles
   async getAvailableMaterials(): Promise<string[]> {
     const inventoryCollection = collection(this.firestore, 'Inventory');
@@ -129,9 +126,6 @@ export class RequestsService {
   
     return colors;
   }
-  
-  
-  
 
   // Obtener los tamaños disponibles para un color específico
   async getAvailableTamanosForColor(nombre: string, color: string): Promise<string[]> {
@@ -160,10 +154,6 @@ export class RequestsService {
     // Convertir el Set a un array y devolver
     return Array.from(tamanos);
   }
-  
-
-
-
 
     // Verificar si el material tiene suficiente cantidad en el inventario
     async checkMaterialQuantity(
@@ -223,7 +213,6 @@ export class RequestsService {
     }
   }
   
-
   // Función para enviar datos a Firestore
   async sendRequest(requestData: any): Promise<void> {
     try {

@@ -9,3 +9,6 @@ export interface MaterialI {
     tamano?: string[];        // Tamaño del material
   };
 }
+
+// Sobra un color y un tamano
+// Debería tener un pictogramId
