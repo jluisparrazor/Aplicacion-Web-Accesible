@@ -70,10 +70,9 @@ export class StudentService {
   async editStudent(student: StudentI): Promise<void> {
     try {
       const studentRef = await this.firestoreService.getDocumentReference('Students', student.id);
-      const updatedData: StudentI = {...student};
       try {
         // Actualiza el documento en Firestore con los nuevos datos
-        await this.firestoreService.updateDocument(studentRef, updatedData);
+        await this.firestoreService.updateDocument(studentRef, student);
         console.log('Estudiante editado con éxito:', student);
       } catch (error) {
         console.error('Error al actualizar los datos del estudiante:', error);
