@@ -251,8 +251,7 @@ export class TareasPorPasosPage implements OnInit {
     }, 500)
 
     
-  }
-  }  
+  } 
   
   marcarEnlaceVisitado(){
     this.enlaceVisitado = true;

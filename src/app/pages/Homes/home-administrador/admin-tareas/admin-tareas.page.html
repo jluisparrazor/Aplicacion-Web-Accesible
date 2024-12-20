@@ -218,49 +218,6 @@
 
             </ng-container>
           </ion-row>
-
-          <!-- Fechas con diseño tipo grid -->
-          <ion-item>
-            <ion-grid class="fechas-grid">
-              <ion-row>
-                <!-- Fecha de inicio -->
-                <ion-col size="auto" class="fecha-item">
-                  <ion-label class="titulo-fecha">Fecha de inicio:</ion-label>
-                  <ion-datetime
-                    [(ngModel)]="tempFechaInicio"
-                    displayFormat="YYYY-MM-DD HH:mm"
-                    doneText="Aceptar"
-                    cancelText="Cancelar"
-                    (ionChange)="onFechaInicioChange($event)">
-                  </ion-datetime>
-                  <p *ngIf="tempFechaInicio; else noFechaInicio" class="seleccionada">
-                    {{ tempFechaInicio | date: 'fullDate' }} {{ tempFechaInicio | date: 'HH:mm' }}
-                  </p>
-                  <ng-template #noFechaInicio>
-                    <p>No hay fecha de inicio seleccionada</p>
-                  </ng-template>
-                </ion-col>
-
-                <!-- Fecha de cumplimiento -->
-                <ion-col size="auto" class="fecha-item">
-                  <ion-label class="titulo-fecha">Fecha de cumplimiento:</ion-label>
-                  <ion-datetime
-                    [(ngModel)]="tempFechaCumplimiento"
-                    displayFormat="YYYY-MM-DD HH:mm"
-                    doneText="Aceptar"
-                    cancelText="Cancelar"
-                    (ionChange)="onFechaCumplimientoChange($event)">
-                  </ion-datetime>
-                  <p *ngIf="tempFechaCumplimiento; else noFechaCumplimiento" class="seleccionada">
-                    {{ tempFechaCumplimiento | date: 'fullDate' }} {{ tempFechaCumplimiento | date: 'HH:mm' }}
-                  </p>
-                  <ng-template #noFechaCumplimiento>
-                    <p>No hay fecha seleccionada</p>
-                  </ng-template>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-item>
             
           </ion-list>
         </ion-card>
