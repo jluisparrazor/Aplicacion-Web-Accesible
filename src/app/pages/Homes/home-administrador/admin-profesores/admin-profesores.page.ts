@@ -40,7 +40,7 @@ export class AdminProfesoresPage {
   teachers: TeacherI[] = [];
   newTeacher: TeacherI;
   teacher: TeacherI;
-
+  edicion: boolean = false;
   userActual: TeacherI;
 
   showTeacherForm: boolean = false;
@@ -55,8 +55,6 @@ export class AdminProfesoresPage {
     private readonly sessionService: SessionService,
     private readonly router: Router,
     private readonly teacherService: TeacherService,
-    private readonly studentService: StudentService,
-    private readonly taskService: TasksService,
     private alertController: AlertController,
     private arasaac: ArasaacService) {
     this.arasaacService = arasaac;
@@ -122,25 +120,52 @@ export class AdminProfesoresPage {
   }
 
   // Método para editar un profesor
-  editTeacher(teacher: TeacherI) {
-    // console.log('edit -> ', teacher);
-    this.teacherService.editTeacher(teacher);
-    this.newTeacher = teacher;
+  async editTeacher() {
+    console.log('edit -> ', this.newTeacher);
+    
+    try {
+      const teacherRef = await this.firestoreService.getDocumentReference('Teachers', this.newTeacher.id);
+      const updatedData: TeacherI = {
+        id: this.teacher.id,
+        name: this.newTeacher.name,
+        surname: this.newTeacher.surname,
+        dni: this.newTeacher.dni,
+        pictogramId: this.newTeacher.pictogramId,
+        email: this.newTeacher.email,
+        password: this.newTeacher.password,
+        administrative: this.newTeacher.administrative,
+        birthdate: this.newTeacher.birthdate,
+        phone: this.newTeacher.phone
+      };
+      try {
+        await this.firestoreService.updateDocument(teacherRef, updatedData);
+        // this.alertService.showAlert('Éxito', 'Datos actualizados correctamente', 'OK');
+      } catch (error) {
+        console.error('Error al actualizar los datos del profesor:', error);
+        // this.alertService.showAlert('Error', 'No se pudo actualizar los datos', 'OK');
+      }
+    } catch (error) {
+      console.error('Error editando el profesor:', error);
+    }
+this.edicion=false;
+    this.toggleTeacherForm();
+    this.teacherService.cleanTeacherInterface(this.newTeacher);
   }
 
   // Método para eliminar un profesor de la base de datos
   deleteTeacher(teacher: TeacherI) {
-    //   console.log('delete -> ',teacher.id);
-    //   await this.firestoreService.deleteDocumentID('Teachers', teacher.id);
     this.teacherService.deleteTeacher(teacher.id);
     console.log('delete teacher -> ', teacher.name, teacher.surname);
-
   }
 
   toggleTeacherForm() {
     this.showTeacherForm = !this.showTeacherForm;
   }
-
+activaredicion(teacher: TeacherI){  
+  this.edicion=true;
+  this.newTeacher = teacher;
+  this.toggleTeacherForm();
+}
   comeback() {
     this.router.navigate(['/homeadministrador']);
   }

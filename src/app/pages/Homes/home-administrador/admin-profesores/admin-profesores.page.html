@@ -32,9 +32,11 @@
         <!-- Formulario de profesores -->
         <ion-card *ngIf="showTeacherForm" class="card-add-tarea">
           <ion-toolbar>
-            <ion-title>Crear profesor</ion-title>
+            <ion-title>Crear/Actualizar profesor</ion-title>
             <ion-buttons slot="end">
-              <ion-button (click)="addTeacher()" shape="round" color="primary">Añadir/Actualizar Profesor</ion-button>
+              <ion-button *ngIf="!edicion" (click)="addTeacher()" shape="round" color="primary">Añadir Profesor</ion-button>
+              <ion-button *ngIf="edicion" (click)="editTeacher()" shape="round" color="primary">Actualizar Profesor</ion-button>
+              
               <ion-button (click)="toggleTeacherForm()" shape="round" color="danger">Cancelar</ion-button>
             </ion-buttons>
           </ion-toolbar>
@@ -156,7 +158,7 @@
         
                 <!-- Botones de editar y eliminar -->
                 <ion-buttons slot="end">
-                  <ion-button (click)="editTeacher(teacher)">
+                  <ion-button (click)="activaredicion(teacher)">
                     <ion-icon slot="icon-only" name="create" color="primary"></ion-icon>
                   </ion-button>
                   <ion-button (click)="deleteTeacher(teacher)">
