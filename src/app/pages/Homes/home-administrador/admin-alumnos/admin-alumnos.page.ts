@@ -80,15 +80,15 @@ export class AdminAlumnosPage {
 
   init() {
 
-    //Miro que admin ha iniciado sesion
-    // const user = this.sessionService.getCurrentUser();
-    // if (user as TeacherI && (user as TeacherI).administrative) {
-    //   this.userActual = user as unknown as TeacherI;
-    //   console.log('Administrador loggeado:', this.userActual.name);
-    // } else {
-    //   console.error('El usuario actual no es válido o no tiene permisos de administrador. ->', user);
-    //   this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
-    // }
+    //  Miro que admin ha iniciado sesion
+    const user = this.sessionService.getCurrentUser();
+    if (user as TeacherI && (user as TeacherI).administrative) {
+      this.userActual = user as unknown as TeacherI;
+      console.log('Administrador loggeado:', this.userActual.name);
+    } else {
+      console.error('El usuario actual no es válido o no tiene permisos de administrador. ->', user);
+      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+    }
 
     this.newStud = this.studentService.initStudent();
   }
@@ -157,7 +157,7 @@ export class AdminAlumnosPage {
   comeback() {
     this.router.navigate(['/homeadministrador']);
   }
-  
+
   incrementPassword(index: number) {
     if (this.newStud.correctPassword && this.newStud.correctPassword[index] < 6) {
       this.newStud.correctPassword[index]++;
