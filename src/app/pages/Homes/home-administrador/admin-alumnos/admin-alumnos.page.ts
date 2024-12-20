@@ -19,6 +19,8 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { LOCALE_ID } from '@angular/core';
 import { ArasaacService } from 'src/app/common/services/arasaac.service';
+import { TeacherI } from 'src/app/common/models/teacher.models';
+import { AlertService } from 'src/app/common/services/alert.service';
 
 
 registerLocaleData(localeEs);
@@ -33,7 +35,7 @@ registerLocaleData(localeEs);
 })
 
 
-export class AdminAlumnosPage{
+export class AdminAlumnosPage {
   //Esto lo uso para cuando edito tarea, que scrollee hasta arriba del todo
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
@@ -43,30 +45,31 @@ export class AdminAlumnosPage{
   stud: StudentI;
   arasaacService: any;
 
-
   selectedStudent: StudentI; // Estudiante al que se asignará la tarea
-  
+
   //Formularios
   showStudentForm: boolean = false;
+  editingStudent: boolean = false;
 
   //Subject
   private unsubscribe$ = new Subject<void>();
+
+  userActual: TeacherI | null = null;
+
 
   constructor(
     private readonly firestoreService: FirestoreService,
     private readonly sessionService: SessionService,
     private readonly router: Router,
-    private readonly teacherService: TeacherService,
     private readonly studentService: StudentService,
-    private readonly taskService: TasksService,
-    private alertController: AlertController,
+    private alertService: AlertService,
     private arasaacServie: ArasaacService) {
-      this.arasaacService = arasaacServie;
-      
+    this.arasaacService = arasaacServie;
+
     this.load();
     this.init();
 
-    this.getStudent();
+    // this.getStudent();
 
   }
 
@@ -74,88 +77,84 @@ export class AdminAlumnosPage{
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
- 
-  init(){
+
+  init() {
 
     //Miro que admin ha iniciado sesion
-    const user = this.sessionService.getCurrentUser();
+    // const user = this.sessionService.getCurrentUser();
+    // if (user as TeacherI && (user as TeacherI).administrative) {
+    //   this.userActual = user as unknown as TeacherI;
+    //   console.log('Administrador loggeado:', this.userActual.name);
+    // } else {
+    //   console.error('El usuario actual no es válido o no tiene permisos de administrador. ->', user);
+    //   this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+    // }
 
-    /*if (user as TeacherI && (user as TeacherI).administrative) {
-      this.userActual = user as unknown as TeacherI;
-      console.log('Administrador loggeado:', this.userActual.name);
-    } else {
-      console.error('El usuario actual no es válido o no tiene permisos de administrador. ->' , user);
-      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
-      return; // Detenemos la ejecución si el usuario no es válido
-    }*/
     this.newStud = this.studentService.initStudent();
   }
 
   // Método para cargar los datos de la base de datos
-  load(){
-    
+  load() {
+
     // Estudiantes
     this.firestoreService.getCollectionChanges<StudentI>('Students')
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe((data) => {
-      if (data) {
-        this.students = data;
-        console.log('Estudiantes -> ', this.students);
-      }
-    });
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        if (data) {
+          this.students = data;
+          console.log('Estudiantes -> ', this.students);
+        }
+      });
   }
 
   // GETTERS
 
   // Método para obtener un estudiante de la base de datos
-  getStudent(){
-  //   const res = await this.firestoreService.getDocument<StudentI>('Students/'+ this.newStud.id);
-  //   this.stud = res.data();
-  this.studentService.getStudent(this.newStud.id).then((student) => {
-    this.stud = student;
-  });
-  console.log('Estudiante:', this.stud);  
+  getStudent() {
+    //   const res = await this.firestoreService.getDocument<StudentI>('Students/'+ this.newStud.id);
+    //   this.stud = res.data();
+    this.studentService.getStudent(this.newStud.id).then((student) => {
+      this.stud = student;
+    });
+    console.log('Estudiante:', this.stud);
   }
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~Student section~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Método para añadir un nuevo estudiante a la base de datos (estudiante no existente en la BD)
-  addStud(){
-    // Hacer comprobación para que al menos estén rellenos los campos obligatorios
-    // this.newStud.id = this.firestoreService.createIDDoc();
-    // await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
-    // this.showStudentForm = false;  // Oculta el formulario después de guardar
-    // this.cleanInterfaceStud();
-    this.studentService.addStudent(this.newStud);
-    
-    this.showStudentForm = false;
-    // Limpiar el formulario y ocultar
-    this.studentService.cleanStudentInterface(this.newStud);
- 
-  }
-      
-  // Método para guardar nuevos datos de un estudiante (ya existente) en la base de datos
-  async saveStudent(){
-    await this.firestoreService.createDocumentID(this.newStud, 'Students', this.newStud.id);
+  saveStudent() {
+    if (this.editingStudent)
+      this.studentService.editStudent(this.newStud).then(() => {
+        this.cancelForm();
+      });
+    else
+      this.studentService.addStudent(this.newStud).then(() => {
+        this.cancelForm();
+      });
   }
 
+  cancelForm() {
+    console.log('this.newStud -> ', this.newStud);
+    this.editingStudent = false;
+    this.showStudentForm = false;
+    this.studentService.cleanStudentInterface(this.newStud);
+  }
+
+
   // Método para editar un estudiante
-  editStu(student: StudentI){
-    this.studentService.editStudent(student);
-    this.newStud = student;
+  editStu(student: StudentI) {
+    this.newStud = { ...student };
+    this.editingStudent = true;
+    this.showStudentForm = true;
   }
 
   // Método para eliminar un estudiante de la base de datos
-  deleteStu(student: StudentI){
+  deleteStu(student: StudentI) {
     this.studentService.deleteStudent(student.id);
-    console.log('delete student -> ',student.name, student.surname);
+    console.log('delete student -> ', student.name, student.surname);
   }
 
-  toggleStudentForm() {
-    console.log('toggleStudentForm activated');
-    this.showStudentForm = !this.showStudentForm;
-  }
 
-  comeback(){
+  comeback() {
     this.router.navigate(['/homeadministrador']);
   }
 

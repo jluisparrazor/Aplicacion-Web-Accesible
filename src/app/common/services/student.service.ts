@@ -1,12 +1,15 @@
 import { Injectable } from "@angular/core";
 import { StudentI } from "../models/student.models";
 import { FirestoreService } from "./firestore.service";
+import { AlertService } from "./alert.service";
 
 @Injectable({
   providedIn: 'root' // Disponible en toda la aplicación
 })
 export class StudentService {
-  constructor(private readonly firestoreService: FirestoreService) {}
+  constructor(private readonly firestoreService: FirestoreService,
+      private alertService: AlertService
+  ) {}
 
   // Inicializa un estudiante con los campos a null menos el id
   initStudent(): StudentI {
@@ -66,9 +69,17 @@ export class StudentService {
   // Edita un estudiante existente en la base de datos
   async editStudent(student: StudentI): Promise<void> {
     try {
-      // await this.firestoreService.createDocumentID(student, 'Students', student.id);
-      // console.log('Estudiante editado con éxito:', student);
-      console.log("Todavía sin implementar");
+      const studentRef = await this.firestoreService.getDocumentReference('Students', student.id);
+      const updatedData: StudentI = {...student};
+      try {
+        // Actualiza el documento en Firestore con los nuevos datos
+        await this.firestoreService.updateDocument(studentRef, updatedData);
+        console.log('Estudiante editado con éxito:', student);
+      } catch (error) {
+        console.error('Error al actualizar los datos del estudiante:', error);
+        this.alertService.showAlert('Error', 'No se pudo actualizar los datos', 'OK');
+      }
+      // console.log("Todavía sin implementar");
     } catch (error) {
       console.error('Error editando el estudiante:', error);
     }

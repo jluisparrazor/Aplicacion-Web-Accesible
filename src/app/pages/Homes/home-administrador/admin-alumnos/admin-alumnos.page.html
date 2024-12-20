@@ -24,7 +24,7 @@
         <ion-toolbar>
           <ion-title class="tituloSeccion">Alumnos:</ion-title>
           <ion-buttons slot="end" *ngIf="!showStudentForm">
-            <ion-button (click)="toggleStudentForm()">
+            <ion-button (click)="showStudentForm=true">
               <ion-icon slot="icon-only" name="add-circle-outline" color="primary"></ion-icon>
             </ion-button>
           </ion-buttons>
@@ -33,10 +33,11 @@
         <!-- Formulario de alumnos -->
         <ion-card *ngIf="showStudentForm" class="card-add-tarea">
           <ion-toolbar>
-            <ion-title>Crear alumno</ion-title>
+            <ion-title>{{ editingStudent ? 'Editar alumno' : 'Nuevo alumno' }}</ion-title>
             <ion-buttons slot="end">
-              <ion-button (click)="addStud()" shape="round" color="primary">Añadir alumno</ion-button>
-              <ion-button (click)="toggleStudentForm()" shape="round" color="danger">Cancelar</ion-button>
+              <ion-button (click)="saveStudent()" shape="round" color="primary">
+                {{ editingStudent ? 'Actualizar alumno' : 'Añadir alumno' }}</ion-button>
+              <ion-button (click)="cancelForm()" shape="round" color="danger">Cancelar</ion-button>
             </ion-buttons>
           </ion-toolbar>
           <ion-list>
