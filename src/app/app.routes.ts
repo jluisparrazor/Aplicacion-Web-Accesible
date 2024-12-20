@@ -73,7 +73,7 @@ export const routes: Routes = [
   },
   {
     path: 'show-menus',
-    loadComponent: () => import('./pages/Menus/show-menus/show-menus.page').then( m => m.ShowMenusPage)
+    loadComponent: () => import('./pages/Homes/home-administrador/Menus/show-menus/show-menus.page').then( m => m.ShowMenusPage)
   },
   {
     path: 'inicio',
@@ -85,11 +85,11 @@ export const routes: Routes = [
   },
   {
     path: 'classes',
-    loadComponent: () => import('./pages/classes/classes.page').then( m => m.ClassesPage)
+    loadComponent: () => import('./pages/Homes/home-administrador/classes/classes.page').then( m => m.ClassesPage)
   },
   {
     path: 'menutypes',
-    loadComponent: () => import('./pages/Menus/menutypes/menutypes.page').then( m => m.MenuTypesPage)
+    loadComponent: () => import('./pages/Homes/home-administrador/Menus/menutypes/menutypes.page').then( m => m.MenuTypesPage)
   },
   {
     path: 'mi-perfil',

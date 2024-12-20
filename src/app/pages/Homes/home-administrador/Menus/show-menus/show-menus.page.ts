@@ -5,13 +5,16 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonLabel, IonDa
 import { MenuService } from 'src/app/common/services/menu.service';
 import { Menu } from 'src/app/common/models/menu.models';
 import { ChangeDetectorRef } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-show-menus',
   templateUrl: './show-menus.page.html',
   styleUrls: ['./show-menus.page.scss'],
   standalone: true,
-  imports: [IonCol, IonGrid, IonRow, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonSegment, IonSegmentButton, IonLabel, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonDatetime, CommonModule, FormsModule]
+  imports: [IonCol, IonGrid, RouterModule, IonRow, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonSegment, IonSegmentButton, IonLabel, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonDatetime, CommonModule, FormsModule]
 })
 export class ShowMenusPage implements OnInit {
 
@@ -26,7 +29,7 @@ export class ShowMenusPage implements OnInit {
   viewMode: string = "classView";
   printMode: boolean = false;
 
-  constructor(private menuService: MenuService, private cdr: ChangeDetectorRef) { }
+  constructor(private menuService: MenuService,private readonly router: Router, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadStructure();
@@ -97,6 +100,6 @@ export class ShowMenusPage implements OnInit {
   }
 
   salir() {
-    // Implement navigation to home
+    this.router.navigate(['/homeadministrador']);
   }
 }

@@ -9,14 +9,16 @@
   overflow: hidden; /* Evitar el desplazamiento */
 }
 
+
+
 .boton-central {
-  width: 50%; /* Ancho de los botones */
+  width: 100%; /* Ancho de los botones */
   font-size: 1.2rem; /* Tamaño de fuente más grande */
   padding: 1rem; /* Espacio interno del botón */
   border-radius: 12px; /* Bordes redondeados */
   margin: 10px 0; /* Espacio entre los botones */
+  height: 60px;
 }
-
 /* Media query para pantallas pequeñas verticalmente */
 @media (max-height: 600px) {
   .contenedor-central {
