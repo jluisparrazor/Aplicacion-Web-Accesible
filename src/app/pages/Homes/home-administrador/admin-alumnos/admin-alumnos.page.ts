@@ -157,5 +157,18 @@ export class AdminAlumnosPage {
   comeback() {
     this.router.navigate(['/homeadministrador']);
   }
+  
+  incrementPassword(index: number) {
+    if (this.newStud.correctPassword && this.newStud.correctPassword[index] < 6) {
+      this.newStud.correctPassword[index]++;
+    }
+  }
+
+  decrementPassword(index: number) {
+    if (this.newStud.correctPassword && this.newStud.correctPassword[index] > 1) {
+      this.newStud.correctPassword[index]--;
+    }
+  }
+
 
 }

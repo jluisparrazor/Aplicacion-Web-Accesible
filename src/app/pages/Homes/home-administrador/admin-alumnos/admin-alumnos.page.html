@@ -112,6 +112,18 @@
               <ion-label>Inicio de sesión especial</ion-label>
             </ion-item>
 
+            <!-- Contraseñas -->
+            <ion-item *ngFor="let index of [0, 1, 2]">
+                <ion-label>{{ index === 0 ? 'Primer' : index === 1 ? 'Segundo' : 'Tercer' }} pictograma correcto: <strong>{{ newStud.correctPassword[index] }}</strong></ion-label>
+              <ion-buttons slot="end">
+              <ion-button (click)="decrementPassword(index)" shape="round">
+                <ion-icon name="arrow-down-outline"></ion-icon>
+              </ion-button>
+              <ion-button (click)="incrementPassword(index)" shape="round">
+                <ion-icon name="arrow-up-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            </ion-item>
             <!-- Tipo de visualización de pasos de tareas por pasos-->
              <ion-item>
               <ion-label>Visualización de pasos de tareas por paso</ion-label>

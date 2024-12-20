@@ -23,7 +23,7 @@ export class StudentService {
       personalData: null,
       birthDate: null,
       loginType: false,
-      correctPassword: null,
+      correctPassword: [1, 2, 3],
       stepVisualization: null
     };
     return newStudent;
@@ -104,4 +104,6 @@ export class StudentService {
     // Restaura los valores por defecto
     student.loginType = false;
   }
+
+  
 }
