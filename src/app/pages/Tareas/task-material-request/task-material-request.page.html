@@ -1,0 +1,80 @@
+<!-- HEADER -->
+<ion-header id="main-header" [translucent]="true">
+  <ion-toolbar>
+    <ion-button color="medium" slot="start" (click)="salir()" shape="round">
+      Salir <ion-icon name="exit-outline" style="margin-left: 8px;"></ion-icon>
+    </ion-button>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="2"></ion-col>
+        <ion-col size="4" class="center-content">
+          <ion-img [src]="'https://api.arasaac.org/api/pictograms/15838'" alt="{{ taskTitle }}"
+            class="pictogram-center" />
+        </ion-col>
+        <ion-col size="4" class="center-content">
+          <ion-title class="title-toolbar">{{ taskTitle }}</ion-title>
+        </ion-col>
+        <ion-col size="3"></ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-button [color]="allMaterialsCompleted() ? 'success' : 'medium'" (click)="completeTask()" slot="end"
+      shape="round">
+      <ion-icon name="checkbox-outline" style="margin-right: 8px;"></ion-icon> ¡Completar!</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" scroll-y="false">
+
+  <!-- MATERIAL CARDS -->
+  <ion-card class="cards-size" mode="ios" *ngFor="let mat of getMaterialsForcurrentPage()">
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="3" class="center-content">
+            <!--  POR HACER: poner el pictograma del material -->
+            <ion-img [src]="'https://api.arasaac.org/api/pictograms/34153'" alt="{{ mat.nombre }}"
+              class="pictogram-center" />
+          </ion-col>
+          <ion-col size="3" class="center-content">
+            <ion-card-title class="small-card-title" style="margin-right: 5px;"><strong>{{ mat.nombre
+                }}</strong></ion-card-title>
+            <!-- POR HACER: comprobar que existen -->
+            {{ mat.color }} {{ mat.tamano }}
+          </ion-col>
+          <ion-col size="3" class="center-content">
+            <ion-label>Unidades:</ion-label>
+            <ion-img [src]="getNumPict(mat.cantidad)" alt="{{ mat.cantidad }}" class="pictogram-center" />
+          </ion-col>
+          <ion-col size="3" class="center-content">
+            <ion-button [color]="completed.get(mat.id) ? 'success' : 'light'" (click)="completeMaterial(mat.id)">
+              <span style="margin-right: 4px;">Estado:</span><strong>{{ completed.get(mat.id) ? 'Finalizado' :
+                'Pendiente' }}</strong>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<!-- FOOTER -->
+<ion-footer >
+  <ion-grid>
+    <ion-row>
+      <ion-col size="3"></ion-col>
+      <ion-col size="3" class="ion-text-left">
+        <ion-button *ngIf="currentPage > 0" (click)="previousPage()" shape="round">
+          <ion-icon name="arrow-back-outline" style="margin-right: 8px;"></ion-icon> Anterior
+        </ion-button>
+      </ion-col>
+      <ion-col size="3" class="ion-text-right">
+        <ion-button *ngIf="(currentPage + 1) * materialsPerPage < materials.size" (click)="nextPage()" shape="round">
+          Siguiente <ion-icon name="arrow-forward-outline" style="margin-left: 8px;"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>
+
+<!-- Contenedor de la animación con overlay -->
+<app-celebracion></app-celebracion>

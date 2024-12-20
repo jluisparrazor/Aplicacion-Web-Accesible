@@ -6,7 +6,7 @@ import { StudentI } from 'src/app/common/models/student.models';
 import { getDoc, setDoc } from 'firebase/firestore';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DescriptionI, TaskI } from 'src/app/common/models/task.models';
+import { DescriptionI, TaskI, StepI } from 'src/app/common/models/task.models';
 import { doc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
@@ -79,6 +79,11 @@ export class AdminTareasPage{
   tasksDescriptions: DescriptionI[] = [];
   newTaskDescription: DescriptionI;
   description: DescriptionI;
+
+  //Paso de tarea
+  newStep: StepI;
+  newStepDescription: string;
+  newStepImageLink: string;
   
   //Formularios
   showTaskForm: boolean = false;
@@ -142,6 +147,10 @@ export class AdminTareasPage{
 
     this.tareaVacia = this.taskService.initTask();
 
+    this.newStep = this.taskService.initStep();
+
+    this.newStepDescription = ''
+    this.newStepImageLink = ''
   }
 
   // Método para cargar los datos de la base de datos
@@ -576,13 +585,20 @@ export class AdminTareasPage{
         // Actualizar la descripción si es necesario
         if (this.newTaskDescription.descriptionId) {
           // Crear un objeto con los campos relevantes de la descripción
-          const descripcion = {
+          let descripcion = {
             descriptionId: this.newTaskDescription.descriptionId,
             imagesId: this.newTaskDescription.imagesId,
             text: this.newTaskDescription.text,
             pictogramId: this.newTaskDescription.pictogramId,
-            link: this.newTaskDescription.link
+            link: this.newTaskDescription.link,
+            steps: this.newTaskDescription.steps
           };
+
+          if (this.newTaskDescription.steps == undefined) {
+            descripcion.steps = null
+          }
+
+          console.log(descripcion)
 
           const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.editedTask.associatedDescriptionId);
           await setDoc(descriptionRef, descripcion);  // Solo actualizamos los campos necesarios de la descripción
@@ -754,6 +770,40 @@ export class AdminTareasPage{
       const index = this.newTaskDescription.imagesId.indexOf(imageId);
       if (index > -1) {
         this.newTaskDescription.imagesId.splice(index, 1);
+      }
+    }
+  }
+
+  // Añadir paso
+  addStep() {
+    if ( (this.newStepImageLink != undefined && this.newStepImageLink.trim() !== '') || this.newStep.pictogramId != null) {
+      if (!this.newTaskDescription.steps) {
+        this.newTaskDescription.steps = [];
+      }
+
+      // Configuramos nuevo paso
+      if (this.newStepDescription == undefined || this.newStepDescription.trim() == '') this.newStep.text = "Descripción del paso"
+      else this.newStep.text = this.newStepDescription.trim()
+      
+      if (this.newStepImageLink != undefined && this.newStepImageLink.trim() !== '') this.newStep.imageUrl = this.newStepImageLink.trim()
+
+      // Añadimos nuevo paso
+      this.newTaskDescription.steps.push(this.newStep)
+
+      console.log(this.newTaskDescription.steps)
+
+      // Limipiamos campos
+      this.newStep = this.taskService.initStep();
+      this.newStepDescription = ''
+      this.newStepImageLink = ''
+    }
+  }
+
+  removeStep(step: StepI) {
+    if (this.newTaskDescription.steps) {
+      const index = this.newTaskDescription.steps.indexOf(step);
+      if (index > -1) {
+        this.newTaskDescription.steps.splice(index, 1);
       }
     }
   }
