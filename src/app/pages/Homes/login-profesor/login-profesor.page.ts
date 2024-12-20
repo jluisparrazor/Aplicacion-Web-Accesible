@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonContent, IonItem, IonInput, IonButton, IonLabel} from '@ionic/angular/standalone';
+import { IonContent, IonItem, IonInput, IonButton, IonLabel, IonAvatar, IonHeader, IonToolbar, IonButtons, IonImg } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { Router } from '@angular/router';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   './login-profesor.page.html',
   styleUrls: ['./login-profesor.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonContent, IonItem, FormsModule, IonButton, IoniconsModule, CommonModule, IonInput
+  imports: [IonLabel, IonContent, IonItem, FormsModule, IonButton, IoniconsModule, CommonModule, IonInput, IonAvatar, IonHeader, IonToolbar, IonButtons, IonImg
   ],
 })
 export class LoginPage{
@@ -91,5 +91,9 @@ export class LoginPage{
   recoverPassword() {
     this.router.navigate(['/change-password']);
     this.name = this.password = ''; // Limpiamos los campos de nombre y contraseña                                  
+  }
+
+  volverListado() {
+    this.router.navigate(['/paginainicial']); // Aquí va la ruta a la página del listado
   }
 }
