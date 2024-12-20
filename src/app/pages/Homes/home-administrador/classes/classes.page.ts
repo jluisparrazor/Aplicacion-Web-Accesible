@@ -4,17 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonButton, IonIcon, IonCard, IonCardTitle, IonButtons, IonItem, IonLabel, IonImg, IonThumbnail, IonInput, IonRow, IonGrid, IonCol, IonAlert } from '@ionic/angular/standalone';
 import { Class } from 'src/app/common/models/class.models';
 import { ClassService } from 'src/app/common/services/class.service';
-import { PictogramSearchComponent } from "../../shared/pictogram-search/pictogram-search.component";
+import { PictogramSearchComponent } from "src/app/shared/pictogram-search/pictogram-search.component";
 import { ChangeDetectorRef } from '@angular/core';
 import { AlertService } from 'src/app/common/services/alert.service';
 import { ArasaacService } from 'src/app/common/services/arasaac.service';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-classes',
   templateUrl: './classes.page.html',
   styleUrls: ['./classes.page.scss'],
   standalone: true,
-  imports: [IonCol, IonGrid, IonRow, IonInput, IonImg, IonLabel, IonItem, IonButtons, IonCard, IonIcon, IonButton, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, PictogramSearchComponent, IonThumbnail]
+  imports: [IonCol, IonGrid, IonRow, IonInput, RouterModule, IonImg, IonLabel, IonItem, IonButtons, IonCard, IonIcon, IonButton, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, PictogramSearchComponent, IonThumbnail]
 })
 export class ClassesPage implements OnInit {
 
@@ -28,6 +30,7 @@ export class ClassesPage implements OnInit {
   constructor(
     private classService: ClassService,
     private cdr: ChangeDetectorRef,
+    private readonly router: Router,
     private alertService: AlertService,
     private arasaac: ArasaacService) {
     this.arasaacService = arasaac;
@@ -44,7 +47,7 @@ export class ClassesPage implements OnInit {
   }
 
   salir() {
-    // Implement navigation to home
+    this.router.navigate(['/homeadministrador']);
   }
 
   addClass() {

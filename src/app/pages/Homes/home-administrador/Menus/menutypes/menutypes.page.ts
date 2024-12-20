@@ -4,26 +4,29 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonButton, IonIcon, IonCard, IonCardTitle, IonButtons, IonItem, IonLabel, IonImg , IonThumbnail, IonInput, IonRow, IonGrid, IonCol, IonAlert } from '@ionic/angular/standalone';
 import { MenuType } from 'src/app/common/models/menu.models';
 import { MenuService } from 'src/app/common/services/menu.service';
-import { PictogramSearchComponent } from "../../../shared/pictogram-search/pictogram-search.component";
+import { PictogramSearchComponent } from "../../../../../shared/pictogram-search/pictogram-search.component";
 import { ChangeDetectorRef } from '@angular/core';
 import { AlertService } from 'src/app/common/services/alert.service';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menutypes',
   templateUrl: './menutypes.page.html',
   styleUrls: ['./menutypes.page.scss'],
   standalone: true,
-  imports: [IonCol, IonGrid, IonRow, IonInput, IonImg, IonLabel, IonItem, IonButtons, IonCard, IonIcon, IonButton, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, PictogramSearchComponent, IonThumbnail]
+  imports: [IonCol, IonGrid, RouterModule, IonRow, IonInput, IonImg, IonLabel, IonItem, IonButtons, IonCard, IonIcon, IonButton, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, PictogramSearchComponent, IonThumbnail]
 })
 export class MenuTypesPage implements OnInit {
 
   menuTypes: MenuType[] = [];
   showMenuTypeForm: boolean = false; 
+  
   actualMenuType: MenuType = { id: '', name: '', pictogramId: '' };
   editedMenuType: MenuType | null = null;
   editingMenuType: boolean = false;
 
-  constructor( private menuService: MenuService, private cdr: ChangeDetectorRef, private alertService: AlertService) { }
+  constructor( private menuService: MenuService,private readonly router: Router, private cdr: ChangeDetectorRef, private alertService: AlertService) { }
 
   ngOnInit() {
     this.loadStructure();
@@ -36,7 +39,7 @@ export class MenuTypesPage implements OnInit {
   }
 
   salir() {
-    // Implement navigation to home
+    this.router.navigate(['/homeadministrador']);
   }
 
   addMenuType() {

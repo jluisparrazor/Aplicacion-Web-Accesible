@@ -31,17 +31,50 @@
 <ion-content [fullscreen]="true">
   <div class="contenedor-central">
     <h2>Bienvenido/a, {{ userActual.name }}</h2>
-    <ion-button expand="block" size="large" routerLink="/admin-profesores" class="boton-central">
-      Administrar Profesores
-    </ion-button>
-    <ion-button expand="block" size="large" routerLink="/admin-alumnos" class="boton-central">
-      Administrar Alumnos
-    </ion-button>
-    <ion-button expand="block" size="large" routerLink="/admin-tareas" class="boton-central">
-      Administrar Tareas
-    </ion-button>
-    <ion-button expand="block" size="large" routerLink="/material-update" class="boton-central">
-      Añadir Material
-    </ion-button>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" class="ion-text-center">
+          <ion-button expand="block" size="large" routerLink="/admin-profesores" class="boton-central">
+            Administrar Profesores
+          </ion-button>
+        </ion-col>
+        <ion-col size="6" class="ion-text-center">
+          <ion-button expand="block" size="large" routerLink="/admin-alumnos" class="boton-central">
+            Administrar Alumnos
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6" class="ion-text-center">
+          <ion-button expand="block" size="large" routerLink="/admin-tareas" class="boton-central">
+            Administrar Tareas
+          </ion-button>
+        </ion-col>
+        <ion-col size="6" class="ion-text-center">
+          <ion-button expand="block" size="large" routerLink="/classes" class="boton-central">
+            Administrar Clases
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6" class="ion-text-center">
+          <ion-button expand="block" size="large" routerLink="/menutypes" class="boton-central">
+            Administrar Menús
+          </ion-button>
+        </ion-col>
+        <ion-col size="6" class="ion-text-center">
+          <ion-button expand="block" size="large" routerLink="/show-menus" class="boton-central">
+            Ver Menús
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12" class="ion-text-center">
+          <ion-button expand="block" size="large" routerLink="/material-update" class="boton-central">
+            Añadir Material
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 </ion-content>
