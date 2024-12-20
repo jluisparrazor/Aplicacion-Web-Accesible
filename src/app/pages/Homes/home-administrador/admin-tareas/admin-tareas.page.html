@@ -121,7 +121,7 @@
             </ion-input>
           </ion-item>
           
-         <!-- Añadir Imágenes (solo para StepTask) -->
+          <!-- Añadir Imágenes (solo para StepTask) -->
           <ion-item *ngIf="newTarea.type === 'StepTask'">
             <ion-input 
               label="Imagenes: " 
@@ -144,6 +144,124 @@
               </ion-col>
             </ng-container>
           </ion-row>
+
+          <!-- Añadir pasos (solo para StepTask) -->
+          <ion-list *ngIf="newTarea.type === 'StepTask'">
+            <ion-list-header>
+              <ion-label>Siguiente paso</ion-label>
+            </ion-list-header>
+
+            <!--Descripción del paso-->
+            <ion-item>
+              <ion-input
+                label="Descripción"
+                labelPlacement="floating"
+                type="text"
+                placeholder="Introduce la descripción del paso..."
+                [(ngModel)]="newStepDescription">
+              </ion-input>
+            </ion-item>
+
+            <!--Pictograma asociado al paso-->
+            <app-pictogram-search (pictogramSelect)="newStep.pictogramId = $event"></app-pictogram-search>
+            <ion-item *ngIf="newStep.pictogramId">
+              <ion-label>
+                Pictograma seleccionado para el paso
+              </ion-label>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newStep.pictogramId" alt="Pictogram image"></ion-img>
+              </ion-thumbnail>
+            </ion-item>
+
+            <!--Imagen asociada al paso-->
+            <ion-item>
+              <ion-input
+                label="Imagen"
+                labelPlacement="floating"
+                type="url"
+                placeholder="Introduce el enlace a la imagen... (solo se mostrará si no hay pictograma)"
+                [(ngModel)]="newStepImageLink">
+              </ion-input>
+            </ion-item>
+
+            <!--Vídeo asociado al paso-->
+            <ion-item>
+              <ion-input
+                label="Vídeo"
+                labelPlacement="floating"
+                type="url"
+                placeholder="Introduce el enlace al video...">
+                <!-- [(ngModel)]="newImageLink"-->
+              </ion-input>
+            </ion-item>
+
+            <ion-button (click)="addStep()">Añadir paso</ion-button>
+          </ion-list>
+
+          <!-- Vista previa de pasos añadidos (solo para StepTask) -->
+          <ion-row *ngIf="newTarea.type === 'StepTask' && newTaskDescription.steps && newTaskDescription.steps.length > 0">
+            <ng-container *ngFor="let step of newTaskDescription.steps">
+              
+              <ion-col size="auto" class="imagen-tarea-col">
+                <ion-thumbnail *ngIf="step.pictogramId" class="imagen-tarea-thumbnail">
+                  <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + step.pictogramId" alt="Pictograma del paso"></ion-img>
+                </ion-thumbnail>
+
+                <ion-thumbnail *ngIf="!step.pictogramId && step.imageUrl && step.imageUrl !== '' " class="imagen-tarea-thumbnail">
+                  <ion-img [src]="step.imageUrl" alt="Imagen del paso" class="imagen-tarea-img" alt="Imagen del paso"></ion-img>
+                </ion-thumbnail>
+
+                <h5> {{ step.text }} </h5>
+
+                <ion-button (click)="removeStep(step)" color="danger" class="boton-eliminar-imagen">Eliminar</ion-button>
+              </ion-col>
+
+            </ng-container>
+          </ion-row>
+
+          <!-- Fechas con diseño tipo grid -->
+          <ion-item>
+            <ion-grid class="fechas-grid">
+              <ion-row>
+                <!-- Fecha de inicio -->
+                <ion-col size="auto" class="fecha-item">
+                  <ion-label class="titulo-fecha">Fecha de inicio:</ion-label>
+                  <ion-datetime
+                    [(ngModel)]="tempFechaInicio"
+                    displayFormat="YYYY-MM-DD HH:mm"
+                    doneText="Aceptar"
+                    cancelText="Cancelar"
+                    (ionChange)="onFechaInicioChange($event)">
+                  </ion-datetime>
+                  <p *ngIf="tempFechaInicio; else noFechaInicio" class="seleccionada">
+                    {{ tempFechaInicio | date: 'fullDate' }} {{ tempFechaInicio | date: 'HH:mm' }}
+                  </p>
+                  <ng-template #noFechaInicio>
+                    <p>No hay fecha de inicio seleccionada</p>
+                  </ng-template>
+                </ion-col>
+
+                <!-- Fecha de cumplimiento -->
+                <ion-col size="auto" class="fecha-item">
+                  <ion-label class="titulo-fecha">Fecha de cumplimiento:</ion-label>
+                  <ion-datetime
+                    [(ngModel)]="tempFechaCumplimiento"
+                    displayFormat="YYYY-MM-DD HH:mm"
+                    doneText="Aceptar"
+                    cancelText="Cancelar"
+                    (ionChange)="onFechaCumplimientoChange($event)">
+                  </ion-datetime>
+                  <p *ngIf="tempFechaCumplimiento; else noFechaCumplimiento" class="seleccionada">
+                    {{ tempFechaCumplimiento | date: 'fullDate' }} {{ tempFechaCumplimiento | date: 'HH:mm' }}
+                  </p>
+                  <ng-template #noFechaCumplimiento>
+                    <p>No hay fecha seleccionada</p>
+                  </ng-template>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+            
           </ion-list>
         </ion-card>
 

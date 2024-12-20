@@ -44,6 +44,7 @@ export class PictogramSearchComponent {
     console.log('Pictograma seleccionado:', pictogram._id);
     this.pictogramSelect.emit(pictogram._id);
     this.showPictogramList = false;
+    this.keyword = ''
   }
 
 }

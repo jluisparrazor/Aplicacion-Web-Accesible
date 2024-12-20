@@ -5,19 +5,21 @@ import { Router } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
 import { FirestoreService } from 'src/app/common/services/firestore.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonAvatar, IonImg, IonGrid, IonRow, IonCol, IonCard } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonAvatar, IonImg, IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonLabel, IonItem } from '@ionic/angular/standalone';
 import { StudentI } from 'src/app/common/models/student.models';
 import { TaskI } from 'src/app/common/models/task.models';
-import { DescriptionI } from 'src/app/common/models/task.models';
+import { DescriptionI, StepI } from 'src/app/common/models/task.models';
 import { Timestamp } from '@angular/fire/firestore';
 import { CelebracionComponent } from "../../../shared/celebracion/celebracion.component";
+import { doc, setDoc } from 'firebase/firestore';
+import { max } from 'rxjs';
 
 @Component({
   selector: 'app-tareas-por-pasos',
   templateUrl: './tareas-por-pasos.page.html',
   styleUrls: ['./tareas-por-pasos.page.scss'],
   standalone: true,
-  imports: [IonCard, IonCol, IonRow, IonGrid, IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
+  imports: [IonLabel, IonItem, IonCard, IonCardContent, IonCol, IonRow, IonGrid, IonImg, IonAvatar, IonIcon, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, CommonModule, FormsModule, CelebracionComponent]
 })
 export class TareasPorPasosPage implements OnInit {
 
@@ -35,6 +37,13 @@ export class TareasPorPasosPage implements OnInit {
   taskTitle: string;
   associatedDescriptionId: string;
   estadoTarea: boolean[] = []; // Ahora es un array de booleanos
+
+  // Paso actual a mostrar
+  currentStep: StepI
+  currentStepi: number
+
+  //Visualización
+  visualization: string;
 
   constructor(
     private router: Router,
@@ -59,6 +68,9 @@ export class TareasPorPasosPage implements OnInit {
   
       // Cargar la tarea desde Firestore usando taskID
       this.loadTarea(this.taskID);
+
+      // Poner el paso actual a 0
+      this.currentStepi = 0
     }
   
     const user = this.sessionService.getCurrentUser();
@@ -66,6 +78,10 @@ export class TareasPorPasosPage implements OnInit {
     if (user && 'correctPassword' in user) {
       this.userActual = user as unknown as StudentI;
       console.log('Usuario loggeado:', this.userActual.name);
+      
+      if (this.userActual.stepVisualization !== undefined && this.userActual.stepVisualization !== null)
+        this.visualization = this.userActual.stepVisualization
+
     } else {
       console.error('El usuario actual no es válido o no es un StudentI.');
       this.router.navigate(['/loginalumno']);
@@ -109,10 +125,24 @@ export class TareasPorPasosPage implements OnInit {
       const descriptionDoc = await this.firestoreService.getDocument<DescriptionI>(`Description/${associatedDescriptionId}`);
       this.descripcion = descriptionDoc.data();
       console.log('Descripción cargada:', this.descripcion);
+      this.initStep()
     } catch (error) {
       console.error('Error al cargar la descripción:', error);
     }
-  }  
+  }
+
+  initStep() {
+    // Paso actual a mostrar
+    this.currentStep = null
+    if (this.descripcion.steps !== undefined && this.descripcion.steps !== null && this.descripcion.steps && this.descripcion.steps.length > 0) {
+      // Calculamos currentStepi
+      // (Primer paso incompleto)
+      while (this.currentStepi < this.descripcion.steps.length && this.descripcion.steps[this.currentStepi].done !== undefined && this.descripcion.steps[this.currentStepi].done)
+        this.currentStepi++
+    }
+    
+    this.currentStep = this.descripcion.steps[ this.currentStepi < this.descripcion.steps.length? this.currentStepi : this.descripcion.steps.length-1 ]
+  }
   
   // Función para volver al listado de tareas
   volverListado() {
@@ -148,6 +178,80 @@ export class TareasPorPasosPage implements OnInit {
     } else {
       console.error('El estudiante no está asignado a esta tarea.');
     }
+  }
+
+  completeStep() {
+    // Marcar paso como completado
+    this.descripcion.steps[this.currentStepi].done = true
+
+    // Escribir en la base de datos
+    try {
+      let newDescription = {
+        descriptionId: this.descripcion.descriptionId,
+        imagesId: this.descripcion.imagesId,
+        text: this.descripcion.text,
+        pictogramId: this.descripcion.pictogramId,
+        link: this.descripcion.link,
+        steps: this.descripcion.steps
+      };
+
+      if (this.descripcion.steps == undefined) {
+        newDescription.steps = null
+      }
+
+      const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.descripcion.descriptionId);
+      setDoc(descriptionRef, newDescription);
+
+    } catch (error) {
+      console.error('Error al actualizar la tarea:', error);
+    }
+
+    this.currentStepi++
+
+    if (this.currentStepi !== this.descripcion.steps.length) {
+      setTimeout(() => {
+        this.currentStep = this.descripcion.steps[this.currentStepi]
+      }, 500)
+    }
+  }
+
+  backStep() {
+    console.log("Retrocediendo de paso ", this.currentStepi, " al anterior")
+
+    // Marcar paso como no completado
+    this.descripcion.steps[ this.currentStepi < this.descripcion.steps.length? this.currentStepi : this.descripcion.steps.length-1 ].done = false
+
+    // Escribir en la base de datos
+    try {
+      let newDescription = {
+        descriptionId: this.descripcion.descriptionId,
+        imagesId: this.descripcion.imagesId,
+        text: this.descripcion.text,
+        pictogramId: this.descripcion.pictogramId,
+        link: this.descripcion.link,
+        steps: this.descripcion.steps
+      };
+
+      if (this.descripcion.steps == undefined) {
+        newDescription.steps = null
+      }
+
+      const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.descripcion.descriptionId);
+      setDoc(descriptionRef, newDescription);
+
+    } catch (error) {
+      console.error('Error al actualizar la tarea:', error);
+    }
+
+    setTimeout(() => {
+      this.currentStepi--
+      this.currentStep = this.descripcion.steps[this.currentStepi]
+      console.log("Ahora estamos en el paso ", this.currentStepi)
+      console.log(this.currentStep)
+    }, 500)
+
+    
+  }
   }  
   
   marcarEnlaceVisitado(){

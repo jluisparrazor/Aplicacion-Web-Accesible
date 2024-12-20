@@ -9,6 +9,7 @@ export interface StudentI{
     birthDate?: Date
     loginType: boolean,
     correctPassword?: Array<number>,
+    stepVisualization: string
 }
 
 export function isStudent(obj: any): obj is StudentI {
