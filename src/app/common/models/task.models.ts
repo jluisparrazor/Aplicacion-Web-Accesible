@@ -24,6 +24,7 @@ export interface DescriptionI {
     text: string;               //Descripción de la tarea
     link?: string;              //Enlace, solo para tareas de tipo AppTask
     steps?: StepI[];            //Pasos de tarea tipo StepTask
+    pictograms:string[];       //Array de IDs de pictogramas
 }
 
 //Modelo para un paso
