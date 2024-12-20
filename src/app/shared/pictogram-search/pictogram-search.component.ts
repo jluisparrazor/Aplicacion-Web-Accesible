@@ -36,7 +36,7 @@ export class PictogramSearchComponent {
   }
 
   getPictogramImageUrl(pictogram: any): string {
-    return this.arasaacService.getPictogramImageUrl(pictogram);
+    return this.arasaacService.getPictogramImageUrl(pictogram._id);
   }
 
   selectPictogram(pictogram: any) {

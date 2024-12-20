@@ -6,6 +6,7 @@ import { IoniconsModule } from '../../../common/modules/ionicons.module';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
+import { ArasaacService } from 'src/app/common/services/arasaac.service';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { registerLocaleData } from '@angular/common';
@@ -31,12 +32,15 @@ export class HomeAdministradorPage implements OnDestroy{
   administrative: boolean = false; // Nueva propiedad para almacenar el nombre del administrador
   userActual : TeacherI | null = null;
   sessionSubscription: Subscription;
+  arasaacService: any;
 
 
   constructor(
     private readonly sessionService: SessionService,
-    private readonly router: Router
+    private readonly router: Router,
+    arasaacService: ArasaacService
   ) {
+    this.arasaacService = arasaacService;
     this.init();
   }
     

@@ -5,8 +5,7 @@ import { DescriptionI } from 'src/app/common/models/task.models';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { DocumentReference } from '@angular/fire/firestore';
-import { getDoc } from 'firebase/firestore';
+import { ChangeDetectorRef } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import {
   IonContent,
@@ -47,10 +46,11 @@ export class RegistroSemanalPage implements OnInit {
   tareasCompletadas: TaskI[] = []; // Tareas completadas del alumno seleccionado
   todasTareas: { [key: string]: TaskI[] } = {};
   seleccionado: string = ''; // Id del alumno seleccionado
+  nombreSeleccionado: string = '';
   descripcionesMap: { [key: string]: DescriptionI | undefined } = {}; // Mapa para almacenar descripciones completas
   cargando: boolean = true; // Estado para controlar la carga de datos
 
-  constructor(private firestoreService: FirestoreService) {}
+  constructor(private firestoreService: FirestoreService, private cdr: ChangeDetectorRef) {}
 
   async ngOnInit() {
     try {
@@ -67,6 +67,11 @@ export class RegistroSemanalPage implements OnInit {
       console.error('Error al inicializar la página:', error);
       this.cargando = false; // Asegurarse de que el spinner desaparezca incluso si hay errores
     }
+  }
+
+  ngOnDestroy() {
+    // Limpiar datos cuando el componente se destruye (cuando el usuario sale de la página)
+    this.todasTareas = {};
   }
 
   private async cargarTodasLasTareas() {
@@ -103,8 +108,9 @@ export class RegistroSemanalPage implements OnInit {
     }
   }
   
-  cargarTareas(alumnoId: string, alumnoNombre: string) {
-    this.seleccionado = alumnoNombre;
+  cargarTareas(alumnoId: string, alumnoNombre: string, alumnoApellido: string) {
+    this.seleccionado = alumnoId;
+    this.nombreSeleccionado = alumnoNombre + " " + alumnoApellido; // Almacena el nombre completo
 
     // Limpiar listas
     this.tareasPendientes = [];
@@ -115,16 +121,11 @@ export class RegistroSemanalPage implements OnInit {
 
     // Clasificar las tareas como pendientes o completadas
     for (const tarea of tareas) {
-      const assignedStrings = tarea.assigned.map((assignee: any) =>
-        typeof assignee === 'string' ? assignee : assignee?.id
-      );
+      // Buscar la asignación correspondiente al alumno por ID
+      const assigned = tarea.assigned.find((a) => a.assignedId === alumnoId);
 
-      const index = assignedStrings.indexOf(alumnoNombre);
-
-      if (index !== -1) {
-        const isCompleted = tarea.completed?.[index] ?? false;
-
-        if (isCompleted) {
+      if (assigned) {
+        if (assigned.completed) {
           this.tareasCompletadas.push(tarea);
         } else {
           this.tareasPendientes.push(tarea);
@@ -133,15 +134,34 @@ export class RegistroSemanalPage implements OnInit {
     }
   }
 
-  getDoneTime(tarea: TaskI, alumnoId: string): Timestamp[] {
-    const alumnoIndex = tarea.assigned.findIndex(name => name === alumnoId);
-  
-    // Si el índice es válido y existe un doneTime correspondiente, devuélvelo como un array
-    if (alumnoIndex !== -1 && tarea.doneTime && tarea.doneTime[alumnoIndex]) {
-      return [tarea.doneTime[alumnoIndex]];
+  // Función para convertir un Timestamp a Date
+  convertTimestampToDate(timestamp: any): Date | null {
+    if (timestamp instanceof Timestamp) {
+      return timestamp.toDate();  // Si es un Timestamp, lo convertimos
+    } else if (typeof timestamp === 'string') {
+      // Si es un string con formato de fecha, lo convertimos a Date
+      return new Date(timestamp);
+    } else {
+      return null;  // Si no es un Timestamp ni un string, retornamos null
     }
-  
-    // Si no hay fecha de finalización, devuelve un array vacío
-    return [];
+  }
+
+  // Verifica si existe un endTime para el alumno seleccionado
+  hasEndTime(tarea: TaskI, alumnoId: string): boolean {
+    const assigned = tarea.assigned.find(a => a.assignedId === alumnoId);
+    return assigned ? !!assigned.endTime : false;
+  }
+
+
+  // Devuelve el endTime si existe
+  getEndTime(tarea: TaskI, alumnoId: string): Timestamp | null {
+    const assigned = tarea.assigned.find(a => a.assignedId === alumnoId);
+    return assigned?.endTime ?? null;
+  }
+
+  // Devuelve el doneTime si existe
+  getDoneTime(tarea: TaskI, alumnoId: string): Timestamp | null {    
+    const assigned = tarea.assigned.find(a => a.assignedId === alumnoId);    
+    return assigned?.doneTime ?? null;
   }
 }  

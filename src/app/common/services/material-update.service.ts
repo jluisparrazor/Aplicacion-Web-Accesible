@@ -15,7 +15,6 @@ export class MaterialService {
   }
   
   // Función para obtener nombres del inventario
-  // Función para obtener nombres del inventario
 async fetchInventoryNames(): Promise<string[]> {
     const inventoryCollection = collection(this.firestore, 'Inventory');
     const querySnapshot = await getDocs(inventoryCollection);
