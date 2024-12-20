@@ -26,6 +26,7 @@ export class TareasPorPasosPage implements OnInit {
   tareaCompletada: boolean = false;
   mostrarConfeti: boolean = false;
   userActual: StudentI;
+  studentIndex: number;
 
   tarea: TaskI;
   descripcion: DescriptionI;
@@ -34,7 +35,6 @@ export class TareasPorPasosPage implements OnInit {
 
   //Cosas pasadas por state
   taskID: string;
-  taskTitle: string;
   associatedDescriptionId: string;
   estadoTarea: boolean[] = []; // Ahora es un array de booleanos
 
@@ -55,23 +55,6 @@ export class TareasPorPasosPage implements OnInit {
   ngOnInit() {
     // Obtener los datos de la tarea pasada como parámetro
     const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras?.state) {
-      this.taskID = navigation.extras.state['taskID'];
-      this.taskTitle = navigation.extras.state['taskTitle'];
-      this.associatedDescriptionId = navigation.extras.state['associatedDescriptionId'];
-      this.estadoTarea = navigation.extras.state['completed'];
-  
-      // Cargar la descripción asociada desde Firestore
-      if (this.associatedDescriptionId) {
-        this.loadDescripcion(this.associatedDescriptionId);
-      }
-  
-      // Cargar la tarea desde Firestore usando taskID
-      this.loadTarea(this.taskID);
-
-      // Poner el paso actual a 0
-      this.currentStepi = 0
-    }
   
     const user = this.sessionService.getCurrentUser();
   
@@ -82,14 +65,29 @@ export class TareasPorPasosPage implements OnInit {
       if (this.userActual.stepVisualization !== undefined && this.userActual.stepVisualization !== null)
         this.visualization = this.userActual.stepVisualization
 
+      if (navigation?.extras?.state) {
+        this.taskID = navigation.extras.state['taskID'];
+        this.associatedDescriptionId = navigation.extras.state['associatedDescriptionId'];
+        this.estadoTarea = navigation.extras.state['completed'];
+
+        console.log('Tarea seleccionada:', this.taskID);
+        console.log('ID de la descripción asociada:', this.associatedDescriptionId);
+        console.log('Estado de la tarea para ', user.name, ': ', this.estadoTarea);
+    
+        // Cargar la descripción asociada desde Firestore
+        if (this.associatedDescriptionId)
+          this.loadDescripcion(this.associatedDescriptionId);
+    
+        // Cargar la tarea desde Firestore usando taskID
+        this.loadTarea(this.taskID);
+  
+      }
+
     } else {
       console.error('El usuario actual no es válido o no es un StudentI.');
       this.router.navigate(['/loginalumno']);
     }
 
-    console.log('Tarea seleccionada:', this.taskTitle);
-    console.log('ID de la descripción asociada:', this.associatedDescriptionId);
-    console.log('Estado de la tarea para ', user.name, ': ', this.estadoTarea);
   } 
 
   async loadTarea(taskID: string) {
@@ -106,14 +104,22 @@ export class TareasPorPasosPage implements OnInit {
       const assignedStudent = this.tarea.assigned.find(assignment => assignment.assignedId === userId);  // Compara por ID del alumno
 
       // Buscar el índice del alumno en el array 'assigned' usando el ID del estudiante
-      const studentIndex = this.tarea.assigned.findIndex(assignment => assignment.assignedId === userId);  // Compara por ID del alumno
+      this.studentIndex = this.tarea.assigned.findIndex(assignment => assignment.assignedId === userId);  // Compara por ID del alumno
   
-      if (studentIndex !== -1) {
+      if (this.studentIndex !== -1) {
         // El alumno está asignado a la tarea
         console.log(`El estudiante ${assignedStudent.assignedName} sí está asignado a esta tarea.`);
+
+        // Guardar el paso en una variable local
+
+        this.currentStepi = this.tarea.assigned[this.studentIndex].nStepsCompleted
+        console.log("Paso actual: ", this.currentStepi)
+        this.initStep()
+
       } else {
         console.log(`El estudiante ${assignedStudent.assignedName} no está asignado a esta tarea.`);
       }
+
     } catch (error) {
       console.error('Error al cargar la tarea:', error);
     }
@@ -125,7 +131,6 @@ export class TareasPorPasosPage implements OnInit {
       const descriptionDoc = await this.firestoreService.getDocument<DescriptionI>(`Description/${associatedDescriptionId}`);
       this.descripcion = descriptionDoc.data();
       console.log('Descripción cargada:', this.descripcion);
-      this.initStep()
     } catch (error) {
       console.error('Error al cargar la descripción:', error);
     }
@@ -134,14 +139,8 @@ export class TareasPorPasosPage implements OnInit {
   initStep() {
     // Paso actual a mostrar
     this.currentStep = null
-    if (this.descripcion.steps !== undefined && this.descripcion.steps !== null && this.descripcion.steps && this.descripcion.steps.length > 0) {
-      // Calculamos currentStepi
-      // (Primer paso incompleto)
-      while (this.currentStepi < this.descripcion.steps.length && this.descripcion.steps[this.currentStepi].done !== undefined && this.descripcion.steps[this.currentStepi].done)
-        this.currentStepi++
-    }
-    
-    this.currentStep = this.descripcion.steps[ this.currentStepi < this.descripcion.steps.length? this.currentStepi : this.descripcion.steps.length-1 ]
+    if (this.descripcion.steps !== undefined && this.descripcion.steps !== null && this.descripcion.steps && this.descripcion.steps.length > 0) 
+      this.currentStep = this.descripcion.steps[ this.currentStepi < this.descripcion.steps.length? this.currentStepi : this.descripcion.steps.length-1 ]
   }
   
   // Función para volver al listado de tareas
@@ -181,75 +180,61 @@ export class TareasPorPasosPage implements OnInit {
   }
 
   completeStep() {
-    // Marcar paso como completado
-    this.descripcion.steps[this.currentStepi].done = true
+    console.log("Avanzando del paso ", this.currentStepi, " al siguiente")
 
-    // Escribir en la base de datos
-    try {
-      let newDescription = {
-        descriptionId: this.descripcion.descriptionId,
-        imagesId: this.descripcion.imagesId,
-        text: this.descripcion.text,
-        pictogramId: this.descripcion.pictogramId,
-        link: this.descripcion.link,
-        steps: this.descripcion.steps
-      };
+    if (this.studentIndex !== -1) {
+     
+      // Marcar paso como completado
+      this.currentStepi++
 
-      if (this.descripcion.steps == undefined) {
-        newDescription.steps = null
+      // Escribir en la base de datos
+      this.tarea.assigned[this.studentIndex].nStepsCompleted = this.currentStepi
+      
+      this.tasksService.updateTask(this.tarea).then(() => {
+        console.log('Paso actualizado a completado:', this.tarea);
+      
+      }).catch(error => {
+        console.error('Error actualizando tarea:', error);
+      });
+
+      if (this.currentStepi < this.descripcion.steps.length) {
+        setTimeout(() => {
+          this.currentStep = this.descripcion.steps[this.currentStepi]
+        }, 500)
       }
 
-      const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.descripcion.descriptionId);
-      setDoc(descriptionRef, newDescription);
-
-    } catch (error) {
-      console.error('Error al actualizar la tarea:', error);
     }
 
-    this.currentStepi++
-
-    if (this.currentStepi !== this.descripcion.steps.length) {
-      setTimeout(() => {
-        this.currentStep = this.descripcion.steps[this.currentStepi]
-      }, 500)
-    }
+    console.log("Ahora estamos en el paso: ", this.currentStepi)
   }
 
   backStep() {
     console.log("Retrocediendo de paso ", this.currentStepi, " al anterior")
 
-    // Marcar paso como no completado
-    this.descripcion.steps[ this.currentStepi < this.descripcion.steps.length? this.currentStepi : this.descripcion.steps.length-1 ].done = false
+    if (this.studentIndex !== -1) {
+     
+      // Marcar paso como no completado
+      this.currentStepi--
 
-    // Escribir en la base de datos
-    try {
-      let newDescription = {
-        descriptionId: this.descripcion.descriptionId,
-        imagesId: this.descripcion.imagesId,
-        text: this.descripcion.text,
-        pictogramId: this.descripcion.pictogramId,
-        link: this.descripcion.link,
-        steps: this.descripcion.steps
-      };
+      // Escribir en la base de datos
+      this.tarea.assigned[this.studentIndex].nStepsCompleted = this.currentStepi
 
-      if (this.descripcion.steps == undefined) {
-        newDescription.steps = null
+      // Actualiza la tarea en el servicio de Firestore pasando el ID del alumno
+      this.tasksService.updateTask(this.tarea).then(() => {
+        console.log('Paso actualizado a no completado:', this.tarea);
+      }).catch(error => {
+        console.error('Error actualizando tarea:', error);
+      });
+
+      if (this.currentStepi > -1) {
+        setTimeout(() => {
+          this.currentStep = this.descripcion.steps[this.currentStepi]
+        }, 500)
       }
 
-      const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.descripcion.descriptionId);
-      setDoc(descriptionRef, newDescription);
-
-    } catch (error) {
-      console.error('Error al actualizar la tarea:', error);
     }
 
-    setTimeout(() => {
-      this.currentStepi--
-      this.currentStep = this.descripcion.steps[this.currentStepi]
-      console.log("Ahora estamos en el paso ", this.currentStepi)
-      console.log(this.currentStep)
-    }, 500)
-
+    console.log("Ahora estamos en el paso: ", this.currentStepi)
     
   } 
   

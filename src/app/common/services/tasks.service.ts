@@ -52,7 +52,6 @@ export class TasksService {
       pictogramId: null,
       imageUrl: null,
       videoUrl: null,
-      done: false
     }
     return newStep;
   }

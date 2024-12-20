@@ -381,6 +381,7 @@ export class AdminTareasPage{
         assignedId: a.assignedId,
         assignedName: a.assignedName,
         completed: a.completed || false,
+        nStepsCompleted: a.nStepsCompleted || null,
         doneTime: a.doneTime || null,
         startTime: a.startTime || null,
         endTime: a.endTime || null,
@@ -491,6 +492,7 @@ export class AdminTareasPage{
       assignedId: student.id,
       assignedName: `${student.name} ${student.surname}`,
       completed: false,
+      nStepsCompleted: 0,
       doneTime: null, // Tipo Timestamp | null
       startTime: null, // Tipo Timestamp | null
       endTime: null,   // Tipo Timestamp | null
@@ -524,6 +526,7 @@ export class AdminTareasPage{
   async assignTarea() {
     if (this.selectedTask) {
       if (this.assignationStep === 1) {
+
         this.actualizarMinFecha();
         // Paso 1: Actualizar los alumnos seleccionados
         const removedStudents = this.originalAssigned.filter(student =>
@@ -695,6 +698,7 @@ export class AdminTareasPage{
             assignedName: assigned.assignedName,
             assignedId: assigned.assignedId,
             completed: assigned.completed || false,
+            nStepsCompleted: assigned.nStepsCompleted || null,
             startTime: assigned.startTime || null, // Si ya es Timestamp, se usa directamente
             endTime: assigned.endTime || null,     
             doneTime: assigned.doneTime || null,
