@@ -126,7 +126,7 @@ export class AdminProfesoresPage {
     try {
       const teacherRef = await this.firestoreService.getDocumentReference('Teachers', this.newTeacher.id);
       const updatedData: TeacherI = {
-        id: this.teacher.id,
+        id: this.newTeacher.id,
         name: this.newTeacher.name,
         surname: this.newTeacher.surname,
         dni: this.newTeacher.dni,
