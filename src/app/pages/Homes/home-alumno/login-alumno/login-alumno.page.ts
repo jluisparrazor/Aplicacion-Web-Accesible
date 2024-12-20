@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList, IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonCol, IonRow, IonImg } from '@ionic/angular/standalone';
+import { IonAvatar, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonList, IonItem, IonCard, IonInput, IonButton, IonSpinner, IonIcon, IonButtons, IonGrid, IonCol, IonRow, IonImg } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { IoniconsModule } from 'src/app/common/modules/ionicons.module';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { StudentI } from 'src/app/common/models/student.models';
   styleUrls: ['./login-alumno.page.scss'],
   standalone: true,
   imports: [CommonModule, IonImg, IonRow, IonCol, IonGrid, IonButtons, IonIcon, IonSpinner, IonButton, IonInput, IonCard, IonHeader, IonToolbar, IonTitle,
-    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule],
+    IonContent, IonList, IonLabel, IonItem, FormsModule, IonButton, IonSpinner, IoniconsModule, IonAvatar],
 })
 
 export class LoginAlumnoPage implements OnInit {
@@ -134,5 +134,9 @@ export class LoginAlumnoPage implements OnInit {
         circle.src = '';
       }
     });
+  }
+
+  volverListado() {
+    this.router.navigate(['/paginainicial']); // Aquí va la ruta a la página del listado
   }
 }
