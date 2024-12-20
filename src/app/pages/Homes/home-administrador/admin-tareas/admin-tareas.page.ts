@@ -356,13 +356,12 @@ export class AdminTareasPage{
     this.newTarea.taskID = this.firestoreService.createIDDoc();
     this.newTarea.assigned = [];
     this.newTaskDescription.descriptionId = this.firestoreService.createIDDoc();
-
+    this.newTaskDescription.pictograms = this.Pictograms;
     //Creo la descripcion en la bd
     await this.firestoreService.createDocumentID(this.newTaskDescription, 'Description', this.newTaskDescription.descriptionId);
 
     //Asocio esa descripcion a la tarea
     this.newTarea.associatedDescriptionId = this.newTaskDescription.descriptionId;
-    
     //Creo la tarea en la bd
     await this.firestoreService.createDocumentID(this.newTarea, 'Tasks', this.newTarea.taskID);
 
@@ -597,6 +596,7 @@ export class AdminTareasPage{
     this.newTaskDescription.text = null;
     this.newTaskDescription.link = null;
     this.newTaskDescription.pictogramId = null;
+    this.Pictograms = [];
   }
 
  // Método para eliminar una tarea de la base de datos
@@ -667,7 +667,7 @@ export class AdminTareasPage{
   async saveTarea() {
     if (this.editedTask) {
       try {
-        this.newTaskDescription.pictograms = this.Pictograms;
+        this.newTaskDescription.pictograms = [...this.Pictograms];
         // Actualizar la descripción si es necesario
         if (this.newTaskDescription.descriptionId) {
           // Crear un objeto con los campos relevantes de la descripción

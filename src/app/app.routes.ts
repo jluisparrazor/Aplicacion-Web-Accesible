@@ -72,6 +72,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/Tareas/task-menus/task-menus.page').then( m => m.TaskMenusPage)
   },
   {
+    path: 'task-normal',
+    loadComponent: () => import('./pages/Tareas/task-normal/task-normal.page').then( m => m.TaskNormal)
+  },
+  {
     path: 'show-menus',
     loadComponent: () => import('./pages/Homes/home-administrador/Menus/show-menus/show-menus.page').then( m => m.ShowMenusPage)
   },
