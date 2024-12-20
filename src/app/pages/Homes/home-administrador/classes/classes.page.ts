@@ -10,6 +10,9 @@ import { AlertService } from 'src/app/common/services/alert.service';
 import { ArasaacService } from 'src/app/common/services/arasaac.service';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { SessionService } from 'src/app/common/services/session.service';
+import { TeacherI } from 'src/app/common/models/teacher.models';
 
 @Component({
   selector: 'app-classes',
@@ -25,18 +28,33 @@ export class ClassesPage implements OnInit {
   actualClass: Class = { id: '', name: '', pictogramId: '' };
   editedClass: Class | null = null;
   editingClass: boolean = false;
-  arasaacService: any;
+
+  userActual: TeacherI | null = null;
+  arasaacService: ArasaacService;
+
 
   constructor(
     private classService: ClassService,
     private cdr: ChangeDetectorRef,
     private readonly router: Router,
     private alertService: AlertService,
+    private readonly sessionService: SessionService,
     private arasaac: ArasaacService) {
     this.arasaacService = arasaac;
   }
 
   ngOnInit() {
+
+    // Comprobar que el usuario actual es un administrador
+    const user = this.sessionService.getCurrentUser();
+    if (user && (user as TeacherI).administrative) {
+      this.userActual = user as unknown as TeacherI;
+      console.log('Usuario loggeado:', this.userActual.name);
+    } else {
+      console.error('El usuario actual no es válido o no tiene permisos de administrador.');
+      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+    }
+
     this.loadStructure();
   }
 
