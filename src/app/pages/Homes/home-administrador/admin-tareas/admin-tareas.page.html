@@ -121,7 +121,56 @@
             </ion-input>
           </ion-item>
           
-         <!-- Añadir Imágenes (solo para StepTask) -->
+          <!-- Seleccionar Solicitud -->
+          <ion-item *ngIf="newTarea.type === 'RequestTask'">
+            <ion-label>Seleccionar Solicitud</ion-label>
+            <ion-select [(ngModel)]="newTaskDescription.text" (ionChange)="onRequestChange()">
+              <ion-select-option *ngFor="let request of inventory" [value]="request.id">
+                <div>
+                  <strong>Materiales:</strong>
+                  <ng-container *ngFor="let material of request.materiales">
+                    <div style="margin-bottom: 5px; white-space: normal;">
+                      <p>{{ material.nombre }} | {{ material.cantidad }} | {{ material.color }} | {{ material.tamano }} || </p>
+                    </div>
+                  </ng-container>
+                </div>
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          
+          <!-- Nueva funcionalidad para buscar y previsualizar pictogramas -->
+          <ion-item *ngIf="newTarea.type === 'RequestTask'">
+            <ion-label>Seleccionar Pictograma</ion-label>
+            <div style="width: 100%; margin-top: 10px;">
+              <!-- Componente de búsqueda de pictogramas -->
+              <app-pictogram-search (pictogramSelect)="addPictogramToSteps($event)"></app-pictogram-search>
+            
+              <!-- Vista previa de pictogramas seleccionados -->
+              <ion-row *ngIf="Pictograms.length > 0" style="margin-top: 10px;">
+                <ng-container *ngFor="let pictogramId of Pictograms">
+                  <ion-col size="auto" class="imagen-tarea-col">
+                    <!-- Vista previa del pictograma -->
+                    <ion-thumbnail *ngIf="pictogramId" class="imagen-tarea-thumbnail">
+                      <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + pictogramId" alt="Pictograma del paso"></ion-img>
+                    </ion-thumbnail>
+                  
+                    <!-- Botón para eliminar el pictograma -->
+                    <ion-button (click)="removePictogramStep(pictogramId)" color="danger" class="boton-eliminar-imagen">
+                      Eliminar
+                    </ion-button>
+                  </ion-col>
+                </ng-container>
+              </ion-row>
+            
+              
+            </div>
+          </ion-item>
+
+          
+          
+          
+          
+          <!-- Añadir Imágenes (solo para StepTask) -->
           <ion-item *ngIf="newTarea.type === 'StepTask'">
             <ion-input 
               label="Imagenes: " 
@@ -144,6 +193,81 @@
               </ion-col>
             </ng-container>
           </ion-row>
+
+          <!-- Añadir pasos (solo para StepTask) -->
+          <ion-list *ngIf="newTarea.type === 'StepTask'">
+            <ion-list-header>
+              <ion-label>Siguiente paso</ion-label>
+            </ion-list-header>
+
+            <!--Descripción del paso-->
+            <ion-item>
+              <ion-input
+                label="Descripción"
+                labelPlacement="floating"
+                type="text"
+                placeholder="Introduce la descripción del paso..."
+                [(ngModel)]="newStepDescription">
+              </ion-input>
+            </ion-item>
+
+            <!--Pictograma asociado al paso-->
+            <app-pictogram-search (pictogramSelect)="newStep.pictogramId = $event"></app-pictogram-search>
+            <ion-item *ngIf="newStep.pictogramId">
+              <ion-label>
+                Pictograma seleccionado para el paso
+              </ion-label>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + newStep.pictogramId" alt="Pictogram image"></ion-img>
+              </ion-thumbnail>
+            </ion-item>
+
+            <!--Imagen asociada al paso-->
+            <ion-item>
+              <ion-input
+                label="Imagen"
+                labelPlacement="floating"
+                type="url"
+                placeholder="Introduce el enlace a la imagen... (solo se mostrará si no hay pictograma)"
+                [(ngModel)]="newStepImageLink">
+              </ion-input>
+            </ion-item>
+
+            <!--Vídeo asociado al paso-->
+            <ion-item>
+              <ion-input
+                label="Vídeo"
+                labelPlacement="floating"
+                type="url"
+                placeholder="Introduce el enlace al video...">
+                <!-- [(ngModel)]="newImageLink"-->
+              </ion-input>
+            </ion-item>
+
+            <ion-button (click)="addStep()">Añadir paso</ion-button>
+          </ion-list>
+
+          <!-- Vista previa de pasos añadidos (solo para StepTask) -->
+          <ion-row *ngIf="newTarea.type === 'StepTask' && newTaskDescription.steps && newTaskDescription.steps.length > 0">
+            <ng-container *ngFor="let step of newTaskDescription.steps">
+              
+              <ion-col size="auto" class="imagen-tarea-col">
+                <ion-thumbnail *ngIf="step.pictogramId" class="imagen-tarea-thumbnail">
+                  <ion-img [src]="'https://api.arasaac.org/api/pictograms/' + step.pictogramId" alt="Pictograma del paso"></ion-img>
+                </ion-thumbnail>
+
+                <ion-thumbnail *ngIf="!step.pictogramId && step.imageUrl && step.imageUrl !== '' " class="imagen-tarea-thumbnail">
+                  <ion-img [src]="step.imageUrl" alt="Imagen del paso" class="imagen-tarea-img" alt="Imagen del paso"></ion-img>
+                </ion-thumbnail>
+
+                <h5> {{ step.text }} </h5>
+
+                <ion-button (click)="removeStep(step)" color="danger" class="boton-eliminar-imagen">Eliminar</ion-button>
+              </ion-col>
+
+            </ng-container>
+          </ion-row>
+            
           </ion-list>
         </ion-card>
 

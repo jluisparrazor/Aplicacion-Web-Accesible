@@ -6,7 +6,7 @@ import { StudentI } from 'src/app/common/models/student.models';
 import { getDoc, setDoc } from 'firebase/firestore';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DescriptionI, TaskI } from 'src/app/common/models/task.models';
+import { DescriptionI, TaskI, StepI } from 'src/app/common/models/task.models';
 import { doc, Timestamp } from 'firebase/firestore';
 import { RouterModule } from '@angular/router';
 import { SessionService } from 'src/app/common/services/session.service';
@@ -23,6 +23,8 @@ import { takeUntil } from 'rxjs';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { LOCALE_ID } from '@angular/core';
+import { Firestore, collection, getDocs } from "@angular/fire/firestore"; 
+
 
 registerLocaleData(localeEs);
 
@@ -77,6 +79,18 @@ export class AdminTareasPage{
   tasksDescriptions: DescriptionI[] = [];
   newTaskDescription: DescriptionI;
   description: DescriptionI;
+
+  //Materiales 
+  inventory: any[] = []; // Estructura para guardar los datos
+  // Variable para almacenar el ID de la solicitud seleccionada
+  selectedRequestId: string | null = null;
+  showInvetForm: boolean = false;
+  Pictograms: string[] = [];
+
+  //Paso de tarea
+  newStep: StepI;
+  newStepDescription: string;
+  newStepImageLink: string;
   
   //Formularios
   showTaskForm: boolean = false;
@@ -105,7 +119,8 @@ export class AdminTareasPage{
     private readonly studentService: StudentService,
     private readonly taskService: TasksService,
     private alertController: AlertController,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private firestore: Firestore
   ) {
     
     this.load();
@@ -140,6 +155,10 @@ export class AdminTareasPage{
 
     this.tareaVacia = this.taskService.initTask();
 
+    this.newStep = this.taskService.initStep();
+
+    this.newStepDescription = ''
+    this.newStepImageLink = ''
   }
 
   // Método para cargar los datos de la base de datos
@@ -186,6 +205,11 @@ export class AdminTareasPage{
 
       console.log('Tareas con asignación: ', this.tasksWithAssignment);
       console.log('Tareas sin asignación: ', this.tasksWithoutAssignment);
+      // Llamada a fetchRequests para cargar las solicitudes
+      this.fetchRequests().then(() => {
+        // Una vez que fetchRequests termina, muestra las solicitudes en consola
+        console.log('Peticiones:', this.verRequests());
+      });
     }
   });
 
@@ -233,6 +257,75 @@ export class AdminTareasPage{
   async getDescripcion(){
     const res = await this.firestoreService.getDocument<DescriptionI>('Description/'+ this.newTaskDescription.descriptionId);
     this.description = res.data();
+  }
+  // Función para obtener todas las solicitudes (requests)
+  async fetchRequests(): Promise<void> {
+    const requestsCollection = collection(this.firestore, 'Requests');
+    const querySnapshot = await getDocs(requestsCollection);
+
+    // Procesar los documentos
+    this.inventory = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+
+      // Extraer materiales
+      const materiales = (data['materiales'] || []).map((material: any, index: number) => ({
+        nombre: material.nombre || `Material-${index + 1}`,
+        cantidad: material.cantidad || 0,
+        color: material.color || 'NoEspecificado',
+        tamano: material.tamano || 'NoEspecificado',
+        clave: `${doc.id}-${index}`, // Generar una clave única para cada material
+        atributos: {
+          color: material.color ? [material.color] : undefined,
+          tamano: material.tamano ? [material.tamano] : undefined,
+        },
+      }));
+
+      // Estructura de la solicitud
+      return {
+        id: doc.id,
+        clase: data['clase'] || 'Sin Clase',
+        profesor: data['profesor'] || 'Desconocido',
+        materiales,
+      };
+    });
+  }
+  verRequests(): string {
+    // Simulamos un "desplegable" mostrando un índice numérico para cada solicitud
+    return this.inventory.map((request: any, index: number) => {
+      const materiales = request.materiales.map((material: { nombre: string; cantidad: number; color: string; tamano: string; }) => 
+        `\t- Nombre: ${material.nombre}, Cantidad: ${material.cantidad}, Color: ${material.color}, Tamaño: ${material.tamano}`
+      ).join('\n');
+  
+      return `
+      [${index + 1}] - Solicitud ID: ${request.id}
+      \tClase: ${request.clase}
+      \tProfesor: ${request.profesor}
+      \tMateriales:
+      ${materiales}
+      `;
+    }).join('\n');
+  }
+  // Método para agregar un pictograma al array
+  addPictogramToSteps(pictogramId: string) {
+    if (pictogramId) {
+      this.Pictograms.push(pictogramId); // Agregamos el ID de pictograma directamente
+    }
+  }
+
+  // Método para eliminar un pictograma del array
+  removePictogramStep(pictogramId: string) {
+    const index = this.Pictograms.indexOf(pictogramId); // Busca el índice del pictograma
+    if (index > -1) {
+      this.Pictograms.splice(index, 1); // Elimina el pictograma en el índice encontrado
+    }
+  }
+  logPictogramIds() {
+    console.log('Pictogram IDs:', this.Pictograms);
+  }
+  
+  // Este método se llama cuando cambia la selección
+  onRequestChange() {
+    console.log('Solicitud seleccionada con ID:', this.newTaskDescription.text);
   }
 
   //EN PRINCIPIO ESTA FUNCION NO SE USA EN NINGUN LADO
@@ -571,16 +664,25 @@ export class AdminTareasPage{
   async saveTarea() {
     if (this.editedTask) {
       try {
+        this.newTaskDescription.pictograms = this.Pictograms;
         // Actualizar la descripción si es necesario
         if (this.newTaskDescription.descriptionId) {
           // Crear un objeto con los campos relevantes de la descripción
-          const descripcion = {
+          let descripcion = {
             descriptionId: this.newTaskDescription.descriptionId,
             imagesId: this.newTaskDescription.imagesId,
             text: this.newTaskDescription.text,
             pictogramId: this.newTaskDescription.pictogramId,
-            link: this.newTaskDescription.link
+            link: this.newTaskDescription.link,
+            steps: this.newTaskDescription.steps,
+            pictograms: this.newTaskDescription.pictograms
           };
+
+          if (this.newTaskDescription.steps == undefined) {
+            descripcion.steps = null
+          }
+
+          console.log(descripcion)
 
           const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.editedTask.associatedDescriptionId);
           await setDoc(descriptionRef, descripcion);  // Solo actualizamos los campos necesarios de la descripción
@@ -726,7 +828,8 @@ export class AdminTareasPage{
       this.newTarea = this.taskService.initTask();
       this.newTaskDescription = this.taskService.initTaskDescription();
     }
-  } 
+  }
+ 
 
   // Métodos para mostrar y ocultar el formulario de tarea, alumnos y profesores
   toggleAssignationForm() {
@@ -752,6 +855,40 @@ export class AdminTareasPage{
       const index = this.newTaskDescription.imagesId.indexOf(imageId);
       if (index > -1) {
         this.newTaskDescription.imagesId.splice(index, 1);
+      }
+    }
+  }
+
+  // Añadir paso
+  addStep() {
+    if ( (this.newStepImageLink != undefined && this.newStepImageLink.trim() !== '') || this.newStep.pictogramId != null) {
+      if (!this.newTaskDescription.steps) {
+        this.newTaskDescription.steps = [];
+      }
+
+      // Configuramos nuevo paso
+      if (this.newStepDescription == undefined || this.newStepDescription.trim() == '') this.newStep.text = "Descripción del paso"
+      else this.newStep.text = this.newStepDescription.trim()
+      
+      if (this.newStepImageLink != undefined && this.newStepImageLink.trim() !== '') this.newStep.imageUrl = this.newStepImageLink.trim()
+
+      // Añadimos nuevo paso
+      this.newTaskDescription.steps.push(this.newStep)
+
+      console.log(this.newTaskDescription.steps)
+
+      // Limipiamos campos
+      this.newStep = this.taskService.initStep();
+      this.newStepDescription = ''
+      this.newStepImageLink = ''
+    }
+  }
+
+  removeStep(step: StepI) {
+    if (this.newTaskDescription.steps) {
+      const index = this.newTaskDescription.steps.indexOf(step);
+      if (index > -1) {
+        this.newTaskDescription.steps.splice(index, 1);
       }
     }
   }

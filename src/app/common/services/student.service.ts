@@ -21,6 +21,7 @@ export class StudentService {
       birthDate: null,
       loginType: false,
       correctPassword: null,
+      stepVisualization: null
     };
     return newStudent;
   }

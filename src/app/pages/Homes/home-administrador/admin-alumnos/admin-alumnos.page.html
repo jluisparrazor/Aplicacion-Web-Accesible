@@ -110,6 +110,17 @@
               </ion-checkbox>
               <ion-label>Inicio de sesión especial</ion-label>
             </ion-item>
+
+            <!-- Tipo de visualización de pasos de tareas por pasos-->
+             <ion-item>
+              <ion-label>Visualización de pasos de tareas por paso</ion-label>
+              <ion-select placeholder="Selecciona opción" [(ngModel)]="newStud.stepVisualization">
+                <ion-select-option>Imagen</ion-select-option>
+                <ion-select-option>Texto e imagen</ion-select-option>
+                <ion-select-option>Vídeo</ion-select-option>
+              </ion-select>
+             </ion-item>
+
           </ion-list>
         </ion-card>
 

@@ -1,9 +1,17 @@
 .tarea-aplicacion {
   padding: 16px;
+  margin: auto;
+
 }
 
 .tarea-aplicacion-texto {
-  text-align: center;
+  margin: auto;
+}
+
+.task-header {
+  margin: auto;
+  align-items: center;
+  width: fit-content;
 }
 
 .pictograma-tarea {
@@ -12,8 +20,9 @@
 }
 
 .nombre-tarea {
-  font-size: 24px;
-  margin-top: 8px;
+  font-size: 32pt;
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 .but{
@@ -22,19 +31,31 @@
 }
 
 .descripcion-tarea {
-  font-size: 16px;
-  margin-top: 8px;
+  font-size: 24pt;
+  font-weight: bold;
+  //margin-top: 8px;
+  text-align: center;
 }
 
-.boton-completar-container {
+.step {
+  margin: auto;
+  //align-items: center;
+  width: 35%;
+  //display: flex;
+}
+
+.step-image {
+  height: 300px;
+}
+
+.button-container {
   display: flex;
-  justify-content: center;
   margin-top: 16px;
 }
 
-.boton-completar {
+.button {
   //background-color: #2b6cb0;
-  color: white;
+  width: 100%;
   border: none;
   border-radius: 12px;
   padding: 15px 30px; /* Botón más grande */
@@ -43,6 +64,11 @@
   cursor: pointer;
   //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s, transform 0.2s;
+}
+
+.button-icon {
+  height: 30px;
+  padding-right: 10px;
 }
 
 
