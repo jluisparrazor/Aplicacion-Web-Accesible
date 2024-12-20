@@ -30,10 +30,10 @@
               alt="Pictogram">
             </ion-img>
           </ion-avatar>
-          <ion-label class="nombre-tarea">{{ tarea.title }}</ion-label>
+          <ion-label class="nombre-tarea"> {{ tarea.title }} </ion-label>
         </ion-item>
 
-        <h2 class="descripcion-tarea">{{ descripcion.text }}</h2>
+        <h2 class="descripcion-tarea"> {{ descripcion.text }} </h2>
 
         <!-- Mostrar el paso actual -->
         <ion-card class="step" *ngIf="this.descripcion.steps && this.descripcion.steps.length > 0">
@@ -54,18 +54,34 @@
           <ion-card-content>
             <h1 *ngIf="this.visualization !== 'Imagen'" class="descripcion-tarea"> {{ this.currentStep.text }} </h1>
 
-            <div class="boton-completar-container">
+            <div class="button-container">
+              <ion-button
+                class = "button"
+                fill = "outline"
+                (click) = "backStep()"
+                [disabled] = "this.currentStepi === 0">
+
+                <ion-img class="button-icon"
+                  src="https://api.arasaac.org/api/pictograms/38250"
+                  alt="Pictograma: atrás">
+                </ion-img>
+
+                Atrás
+
+              </ion-button>
+
               <ion-button 
-                class = "boton-completar"
+                class = "button"
                 fill = "outline"
                 (click) = "completeStep()"
                 [disabled] = "this.currentStepi === this.descripcion.steps.length">
-                He completado el paso
 
-                <ion-img class="button-icon-complete"
+                <ion-img class="button-icon"
                   src="https://api.arasaac.org/api/pictograms/5584"
-                  alt="Pictograma: hecho">
+                  alt="Pictograma: completado">
                 </ion-img>
+
+                Completar
 
               </ion-button>
             </div>
@@ -75,12 +91,19 @@
 
       </div>
 
-      <div class="boton-completar-container">
+      <div class="button-container">
         <ion-button 
-          class="boton-completar" 
+          class="button"
           (click)="completarTarea()"
           [disabled] = "this.currentStepi !== this.descripcion.steps.length">
-          He completado la tarea
+
+          <ion-img class="button-icon"
+            src="https://api.arasaac.org/api/pictograms/5584"
+            alt="Pictograma: completado">
+          </ion-img>
+
+          Tarea completada
+
         </ion-button>
       </div>
     </div>

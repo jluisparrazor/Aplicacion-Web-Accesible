@@ -198,6 +198,7 @@ export class TareasPorPasosPage implements OnInit {
 
       const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.descripcion.descriptionId);
       setDoc(descriptionRef, newDescription);
+
     } catch (error) {
       console.error('Error al actualizar la tarea:', error);
     }
@@ -207,8 +208,46 @@ export class TareasPorPasosPage implements OnInit {
     if (this.currentStepi !== this.descripcion.steps.length) {
       setTimeout(() => {
         this.currentStep = this.descripcion.steps[this.currentStepi]
-      }, 3000)
+      }, 500)
     }
+  }
+
+  backStep() {
+    console.log("Retrocediendo de paso ", this.currentStepi, " al anterior")
+
+    // Marcar paso como no completado
+    this.descripcion.steps[ this.currentStepi < this.descripcion.steps.length? this.currentStepi : this.descripcion.steps.length-1 ].done = false
+
+    // Escribir en la base de datos
+    try {
+      let newDescription = {
+        descriptionId: this.descripcion.descriptionId,
+        imagesId: this.descripcion.imagesId,
+        text: this.descripcion.text,
+        pictogramId: this.descripcion.pictogramId,
+        link: this.descripcion.link,
+        steps: this.descripcion.steps
+      };
+
+      if (this.descripcion.steps == undefined) {
+        newDescription.steps = null
+      }
+
+      const descriptionRef = doc(this.firestoreService.firestore, 'Description', this.descripcion.descriptionId);
+      setDoc(descriptionRef, newDescription);
+
+    } catch (error) {
+      console.error('Error al actualizar la tarea:', error);
+    }
+
+    setTimeout(() => {
+      this.currentStepi--
+      this.currentStep = this.descripcion.steps[this.currentStepi]
+      console.log("Ahora estamos en el paso ", this.currentStepi)
+      console.log(this.currentStep)
+    }, 500)
+
+    
   }
   
   marcarEnlaceVisitado(){
