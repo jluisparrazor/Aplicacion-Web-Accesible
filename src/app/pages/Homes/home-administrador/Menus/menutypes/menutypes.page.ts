@@ -9,6 +9,8 @@ import { ChangeDetectorRef } from '@angular/core';
 import { AlertService } from 'src/app/common/services/alert.service';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
+import { SessionService } from 'src/app/common/services/session.service';
+import { TeacherI } from 'src/app/common/models/teacher.models';
 
 @Component({
   selector: 'app-menutypes',
@@ -26,9 +28,27 @@ export class MenuTypesPage implements OnInit {
   editedMenuType: MenuType | null = null;
   editingMenuType: boolean = false;
 
-  constructor( private menuService: MenuService,private readonly router: Router, private cdr: ChangeDetectorRef, private alertService: AlertService) { }
+  userActual: TeacherI | null = null;
+
+  constructor( private menuService: MenuService,
+    private readonly router: Router, 
+    private cdr: ChangeDetectorRef,
+    private readonly sessionService: SessionService, 
+    private alertService: AlertService) { }
 
   ngOnInit() {
+    
+    // Comprobar que el usuario actual es un administrador
+    const user = this.sessionService.getCurrentUser();
+    if (user && (user as TeacherI).administrative) {
+      this.userActual = user as unknown as TeacherI;
+      console.log('Usuario loggeado:', this.userActual.name);
+    } else {
+      console.error('El usuario actual no es válido o no tiene permisos de administrador.');
+      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+    }
+
+
     this.loadStructure();
   }
 

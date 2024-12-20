@@ -7,6 +7,8 @@ import { Menu } from 'src/app/common/models/menu.models';
 import { ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
+import { TeacherI } from 'src/app/common/models/teacher.models';
+import { SessionService } from 'src/app/common/services/session.service';
 
 
 @Component({
@@ -29,9 +31,25 @@ export class ShowMenusPage implements OnInit {
   viewMode: string = "classView";
   printMode: boolean = false;
 
-  constructor(private menuService: MenuService,private readonly router: Router, private cdr: ChangeDetectorRef) { }
+  userActual: TeacherI | null = null;
+
+
+  constructor(private menuService: MenuService,
+    private readonly router: Router,
+    private readonly sessionService: SessionService,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
+    // Comprobar que el usuario actual es un administrador
+    const user = this.sessionService.getCurrentUser();
+    if (user && (user as TeacherI).administrative) {
+      this.userActual = user as unknown as TeacherI;
+      console.log('Usuario loggeado:', this.userActual.name);
+    } else {
+      console.error('El usuario actual no es válido o no tiene permisos de administrador.');
+      this.router.navigate(['/loginprofesor']); // Redirigir al login de administrador
+    }
+
     this.loadStructure();
   }
 
@@ -40,7 +58,7 @@ export class ShowMenusPage implements OnInit {
       return '';
     } else {
       let menuString = `showingDate: ${this.showingDate}\n` +
-      `showMenu: \n`+ `\tdate: ${this.showMenu.date.toDate().toISOString()}\n`;
+        `showMenu: \n` + `\tdate: ${this.showMenu.date.toDate().toISOString()}\n`;
 
       this.classNames.forEach(className => {
         menuString += `\t${className}\n`;
@@ -61,9 +79,9 @@ export class ShowMenusPage implements OnInit {
     });
   }
 
-  loadMenuForDate() { 
-    this.viewMode = "";   
-    this.showMenu = this.menuMap.get(this.showingDate); 
+  loadMenuForDate() {
+    this.viewMode = "";
+    this.showMenu = this.menuMap.get(this.showingDate);
     if (this.showMenu !== undefined) {
       this.classNames = Object.keys(this.showMenu.menus);
       this.menuTypeNames = Object.keys(this.showMenu.menus[this.classNames[0]]);
@@ -79,13 +97,13 @@ export class ShowMenusPage implements OnInit {
       });
     }
   }
-  
+
   convertDate(date: Date): string {
-    return new Date(date.getTime() +  60 * 60 * 1000).toISOString().split('T')[0];
+    return new Date(date.getTime() + 60 * 60 * 1000).toISOString().split('T')[0];
   }
 
   imprimir() {
-    if (this.showMenu !== undefined){
+    if (this.showMenu !== undefined) {
       this.printMode = true;
       this.viewMode = "menuView";
       this.cdr.detectChanges(); // Force change detection
@@ -93,7 +111,7 @@ export class ShowMenusPage implements OnInit {
         window.print();
         this.printMode = false;
         this.cdr.detectChanges(); // Force change detection
-      }, 1000);  
+      }, 1000);
     } else {
       alert('No hay menú para la fecha seleccionada');
     }
