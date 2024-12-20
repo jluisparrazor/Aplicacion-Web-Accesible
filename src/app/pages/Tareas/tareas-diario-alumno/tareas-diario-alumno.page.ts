@@ -281,7 +281,19 @@ export class TareasDiarioAlumnoPage implements OnInit {
         break;
 
       case 'RequestTask':
-        // Navegación pendiente de implementar
+        if (descripcion) {
+          // Si la descripción existe, navegar a la página correspondiente con los datos
+          this.router.navigate(['/task-material-request'], {
+            state: { 
+              taskID: tarea.taskID,
+              taskTitle: tarea.title,
+              associatedDescriptionId: tarea.associatedDescriptionId,
+              completed: tareaCompletada
+            }
+          });
+        } else {
+          console.warn('Descripción no encontrada para AppTask:', tarea.associatedDescriptionId);
+        }
         break;
 
       default:
