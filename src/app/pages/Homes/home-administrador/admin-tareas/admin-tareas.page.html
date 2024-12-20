@@ -122,7 +122,7 @@
           </ion-item>
           
           <!-- Añadir Imágenes (solo para StepTask) -->
-          <ion-item *ngIf="newTarea.type === 'StepTask'">
+          <!-- <ion-item *ngIf="newTarea.type === 'StepTask'">
             <ion-input 
               label="Imagenes: " 
               labelPlacement="floating"
@@ -131,10 +131,10 @@
               [(ngModel)]="newImageLink">
             </ion-input>
             <ion-button (click)="addImage()">Añadir imagen</ion-button>
-          </ion-item>
+          </ion-item> -->
 
           <!-- Vista previa de imágenes añadidas (solo para StepTask) -->
-          <ion-row *ngIf="newTarea.type === 'StepTask' && newTaskDescription.imagesId && newTaskDescription.imagesId.length > 0">
+          <!-- <ion-row *ngIf="newTarea.type === 'StepTask' && newTaskDescription.imagesId && newTaskDescription.imagesId.length > 0">
             <ng-container *ngFor="let imageId of newTaskDescription.imagesId">
               <ion-col size="auto" *ngIf="imageId.trim() !== ''" class="imagen-tarea-col">
                 <ion-thumbnail class="imagen-tarea-thumbnail">
@@ -143,7 +143,7 @@
                 <ion-button (click)="removeImage(imageId)" color="danger" class="boton-eliminar-imagen">Eliminar</ion-button>
               </ion-col>
             </ng-container>
-          </ion-row>
+          </ion-row> -->
 
           <!-- Añadir pasos (solo para StepTask) -->
           <ion-list *ngIf="newTarea.type === 'StepTask'">
@@ -185,15 +185,15 @@
             </ion-item>
 
             <!--Vídeo asociado al paso-->
-            <ion-item>
+            <!-- <ion-item>
               <ion-input
                 label="Vídeo"
                 labelPlacement="floating"
                 type="url"
                 placeholder="Introduce el enlace al video...">
-                <!-- [(ngModel)]="newImageLink"-->
+                [(ngModel)]="newImageLink"
               </ion-input>
-            </ion-item>
+            </ion-item> -->
 
             <ion-button (click)="addStep()">Añadir paso</ion-button>
           </ion-list>

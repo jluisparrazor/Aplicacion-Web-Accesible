@@ -10,6 +10,7 @@ export interface TaskI {
         assignedName: string | null;       // Nombre del alumno
         assignedId: string | null;         // ID del alumno
         completed: boolean;         // Estado de completado
+        nStepsCompleted?: number;       // Número de pasos completados, si tiene pasos
         doneTime?: Timestamp | null;  // Fecha específica de finalización        
         startTime?: Timestamp | null; // Fecha específica de inicio para este alumno
         endTime?: Timestamp | null;   // Fecha específica de fin para este alumno       
@@ -32,5 +33,4 @@ export interface StepI {
     pictogramId?: string;       // Pictograma asociado al paso
     imageUrl? : string;         // Imagen asociada al paso (url)
     videoUrl?: string;          // Vídeo asociado al paso (url)
-    done: boolean               // Si el paso está hecho
 }
