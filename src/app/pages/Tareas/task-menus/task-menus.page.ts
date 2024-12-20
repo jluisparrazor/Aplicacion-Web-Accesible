@@ -10,7 +10,7 @@ import { ClassService } from '../../../common/services/class.service';
 import { MenuService } from '../../../common/services/menu.service';
 import { SessionService } from 'src/app/common/services/session.service';
 import { TasksService } from 'src/app/common/services/tasks.service';
-import { AnimationService } from 'src/app/common/services/animation.service';
+import { AnimationService } from '../../../common/services/animation.service';
 import { Router } from '@angular/router';
 import { CelebracionComponent } from "../../../shared/celebracion/celebracion.component";
 
