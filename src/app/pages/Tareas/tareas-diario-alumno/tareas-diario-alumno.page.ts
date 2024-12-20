@@ -254,8 +254,19 @@ export class TareasDiarioAlumnoPage implements OnInit {
         break;
 
       case 'NormalTask':
-        // Navegación pendiente de implementar
-        console.warn('La redirección para "normal" no está implementada.');
+        if (descripcion) {
+          // Si la descripción existe, navegar a la página correspondiente con los datos
+          this.router.navigate(['/task-normal'], {
+            state: { 
+              taskID: tarea.taskID,
+              taskTitle: tarea.title,
+              associatedDescriptionId: tarea.associatedDescriptionId,
+              completed: tareaCompletada
+            }
+          });
+        } else {
+          console.warn('Descripción no encontrada para AppTask:', tarea.associatedDescriptionId);
+        }
         break;
 
       case 'MenuTask':
